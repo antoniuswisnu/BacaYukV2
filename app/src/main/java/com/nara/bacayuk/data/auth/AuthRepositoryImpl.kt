@@ -50,5 +50,4 @@ class AuthRepositoryImpl(
     override suspend fun forgotPassword(email: String) {
         firebaseAuthDataSource.forgotPassword(email)
     }
-
 }

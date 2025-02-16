@@ -5,7 +5,6 @@ import android.content.Context
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import com.nara.bacayuk.R
-import com.nara.bacayuk.databinding.DialogConfirmationBinding
 import com.nara.bacayuk.databinding.LayoutStatusAnswerBinding
 import com.nara.bacayuk.utils.playAudioFromRawAssetsFileString
 

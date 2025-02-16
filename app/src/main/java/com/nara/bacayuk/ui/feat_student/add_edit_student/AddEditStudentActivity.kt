@@ -33,10 +33,7 @@ class AddEditStudentActivity : AppCompatActivity() {
             intent.getParcelableExtra(DATA) as Student?
         }
 
-
-
         binding.apply {
-
             toolbar.apply {
                 imgActionRight.invisible()
                 imageView.setOnClickListener { finish() }
@@ -50,7 +47,6 @@ class AddEditStudentActivity : AppCompatActivity() {
                 edtAsalSekolah.setText(dataStudent!!.asalSekolah)
                 edtTahunMasukSekolah.setText(dataStudent!!.tahunMasukSekolah)
             }
-
 
             btnSaveStudent.setOnClickListener {
                 val name = edtName.text.toString()

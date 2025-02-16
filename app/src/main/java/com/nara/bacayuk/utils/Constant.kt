@@ -1,6 +1,5 @@
 package com.nara.bacayuk.utils
 
-
 val PREFERENCES_NAME = "app_preferences"
 val EMAIL = "email"
 val UID = "uid"

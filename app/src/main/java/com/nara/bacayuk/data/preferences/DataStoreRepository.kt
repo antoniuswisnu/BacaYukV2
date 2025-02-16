@@ -10,8 +10,6 @@ interface DataStoreRepository {
     suspend fun getString(key: String): String?
     suspend fun getInt(key: String): Int?
     suspend fun clear()
-
     suspend fun putUser(key: String, student: User)
     suspend fun getUser(): User?
-
 }

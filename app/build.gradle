@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId "com.nara.bacayuk"
-        minSdk 21
+        minSdk 24
         targetSdk 33
         versionCode 6
         versionName "2.3.1"
@@ -38,11 +38,11 @@ android {
 
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 }
 
@@ -120,7 +120,8 @@ dependencies {
     implementation 'com.github.douglasjunior:android-simple-tooltip:1.1.0'
     implementation 'com.github.IgnacioCarrionN:WheelPicker:0.0.1-Alpha04'
 
-    implementation 'com.yarolegovich:discrete-scrollview:1.5.1'
+//    implementation 'com.yarolegovich:discrete-scrollview:1.5.1'
+//    implementation 'com.github.yarolegovich:DiscreteScrollView:v1.5.1'
 
     //mockito
     def mockitoVersion = "3.12.4"

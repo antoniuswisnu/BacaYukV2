@@ -164,5 +164,3 @@ fun getTwoRandomAbjadKapital(tidakDiambil: String): List<String> {
     val randomIndices = (allAbjad.indices).shuffled().take(2)
     return randomIndices.map { allAbjad[it] }
 }
-
-

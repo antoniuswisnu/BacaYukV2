@@ -103,7 +103,6 @@ class MenuBacaHurufActivity : AppCompatActivity(), AdapterListener {
                         Log.d("menubaca", it)
                     }
                 }
-
                 else -> {}
             }
         }

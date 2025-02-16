@@ -13,7 +13,6 @@ import com.nara.bacayuk.ui.listener.adapter.AdapterListener
 import com.nara.bacayuk.utils.invisible
 import com.nara.bacayuk.utils.visible
 
-
 class AbjadMenuAdapter(val listener: AdapterListener) :
     RecyclerView.Adapter<AbjadMenuAdapter.RecentAdapterViewHolder>() {
 
@@ -29,7 +28,6 @@ class AbjadMenuAdapter(val listener: AdapterListener) :
         }
     }
 
-
     private val differ = AsyncListDiffer(this, diffCallback)
     private var typ = "-"
 
@@ -39,7 +37,6 @@ class AbjadMenuAdapter(val listener: AdapterListener) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentAdapterViewHolder {
-
         val binding =
             ItemAbjadMenuBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RecentAdapterViewHolder(binding.root)
@@ -87,8 +84,6 @@ class AbjadMenuAdapter(val listener: AdapterListener) :
             }
         }
     }
-
     override fun getItemCount(): Int = differ.currentList.size
-
 }
 

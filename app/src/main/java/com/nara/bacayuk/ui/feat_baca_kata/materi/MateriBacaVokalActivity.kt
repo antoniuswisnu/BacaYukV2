@@ -32,11 +32,10 @@ import com.nara.bacayuk.utils.invisible
 import com.nara.bacayuk.utils.playAudioFromRawAssetsFileString
 import com.nara.bacayuk.utils.playAudioFromUrl
 import com.nara.bacayuk.utils.showQuizToast
-import com.yarolegovich.discretescrollview.DSVOrientation
-import com.yarolegovich.discretescrollview.DiscreteScrollLayoutManager
+//import com.yarolegovich.discretescrollview.DSVOrientation
+//import com.yarolegovich.discretescrollview.DiscreteScrollLayoutManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import sh.tyy.wheelpicker.core.WheelPickerRecyclerView
-
 
 class MateriBacaVokalActivity : AppCompatActivity()
     {

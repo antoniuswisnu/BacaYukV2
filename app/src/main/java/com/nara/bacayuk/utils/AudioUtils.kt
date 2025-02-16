@@ -1,11 +1,9 @@
 package com.nara.bacayuk.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.util.Log
-
 
 object AudioPlayerManager {
     var mediaPlayer: MediaPlayer? = null
