@@ -34,6 +34,7 @@ class RiwayatHurufActivity : AppCompatActivity() {
         riwayatViewModel.getAllReports(student?.uuid ?: "-").also {
             dialog.show()
         }
+
         riwayatViewModel.reports.observe(this@RiwayatHurufActivity) { response ->
             dialog.dismiss()
             when (response) {

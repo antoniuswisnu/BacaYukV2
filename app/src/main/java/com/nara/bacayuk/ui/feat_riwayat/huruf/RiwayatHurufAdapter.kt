@@ -10,12 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Abjad
-import com.nara.bacayuk.databinding.ItemAbjadMenuBinding
 import com.nara.bacayuk.databinding.ItemRiwayatHurufBinding
-import com.nara.bacayuk.ui.listener.adapter.AdapterListener
-import com.nara.bacayuk.utils.invisible
-import com.nara.bacayuk.utils.visible
-
 
 class RiwayatHurufAdapter :
     RecyclerView.Adapter<RiwayatHurufAdapter.RecentAdapterViewHolder>() {
@@ -89,10 +84,7 @@ class RiwayatHurufAdapter :
                         if (report?.quizHurufNonKapital == true) R.drawable.ic_finished else R.drawable.ic_unfinished
                     )
                 )
-
             }
-
-
         }
     }
 

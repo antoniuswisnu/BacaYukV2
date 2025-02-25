@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityMenuRiwayatBinding
 import com.nara.bacayuk.ui.feat_riwayat.huruf.RiwayatHurufActivity
@@ -34,25 +33,42 @@ class MenuRiwayatActivity : AppCompatActivity() {
             toolbar.imageView.setOnClickListener { onBackPressed() }
             toolbar.imgActionRight.invisible()
             btnHuruf.setOnClickListener {
-                val intent = Intent(this@MenuRiwayatActivity, RiwayatHurufActivity::class.java).apply {
-                    putExtra("student", student)
-                }
+                val intent =
+                    Intent(this@MenuRiwayatActivity, RiwayatHurufActivity::class.java).apply {
+                        putExtra("student", student)
+                    }
                 startActivity(intent)
             }
 
             btnKata.setOnClickListener {
-                val intent = Intent(this@MenuRiwayatActivity, RiwayatKataActivity::class.java).apply {
+                val intent =
+                    Intent(this@MenuRiwayatActivity, RiwayatKataActivity::class.java).apply {
+                        putExtra("student", student)
+                    }
+                startActivity(intent)
+            }
+
+            btnKalimat.setOnClickListener {
+                val intent =
+                    Intent(this@MenuRiwayatActivity, RiwayatKalimatActivity::class.java).apply {
+                        putExtra("student", student)
+                    }
+                startActivity(intent)
+            }
+
+            btnTulisAngka.setOnClickListener {
+                val intent = Intent(this@MenuRiwayatActivity, RiwayatTulisAngkaActivity::class.java).apply {
                     putExtra("student", student)
                 }
                 startActivity(intent)
             }
 
-            btnKalimat.setOnClickListener {
-                val intent = Intent(this@MenuRiwayatActivity, RiwayatKalimatActivity::class.java).apply {
-                    putExtra("student", student)
-                }
-                startActivity(intent)
-            }
+//            btnTulisHuruf.setOnClickListener {
+//                val intent = Intent(this@MenuRiwayatActivity, RiwayatTulisHurufActivity::class.java).apply {
+//                    putExtra("student", student)
+//                }
+//                startActivity(intent)
+//            }
         }
     }
 }

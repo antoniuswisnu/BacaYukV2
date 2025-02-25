@@ -4,10 +4,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import com.nara.bacayuk.R
-import com.nara.bacayuk.data.model.BelajarSuku
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.SoalKata
 import com.nara.bacayuk.data.model.Student
@@ -22,10 +20,9 @@ class RiwayatKalimatActivity : AppCompatActivity() {
     private val binding by lazy { ActivityRiwayatKalimatBinding.inflate(layoutInflater) }
     var student: Student? = null
     private val riwayatViewModel: RiwayatViewModel by viewModel()
-    var quizSusunKata: ArrayList<SoalKata> = arrayListOf()
-    var quizPilganKata: ArrayList<SoalKata> = arrayListOf()
+    private var quizSusunKata: ArrayList<SoalKata> = arrayListOf()
+    private var quizPilganKata: ArrayList<SoalKata> = arrayListOf()
     private val dialog by lazy { waitingDialog() }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +49,6 @@ class RiwayatKalimatActivity : AppCompatActivity() {
                         addView(quizSusunKata,1)
                         addView(quizPilganKata, 2)
                     }
-
                 }
 
                 is Response.Error -> {

@@ -4,23 +4,17 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.widget.Toast
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Abjad
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityMateriBacaHurufBinding
 import com.nara.bacayuk.ui.feat_baca_huruf.menu_baca_huruf.MenuBacaHurufActivity
-import com.nara.bacayuk.ui.feat_baca_huruf.menu_baca_huruf.MenuBacaHurufViewModel
 import com.nara.bacayuk.ui.feat_baca_huruf.quiz_baca_huruf.QuizBacaHurufActivity
-import com.nara.bacayuk.ui.feat_student.list_student.ListStudentActivity
 import com.nara.bacayuk.utils.DATA
 import com.nara.bacayuk.utils.ToastType
 import com.nara.bacayuk.utils.invisible
 import com.nara.bacayuk.utils.showQuizToast
-import com.nara.bacayuk.utils.showToast
-import com.nara.bacayuk.utils.visible
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MateriBacaHurufActivity : AppCompatActivity() {
 
@@ -34,6 +28,7 @@ class MateriBacaHurufActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
         dataAbjad = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(DATA, Abjad::class.java)
         } else {
@@ -57,6 +52,7 @@ class MateriBacaHurufActivity : AppCompatActivity() {
                     Toast.makeText(this@MateriBacaHurufActivity, "back pressed", Toast.LENGTH_SHORT).show()
                 }
             }
+
             val isKata = dataAbjad==null
             val pagerAdapter = ViewPageAdapter(this@MateriBacaHurufActivity, isKata = isKata) { name = it.toString() }
             slideVP.adapter = pagerAdapter
@@ -84,8 +80,9 @@ class MateriBacaHurufActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (dataAbjad==null) {
+        if (dataAbjad == null) {
             finish()
         } else {
             val intent = Intent(this@MateriBacaHurufActivity, MenuBacaHurufActivity::class.java)
@@ -96,7 +93,5 @@ class MateriBacaHurufActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
     }
-
 }

@@ -91,7 +91,7 @@ class MateriBacaHurufViewModel(
         }
     }
 
-    fun getEmail(): String? = runBlocking {
+    private fun getEmail(): String? = runBlocking {
         dataStore.getString(EMAIL)
     }
 
@@ -99,7 +99,7 @@ class MateriBacaHurufViewModel(
         dataStore.getString(UID)
     }
 
-    fun getFullName(): String? = runBlocking {
+    private fun getFullName(): String? = runBlocking {
         dataStore.getString(FULL_NAME_USER)
     }
 }

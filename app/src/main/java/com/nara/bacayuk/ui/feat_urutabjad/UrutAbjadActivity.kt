@@ -15,10 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.nara.bacayuk.R
 import com.nara.bacayuk.databinding.ActivityUrutAbjadBinding
 
-
 class UrutAbjadActivity : AppCompatActivity() {
     private val binding by lazy { ActivityUrutAbjadBinding.inflate(layoutInflater) }
     private var answerList = arrayListOf<String>("A","B", "C", "D","E")
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -61,7 +61,7 @@ class UrutAbjadActivity : AppCompatActivity() {
         }
     }
 
-    fun reset() {
+    private fun reset() {
         binding.apply {
             opt1.visibility = View.VISIBLE
 
@@ -93,7 +93,6 @@ class UrutAbjadActivity : AppCompatActivity() {
             when (event.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
                     //change the text color to teal200
-
                 }
                 DragEvent.ACTION_DRAG_ENTERED -> {
 
@@ -102,8 +101,6 @@ class UrutAbjadActivity : AppCompatActivity() {
 
                 }
                 DragEvent.ACTION_DROP -> {
-
-
                     //handle the dragged view being dropped over a drop view
                     val view = event.localState as View
                     //view dragged item is being dropped on
@@ -144,7 +141,6 @@ class UrutAbjadActivity : AppCompatActivity() {
                         dropTarget.tag = dropped.id
                         //remove setOnDragListener by setting OnDragListener to null, so that no further drag & dropping on this TextView can be done
                         dropTarget.setOnDragListener(null)
-                        //show toast
                         Toast.makeText(this@UrutAbjadActivity, "BENAR!", Toast.LENGTH_SHORT).show()
                     } else  //displays message if first character of dropTarget is not equal to first character of dropped
                         Toast.makeText(v.context, "SALAH!", Toast.LENGTH_SHORT).show()
@@ -156,5 +152,4 @@ class UrutAbjadActivity : AppCompatActivity() {
             return true
         }
     }
-
 }

@@ -35,4 +35,49 @@
     <string name="ini_perbedaan_huruf">Ini perbedaan huruf besar dan huruf kecil</string>
     <string name="ini_huruf_vokal">Ini huruf vokal</string>
     <string name="huruf">Huruf</string>
+
+    <!-- Writing Features Update -->
+    <string name="simpan_soal">Simpan Soal</string>
+    <string name="pertanyaan">Pertanyaan</string>
+    <string name="masukkan_pertanyaan">Masukkan pertanyaan</string>
+    <string name="masukkan_jawaban">Masukkan jawaban</string>
+    <string name="button_back">Button Back</string>
+    <string name="tambah_soal">Tambah Soal</string>
+    <string name="jawaban">Jawaban</string>
+    <string name="tipe_soal">Tipe Soal</string>
+    <string name="tulis_huruf">Tulis Huruf</string>
+    <string name="perhatikan_langkah_langkah_n_menulis_huruf_berikut">Perhatikan Langkah-Langkah \n Menulis Huruf Berikut</string>
+    <string name="kuis_1">Kuis 1</string>
+    <string name="button_add_question">Button Add Question</string>
+    <string name="simpan_kuis">Simpan Kuis</string>
+    <string name="belum_ada_soal_tambahkan_soal_baru">Belum ada soal. Tambahkan soal baru!</string>
+    <string name="tulis_angka">Tulis Angka</string>
+    <string name="tulis_kata">Tulis Kata</string>
+    <string name="tulis_kalimat">Tulis Kalimat</string>
+    <string name="ujian_tulis">Ujian Tulis</string>
+    <string name="riwayat_belajar">Riwayat Belajar</string>
+    <string name="ahmad_widodo">Ahmad Widodo</string>
+    <string name="menu_utama">Menu Utama</string>
+    <string name="belum_ada_quiz_tambahkan_quiz_baru">Belum ada quiz. Tambahkan quiz baru!</string>
+    <string name="huruf_kapital_benar">Huruf Kapital Benar</string>
+    <string name="tulis_huruf_tersebut_sesuai_n_dengan_bentuknya">Tulis huruf tersebut sesuai \n dengan bentuknya</string>
+    <string name="button_play_animation">Button Play Animation</string>
+    <string name="button_pencil">Button Pencil</string>
+    <string name="button_eraser">Button Eraser</string>
+    <string name="button_reload">Button Reload</string>
+    <string name="tulis_kata_tersebut_sesuai_dengan_bentuknya">Tulis kata tersebut sesuai dengan bentuknya</string>
+    <string name="hasil_huruf">Hasil Huruf</string>
+    <string name="hasil_prediksi">Hasil Prediksi :</string>
+    <string name="huruf_soal">Huruf Soal :</string>
+    <string name="b">B</string>
+    <string name="feedback">Feedback</string>
+    <string name="tulisan_ini_sudah_benar_namun_terdapat_garis_yang_masih_belum_lurus_dan_perlu_diperbaiki">Tulisan ini sudah benar namun terdapat garis yang masih belum lurus dan perlu diperbaiki.</string>
+    <string name="ujian_menulis">Ujian Menulis</string>
+    <string name="_1_5">1/5</string>
+    <string name="hasil_kuis">Hasil Kuis</string>
+    <string name="benar_0">Benar: 0</string>
+    <string name="salah_0">Salah: 0</string>
+    <string name="selesai">Selesai</string>
+
+
 </resources>
