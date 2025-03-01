@@ -32,6 +32,9 @@ class MainViewModel(
     private val _statusCreateData = MutableLiveData<ArrayList<String>>()
     val statusCreateData: LiveData<ArrayList<String>> = _statusCreateData
 
+    private val _user = MutableLiveData<Response<User>>()
+    val user: LiveData<Response<User>> = _user
+
     fun createReportHurufDataSets(
         isFirstOpen: Boolean,
         idUser: String,
@@ -49,34 +52,25 @@ class MainViewModel(
                 if (isFirstOpen) {
                     student.isReadyHurufDataSet = true
                     user?.let {
-                        val changedStudent = student
-                        changedStudent.isReadyHurufDataSet = true
-                        studentUseCase.addUpdateStudentToFirestore(it.uuid ?: "-", changedStudent) }
+                        student.isReadyHurufDataSet = true
+                        studentUseCase.addUpdateStudentToFirestore(it.uuid ?: "-", student)
+                    }
+
                     val status = reportUseCase.createReportHurufDataSets(idUser, idStudent)
                     val statusKata = reportUseCase.createReportKataDataSets(idUser, idStudent)
-                    Log.d("statuscreate", "createReportHurufDataSets: $status")
-                    Log.d("statuscreate", "createReportHurufDataSets: $statusKata")
-                    val statusKalimat1 = reportUseCase.addUpdateReportKalimat(idUser, idStudent, ReportKalimat())
-//                    if (status) Log.d("createReport", "Report Huruf data set created")
-//                    else Log.d("createReport", "Report Huruf data set creation failed")
-//                    if (statusKata) Log.d("createReport", "Report Kata data set created")
-//                    else Log.d("createReport", "Report Kata data set creation failed")
+                    val statusKalimat = reportUseCase.addUpdateReportKalimat(idUser, idStudent, ReportKalimat())
+
                     val arrayList1 = arrayListOf("","","")
                     arrayList1[0] = status
                     arrayList1[1] = statusKata
-                    arrayList1[2] = if (statusKalimat1) MESSAGE_KALIMAT_SUCCESS else "Gagal mempersiapkan data kalimat"
+                    arrayList1[2] = if (statusKalimat) MESSAGE_KALIMAT_SUCCESS else "Gagal mempersiapkan data kalimat"
                     _statusCreateData.value = arrayList1
-                    if (statusKalimat1) Log.d("createReport", "Report Kata data set created")
-                    else Log.d("createReport", "Report Kata data set creation failed")
                 }
             } catch (e: Exception) {
                 Log.d("MainViewModel", "login: fail")
                 e.printStackTrace()
             }
         }
-
-    private val _user = MutableLiveData<Response<User>>()
-    val user: LiveData<Response<User>> = _user
 
     fun saveUser(user: User) = viewModelScope.launch {
         userUseCase.addUpdateUserToFirestore(user)
@@ -118,7 +112,6 @@ class MainViewModel(
         dataStoreRepository.getString(FULL_NAME_USER)
     }
 
-
     fun getUserDataStore(): User? {
         val uid = getUID()
         val email = getEmail()
@@ -129,6 +122,4 @@ class MainViewModel(
             null
         }
     }
-
-
 }

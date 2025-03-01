@@ -43,7 +43,7 @@ class MateriBacaHurufActivity : AppCompatActivity() {
 
         binding.apply {
             toolbar.apply {
-                txtTitle.text = if (dataAbjad==null) "Baca Kata" else getString(R.string.baca_huruf)
+                txtTitle.text = if (dataAbjad == null) "Baca Kata" else getString(R.string.baca_huruf)
                 txtTitle.setTextColor(resources.getColor(R.color.teal_600))
                 imgActionRight.invisible()
                 imageView.invisible()
@@ -53,7 +53,7 @@ class MateriBacaHurufActivity : AppCompatActivity() {
                 }
             }
 
-            val isKata = dataAbjad==null
+            val isKata = dataAbjad == null
             val pagerAdapter = ViewPageAdapter(this@MateriBacaHurufActivity, isKata = isKata) { name = it.toString() }
             slideVP.adapter = pagerAdapter
             dotsIndicator.setViewPager2(slideVP)
@@ -82,6 +82,7 @@ class MateriBacaHurufActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        super.onBackPressed()
         if (dataAbjad == null) {
             finish()
         } else {

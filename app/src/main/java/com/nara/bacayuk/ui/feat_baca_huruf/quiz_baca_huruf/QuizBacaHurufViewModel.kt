@@ -10,7 +10,6 @@ import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.User
 import com.nara.bacayuk.data.preferences.DataStoreRepository
 import com.nara.bacayuk.domain.usecase.ReportUseCase
-import com.nara.bacayuk.domain.usecase.StudentUseCase
 import com.nara.bacayuk.domain.usecase.UserUseCase
 import com.nara.bacayuk.utils.EMAIL
 import com.nara.bacayuk.utils.FULL_NAME_USER
@@ -27,7 +26,6 @@ class QuizBacaHurufViewModel(
     private val _user = MutableLiveData<Response<User>>()
     val user: LiveData<Response<User>> = _user
 
-
     fun updateReportHuruf(
         idUser: String,
         idStudent: String,
@@ -40,7 +38,6 @@ class QuizBacaHurufViewModel(
             e.printStackTrace()
         }
     }
-
 
     fun getUser(id: String) {
         Log.d("MainViewModel", "getUser: called")
@@ -55,7 +52,6 @@ class QuizBacaHurufViewModel(
                 e.printStackTrace()
             }
         }
-
     }
 
     fun getUserDataStore(): User? {

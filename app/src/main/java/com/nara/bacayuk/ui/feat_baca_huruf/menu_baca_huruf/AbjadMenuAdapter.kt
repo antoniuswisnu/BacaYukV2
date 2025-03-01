@@ -1,6 +1,5 @@
 package com.nara.bacayuk.ui.feat_baca_huruf.menu_baca_huruf
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,7 +44,6 @@ class AbjadMenuAdapter(val listener: AdapterListener) :
     override fun onBindViewHolder(holder: RecentAdapterViewHolder, position: Int) {
         holder.view.apply {
             val data = differ.currentList[position]
-            Log.d("TAG", "onBindViewHolder: $data")
             val binding = ItemAbjadMenuBinding.bind(this)
             binding.txtAbjad.text = data?.abjadNonKapital
             binding.imgChecklist.invisible()
@@ -65,12 +63,11 @@ class AbjadMenuAdapter(val listener: AdapterListener) :
                 }
                 "kata" -> {
                     if (data?.belajarSuku != null) {
-
-                        if (data.belajarSuku?.belajarVokal?.isADone == true
-                            && data.belajarSuku.belajarVokal.isEDone
-                            && data.belajarSuku.belajarVokal.isIDone
-                            && data.belajarSuku.belajarVokal.isODone
-                            && data.belajarSuku.belajarVokal.isUDone) {
+                        if (data.belajarSuku.belajarVokal.isADone &&
+                            data.belajarSuku.belajarVokal.isEDone &&
+                            data.belajarSuku.belajarVokal.isIDone &&
+                            data.belajarSuku.belajarVokal.isODone &&
+                            data.belajarSuku.belajarVokal.isUDone) {
                             binding.imgChecklist.visible()
                         } else {
                             binding.imgChecklist.invisible()
@@ -86,4 +83,3 @@ class AbjadMenuAdapter(val listener: AdapterListener) :
     }
     override fun getItemCount(): Int = differ.currentList.size
 }
-

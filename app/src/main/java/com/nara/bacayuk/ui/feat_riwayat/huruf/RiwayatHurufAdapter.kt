@@ -30,12 +30,10 @@ class RiwayatHurufAdapter :
     private val differ = AsyncListDiffer(this, diffCallback)
 
     fun submitData(list: ArrayList<Abjad>) {
-
         differ.submitList(list)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentAdapterViewHolder {
-
         val binding =
             ItemRiwayatHurufBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RecentAdapterViewHolder(binding.root)

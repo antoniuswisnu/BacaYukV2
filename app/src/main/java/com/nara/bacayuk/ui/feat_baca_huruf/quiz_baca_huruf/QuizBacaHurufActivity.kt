@@ -12,8 +12,6 @@ import com.nara.bacayuk.ui.feat_baca_huruf.materi_baca_huruf.MateriBacaHurufActi
 import com.nara.bacayuk.ui.feat_baca_huruf.menu_baca_huruf.MenuBacaHurufActivity
 import com.nara.bacayuk.utils.DATA
 import com.nara.bacayuk.utils.invisible
-import com.nara.bacayuk.utils.openActivity
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class QuizBacaHurufActivity : AppCompatActivity() {
 
@@ -24,10 +22,10 @@ class QuizBacaHurufActivity : AppCompatActivity() {
         var student: Student? = null
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
         dataAbjad = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(DATA, Abjad::class.java)
         } else {
@@ -69,7 +67,9 @@ class QuizBacaHurufActivity : AppCompatActivity() {
             }
         }
     }
+
     override fun onBackPressed() {
+        super.onBackPressed()
         val intent = Intent(this@QuizBacaHurufActivity, MenuBacaHurufActivity::class.java)
             .apply { putExtra("student", MateriBacaHurufActivity.student) }
         startActivity(intent)

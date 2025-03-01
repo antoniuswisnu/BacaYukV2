@@ -3,7 +3,6 @@ package com.nara.bacayuk.ui.feat_baca_huruf.quiz_baca_huruf
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import com.nara.bacayuk.R
 import com.nara.bacayuk.databinding.ActivitySusunSukuKataBinding
 
 class SusunSukuKataActivity : AppCompatActivity() {

@@ -14,8 +14,8 @@ data class Abjad(
     val belajarSuku: BelajarSuku? = BelajarSuku(),
     val reportHuruf: ReportHuruf? = ReportHuruf(),
     val reportKata: ReportKata? = ReportKata(),
-
-): Parcelable
+//    val reportTulisAngka: ReportTulisAngka? = ReportTulisAngka(),
+    ): Parcelable
 
 fun getAllDataAbjadNonKapital(): List<String>{
     return listOf("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u",

@@ -1,4 +1,4 @@
-package com.nara.bacayuk.writing.number
+package com.nara.bacayuk.writing.number.menu
 
 import android.content.Context
 import android.view.LayoutInflater

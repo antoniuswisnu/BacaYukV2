@@ -9,81 +9,58 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.nara.bacayuk.R
-import com.nara.bacayuk.data.model.Abjad
-import com.nara.bacayuk.databinding.ItemRiwayatHurufBinding
+import com.nara.bacayuk.data.model.Tulis
+import com.nara.bacayuk.databinding.ItemRiwayatTulisAngkaBinding
 
 class RiwayatTulisAngkaAdapter :
     RecyclerView.Adapter<RiwayatTulisAngkaAdapter.RecentAdapterViewHolder>() {
     inner class RecentAdapterViewHolder(val view: View) :
         RecyclerView.ViewHolder(view)
 
-    private val diffCallback = object : DiffUtil.ItemCallback<Abjad>() {
-        override fun areItemsTheSame(oldItem: Abjad, newItem: Abjad): Boolean {
+    private val diffCallback = object : DiffUtil.ItemCallback<Tulis>() {
+        override fun areItemsTheSame(oldItem: Tulis, newItem: Tulis): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Abjad, newItem: Abjad): Boolean {
+        override fun areContentsTheSame(oldItem: Tulis, newItem: Tulis): Boolean {
             return oldItem.hashCode() == newItem.hashCode()
         }
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
 
-    fun submitData(list: ArrayList<Abjad>) {
-
+    fun submitData(list: ArrayList<Tulis>) {
         differ.submitList(list)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentAdapterViewHolder {
-
         val binding =
-            ItemRiwayatHurufBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemRiwayatTulisAngkaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RecentAdapterViewHolder(binding.root)
     }
 
     override fun onBindViewHolder(holder: RecentAdapterViewHolder, position: Int) {
         holder.view.apply {
             val data = differ.currentList[position]
-            val report = data.reportHuruf
+            val report = data.reportTulisAngka
             Log.d("TAG", "onBindViewHolder: $data")
-            val binding = ItemRiwayatHurufBinding.bind(this)
-            binding.txtAbjad.text = data?.abjadNonKapital
+            val binding = ItemRiwayatTulisAngkaBinding.bind(this)
+            binding.txtAngka.text = data.tulisName
 //            binding.imgChecklist.invisible()
             binding.apply {
-                imgMateriKapital.setImageDrawable(
+                imgMateriTulisAngka.setImageDrawable(
                      ContextCompat.getDrawable(
                         context,
-                        if (report?.materiHurufKapital == true) R.drawable.ic_finished else R.drawable.ic_unfinished
+                        if (report?.materiAngka == true) R.drawable.ic_finished else R.drawable.ic_unfinished
                     )
                 )
 
-                imgMateriNonKapital.setImageDrawable((
+                imgLatihanTulisAngka.setImageDrawable((
                      ContextCompat.getDrawable(
                         context,
-                        if (report?.materiHurufNonKapital == true) R.drawable.ic_finished else R.drawable.ic_unfinished
+                        if (report?.latihanAngka == true) R.drawable.ic_finished else R.drawable.ic_unfinished
                     )
                         ))
-
-                imgMateriPerbedaan.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        if (report?.materiPerbedaanHuruf == true) R.drawable.ic_finished else R.drawable.ic_unfinished
-                    )
-                )
-
-                imgQuizKapital.setImageDrawable(
-                     ContextCompat.getDrawable(
-                        context,
-                        if (report?.quizHurufKapital == true) R.drawable.ic_finished else R.drawable.ic_unfinished
-                    )
-                )
-
-                imgQuizNonKapital.setImageDrawable(
-                     ContextCompat.getDrawable(
-                        context,
-                        if (report?.quizHurufNonKapital == true) R.drawable.ic_finished else R.drawable.ic_unfinished
-                    )
-                )
             }
         }
     }

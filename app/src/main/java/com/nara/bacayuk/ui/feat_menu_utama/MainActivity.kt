@@ -1,6 +1,5 @@
 package com.nara.bacayuk.ui.feat_menu_utama
 
-import android.app.ProgressDialog
 import android.content.Intent
 import android.os.*
 import android.util.Log
@@ -21,6 +20,7 @@ import com.nara.bacayuk.ui.feat_baca_kata.quiz.QuizMenuActivity
 import com.nara.bacayuk.ui.feat_riwayat.menu.MenuRiwayatActivity
 import com.nara.bacayuk.ui.feat_student.list_student.ListStudentActivity
 import com.nara.bacayuk.utils.*
+import com.nara.bacayuk.writing.number.menu.MenuNumberActivity
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
@@ -28,17 +28,11 @@ import com.skydoves.balloon.createBalloon
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val mainViewModel: MainViewModel by viewModel()
     private var balloon: Balloon? = null
-    private val progressMax = 150
-    private var currentProgress = 0
-    private var isDataReady = 0
-    private var listData = arrayListOf<String>()
-    private lateinit var progressDialog: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,32 +44,6 @@ class MainActivity : AppCompatActivity() {
             intent.getParcelableExtra("student") as Student?
         }
 
-//        mainViewModel.statusCreateData.observe(this@MainActivity) {
-//
-//            Log.d("statusCreateData", "Called - $isDataReady")
-//            listData.addAll(it)
-//            if (it.size < 4) {
-//                progressDialog = ProgressDialog(this)
-//                progressDialog.setCancelable(false)
-//                progressDialog.setMessage("${it[0]}\n${it[1]}\n${it[2]}")
-//                val dialog = WaitingDialog(this@MainActivity, "${it[0]}\n${it[1]}\n${it[2]}",
-//                object : OnDialogShow{
-//                    override fun onDialogShow(button: Button) {
-//                        if (it[0] == MESSAGE_HURUF_SUCCESS && it[1] == MESSAGE_KATA_SUCCESS && it[2] == MESSAGE_KALIMAT_SUCCESS){
-//                            button.isEnabled = true
-//                            isDataReady++
-//                            Log.d("createsuccess", "onCreate: success $isDataReady")
-//                        }
-//                    }
-//                })
-//                if (it[0] == MESSAGE_HURUF_SUCCESS && it[1] == MESSAGE_KATA_SUCCESS && it[2] == MESSAGE_KALIMAT_SUCCESS){
-//                    dialog.binding.txtStatus.text = "Data sudah siap"
-//                    dialog.binding.progressDialog.gone()
-//                    isDataReady++
-//                }
-//                dialog.show()
-//            }
-//        }
         binding.apply {
             toolbar.txtTitle.text = "Menu Utama"
             toolbar.imgActionRight.setOnClickListener {
@@ -92,13 +60,6 @@ class MainActivity : AppCompatActivity() {
                     putExtra("student", student)
                 }
                 startActivity(intent)
-            }
-
-            btnLogout.setOnClickListener {
-//                Toast.makeText(this@MainActivity, "Cooming Soon", Toast.LENGTH_SHORT).show()
-                mainViewModel.logOutUser()
-                cekUser()
-                cekUser()
             }
 
             btnBacaKata.setOnClickListener {
@@ -126,6 +87,16 @@ class MainActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             }
+
+            btnTulisAngka.setOnClickListener {
+                val intent = Intent(
+                    this@MainActivity,
+                    MenuNumberActivity::class.java
+                ).apply {
+                    putExtra("student", student)
+                }
+                startActivity(intent)
+            }
         }
 
         mainViewModel.user.observe(this@MainActivity) { response ->
@@ -136,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                         response.data.uuid?.let {
                             mainViewModel.createReportHurufDataSets(
                                 true,
-                                it, student.uuid ?: "-",
+                                it, student.uuid,
                                 student
                             )
                         }
@@ -173,7 +144,7 @@ class MainActivity : AppCompatActivity() {
 
         editSiswaText.setText("Ganti Siswa")
         val deleteSiswaText: TextView =
-            tooltip?.findViewById(R.id.txt_delete_menu)!!
+            tooltip.findViewById(R.id.txt_delete_menu)!!
         deleteSiswaText.setText("Keluar")
 
 
@@ -200,6 +171,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        super.onBackPressed()
         finish()
     }
 
@@ -228,9 +200,6 @@ class MainActivity : AppCompatActivity() {
             balloon?.showAlignBottom(binding.toolbar.imgActionRight)
             Handler(Looper.getMainLooper()).postDelayed({ balloon?.dismiss() }, 2000)
         }
-
-
-
     }
 
     private fun cekUser() {
@@ -244,6 +213,4 @@ class MainActivity : AppCompatActivity() {
 //            }
         }
     }
-
-
 }

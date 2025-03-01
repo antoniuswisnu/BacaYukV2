@@ -7,7 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.nara.bacayuk.writing.number.MenuNumberActivity
+import com.nara.bacayuk.writing.number.menu.MenuNumberActivity
 import com.nara.bacayuk.R
 import com.nara.bacayuk.databinding.ActivityTracingNumberBinding
 

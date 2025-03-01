@@ -23,6 +23,7 @@ class MateriBacaHurufViewModel(
 
     private val _user = MutableLiveData<Response<User>>()
     val user: LiveData<Response<User>> = _user
+
     private val _reportKatas = MutableLiveData<Response<ReportKata>>()
     val reportKatas: LiveData<Response<ReportKata>> = _reportKatas
 

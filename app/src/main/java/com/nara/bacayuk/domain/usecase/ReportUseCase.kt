@@ -46,5 +46,13 @@ class ReportUseCase(private val repository: ReportRepository) {
     fun getAllReportKalimatFromFirestore(idUser: String, idStudent: String): Flow<Response<ReportKalimat>>
     = repository.getAllReportKalimatFromFirestore(idUser, idStudent)
 
+    suspend fun getAllReportTulisAngkaFromFirestore(
+        idUser: String, idStudent: String
+    ): Flow<Response<List<ReportTulisAngka>>> = repository.getAllReportTulisAngkaFromFirestore(idUser, idStudent)
+
+    suspend fun addUpdateReportTulisAngka(
+        idUser: String, idStudent: String, reportHuruf: ReportTulisAngka
+    ): Boolean = repository.addUpdateReportTulisAngka(idUser, idStudent, reportHuruf)
+
 
 }

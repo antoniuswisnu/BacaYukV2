@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace 'com.nara.bacayuk'
-    compileSdk 33
+    compileSdk 34
 
     viewBinding {
         enabled = true
@@ -23,7 +23,7 @@ android {
     defaultConfig {
         applicationId "com.nara.bacayuk"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 6
         versionName "2.3.1"
 
@@ -53,6 +53,7 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
+    implementation 'androidx.activity:activity:1.10.0'
     def lifecycle_version = "2.4.1"
     def coroutines_version = "1.4.2"
 
@@ -73,7 +74,6 @@ dependencies {
     //coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'

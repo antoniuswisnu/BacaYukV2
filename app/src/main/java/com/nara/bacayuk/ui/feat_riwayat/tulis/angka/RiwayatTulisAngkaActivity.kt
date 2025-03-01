@@ -1,25 +1,27 @@
-package com.nara.bacayuk.ui.feat_riwayat.huruf
+package com.nara.bacayuk.ui.feat_riwayat.tulis.angka
 
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.nara.bacayuk.data.model.Abjad
 import com.nara.bacayuk.data.model.Response
+import com.nara.bacayuk.data.model.Tulis
 import com.nara.bacayuk.data.model.Student
-import com.nara.bacayuk.databinding.ActivityRiwayatHurufBinding
+import com.nara.bacayuk.databinding.ActivityRiwayatTulisAngkaBinding
 import com.nara.bacayuk.ui.customview.waitingDialog
+import com.nara.bacayuk.ui.feat_riwayat.huruf.RiwayatViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RiwayatHurufActivity : AppCompatActivity() {
 
-    private val binding by lazy { ActivityRiwayatHurufBinding.inflate(layoutInflater) }
+class RiwayatTulisAngkaActivity : AppCompatActivity() {
+
+    private val binding by lazy{ ActivityRiwayatTulisAngkaBinding.inflate(layoutInflater) }
     private val riwayatViewModel: RiwayatViewModel by viewModel()
-    private val riwayatHurufAdapter by lazy { RiwayatHurufAdapter() }
+    private val riwayatTulisAngkaAdapter by lazy { RiwayatTulisAngkaAdapter() }
     var student: Student? = null
     private val dialog by lazy { waitingDialog() }
-    private val listAbjadMenu = arrayListOf<Abjad>()
+    private val listTulisMenu = arrayListOf<Tulis>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,25 +33,23 @@ class RiwayatHurufActivity : AppCompatActivity() {
             intent.getParcelableExtra("student") as Student?
         }
 
-        riwayatViewModel.getAllReports(student?.uuid ?: "-").also {
+        riwayatViewModel.getAllReportTulisAngkaFromFirestore(student?.uuid ?: "-").also {
             dialog.show()
         }
 
-        riwayatViewModel.reports.observe(this@RiwayatHurufActivity) { response ->
+        riwayatViewModel.reportTulisAngka.observe(this@RiwayatTulisAngkaActivity) { response ->
             dialog.dismiss()
             when (response) {
                 is Response.Success -> {
                     response.data.forEach {
-                        val abjad = Abjad(
-                            id = it.abjadName,
-                            abjadNonKapital = it.abjadName[1].toString(),
-                            abjadKapital = it.abjadName[0].toString(),
-                            suara = "-",
-                            reportHuruf = it
+                        val tulis = Tulis(
+                            id = it.tulisName,
+                            tulisName = it.tulisName,
+                            reportTulisAngka = it
                         )
-                        listAbjadMenu.add(abjad)
+                        listTulisMenu.add(tulis)
                     }
-                    riwayatHurufAdapter.submitData(listAbjadMenu)
+                    riwayatTulisAngkaAdapter.submitData(listTulisMenu)
                 }
 
                 is Response.Error -> {
@@ -63,11 +63,12 @@ class RiwayatHurufActivity : AppCompatActivity() {
         }
 
         binding.apply {
-            toolbar.txtTitle.text = "Riwayat Baca Huruf"
-            rvRiwayatHuruf.apply {
-                adapter = riwayatHurufAdapter
-                layoutManager = LinearLayoutManager(this@RiwayatHurufActivity)
+            toolbar.txtTitle.text = "Riwayat Tulis Angka"
+            rvRiwayatTulisAngka.apply {
+                adapter = riwayatTulisAngkaAdapter
+                layoutManager = LinearLayoutManager(this@RiwayatTulisAngkaActivity)
             }
         }
+
     }
 }

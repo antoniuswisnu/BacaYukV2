@@ -12,7 +12,7 @@ import java.util.List;
 
 public class DrawView extends View {
     Paint paint = new Paint();
-    private List<Float> position1=new ArrayList<Float>();
+    private final List<Float> position1=new ArrayList<Float>();
     private List<Float> position2=new ArrayList<Float>();;
 
     public DrawView(Context context) {

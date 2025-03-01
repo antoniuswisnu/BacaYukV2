@@ -1,10 +1,13 @@
 package com.nara.bacayuk.writing.number.animation
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.writing.number.tracing.TracingNumberActivity
 import com.nara.bacayuk.databinding.ActivityNumberAnimationBinding
+import com.nara.bacayuk.ui.feat_baca_huruf.materi_baca_huruf.MateriBacaHurufActivity.Companion.student
 
 class NumberAnimationActivity : AppCompatActivity() {
 
@@ -14,6 +17,12 @@ class NumberAnimationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityNumberAnimationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("student", Student::class.java)
+        } else {
+            intent.getParcelableExtra("student") as Student?
+        }
 
         val selectedNumber = intent.getStringExtra("SELECTED_NUMBER") ?: "0"
         binding.numberPathView.setNumber(selectedNumber)

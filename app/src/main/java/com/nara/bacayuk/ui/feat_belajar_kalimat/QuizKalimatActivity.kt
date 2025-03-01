@@ -198,6 +198,7 @@ class QuizKalimatActivity : AppCompatActivity(), AdapterQuizListener, ViewPositi
                     false
                 )
             }
+
             btnLogin.setOnClickListener {
                 Log.d("quizsusun", "$isKata- $reportKata- $reportKalimat- ${student?.uuid ?: "-"}")
                 if (txtAnswer.text == soalKata?.correctAnswer) {
@@ -288,9 +289,7 @@ class QuizKalimatActivity : AppCompatActivity(), AdapterQuizListener, ViewPositi
 
             }
         }
-
     }
-
 
     override fun getView(view: View?, type: String) {
         when (type) {
@@ -303,7 +302,6 @@ class QuizKalimatActivity : AppCompatActivity(), AdapterQuizListener, ViewPositi
             }
         }
     }
-
 
     override fun onClick(data: Any?, position: Int?, view: View, view2: View, type: String) {
         when (type) {

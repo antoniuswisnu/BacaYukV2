@@ -60,7 +60,7 @@ class QuizFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
 
 //        Toast.makeText(context, "Correct answer: $correctAnswer", Toast.LENGTH_SHORT).show()
@@ -74,6 +74,7 @@ class QuizFragment : Fragment() {
         _binding = null
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.quiz.apply {
@@ -86,8 +87,6 @@ class QuizFragment : Fragment() {
 
             correctAnswerKapital = listOf<String>(abjad?.abjadKapital ?: "-")
             wrongAndCorrectAnswerKapital = mergeAndShuffle(wrongAnswerKapital, correctAnswerKapital)
-
-
 
             txtAbjadQuiz.setOnTouchListener(ChoiceTouchListener())
 
@@ -171,12 +170,12 @@ class QuizFragment : Fragment() {
             txtOpt1.text = if (isKapital) wrongAndCorrectAnswerKapital[0] else wrongAndCorrectAnswerNonKapital[0]
             txtOpt2.text = if (isKapital) wrongAndCorrectAnswerKapital[1] else wrongAndCorrectAnswerNonKapital[1]
             txtOpt3.text = if (isKapital) wrongAndCorrectAnswerKapital[2] else wrongAndCorrectAnswerNonKapital[2]
-            txtOpt1.setTag(null)
-            txtOpt2.setTag(null)
-            txtOpt3.setTag(null)
-            txtOpt1.setTypeface(Typeface.DEFAULT)
-            txtOpt2.setTypeface(Typeface.DEFAULT)
-            txtOpt3.setTypeface(Typeface.DEFAULT)
+            txtOpt1.tag = null
+            txtOpt2.tag = null
+            txtOpt3.tag = null
+            txtOpt1.typeface = Typeface.DEFAULT
+            txtOpt2.typeface = Typeface.DEFAULT
+            txtOpt3.typeface = Typeface.DEFAULT
             txtOpt1.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
@@ -235,7 +234,7 @@ class QuizFragment : Fragment() {
                         )
                         dialog.show()
                         val layoutParams = WindowManager.LayoutParams()
-                        layoutParams.copyFrom(dialog.getWindow()?.getAttributes())
+                        layoutParams.copyFrom(dialog.window?.attributes)
                         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
                         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
                         dialog.getWindow()?.setAttributes(layoutParams)
