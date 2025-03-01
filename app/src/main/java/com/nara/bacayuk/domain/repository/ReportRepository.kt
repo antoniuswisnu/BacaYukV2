@@ -17,6 +17,7 @@ interface ReportRepository {
     suspend fun addUpdateReportKalimat(idUser: String,idStudent: String,reportHuruf: ReportKalimat): Boolean
     fun getAllReportKalimatFromFirestore(idUser: String, idStudent: String): Flow<Response<ReportKalimat>>
 
+    suspend fun createReportAngkaDataSets(idUser: String,idStudent: String): String
     suspend fun getAllReportTulisAngkaFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisAngka>>>
-    suspend fun addUpdateReportTulisAngka(idUser: String, idStudent: String, reportHuruf: ReportTulisAngka): Boolean
+    suspend fun addUpdateReportTulisAngka(idUser: String, idStudent: String, reportTulisAngka: ReportTulisAngka): Boolean
 }

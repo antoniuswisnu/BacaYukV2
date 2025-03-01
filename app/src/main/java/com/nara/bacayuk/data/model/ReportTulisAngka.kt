@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ReportTulisAngka (
-    val tulisName: String = "",
+    var tulisAngka: String = "",
     var audioUrl: String = "",
     var materiAngka: Boolean = false,
     var latihanAngka: Boolean = false,

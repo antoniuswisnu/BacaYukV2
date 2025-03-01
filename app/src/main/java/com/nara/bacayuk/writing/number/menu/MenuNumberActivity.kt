@@ -3,20 +3,25 @@ package com.nara.bacayuk.writing.number.menu
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
+import com.nara.bacayuk.data.model.Tulis
 import com.nara.bacayuk.databinding.ActivityMenuNumberBinding
-import com.nara.bacayuk.ui.customview.waitingDialog
 import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
+import com.nara.bacayuk.ui.listener.adapter.AdapterListener
 import com.nara.bacayuk.writing.number.animation.NumberAnimationActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MenuNumberActivity : AppCompatActivity() {
+class MenuNumberActivity : AppCompatActivity(), AdapterListener {
 
     private lateinit var binding: ActivityMenuNumberBinding
     private val menuNumberViewModel: MenuNumberViewModel by viewModel()
-    private val dialog by lazy { waitingDialog() }
+//    private val dialog by lazy { waitingDialog() }
+    private val listNumber = arrayListOf<Tulis>()
+    private val adapterNumberAdapter by lazy { NumberAdapter(this@MenuNumberActivity) }
 
     var student: Student? = null
 
@@ -32,45 +37,81 @@ class MenuNumberActivity : AppCompatActivity() {
         }
 
         binding.btnBack.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            onBackPressed()
         }
 
-//        menuNumberViewModel.reportsNumber.observe(this@MenuNumberActivity) { response ->
-//            dialog.dismiss()
-//            when(response){
-//                is Response.Success -> {
-//                    response.data.forEach(
-//                        val
-//                    )
-//                }
-//            }
-//        }
+        menuNumberViewModel.reportsNumber.observe(
+            this@MenuNumberActivity
+        ) { response ->
+            when (response) {
+                is Response.Success -> {
+                    response.data.forEach {
+                        val number = Tulis(
+                            id = it.tulisAngka,
+                            tulisAngka = it.tulisAngka,
+                            reportTulisAngka = it
+                        )
+                        if (!(listNumber.contains(number))) {
+                            listNumber.add(number)
+                        }
+                    }
+                    adapterNumberAdapter.submitData(listNumber, "number")
+                    Log.d("menubaca", "NUMBERRRR : $listNumber")
+                }
+                is Response.Error -> {
+                    Log.d("MenuNumberActivity", "onCreate: ${response.message}")
+                }
 
+                Response.Loading -> TODO()
+            }
+        }
 
-        setupGrid()
+        binding.rvAngka.apply {
+            layoutManager = androidx.recyclerview.widget.GridLayoutManager(this@MenuNumberActivity, 4)
+            adapter = adapterNumberAdapter
+        }
+
+//        setupGrid()
     }
 
     override fun onResume() {
         super.onResume()
         menuNumberViewModel.getAllReportTulisAngkaFromFirestore(student?.uuid ?: "-")
-        dialog.show()
+//        dialog.show()
     }
 
-    private fun setupGrid() {
-        val number = ('0'..'9').toList()
-        val adapter = NumberAdapter(this, number)
-
-        adapter.setOnNumberClickListener(object : NumberAdapter.OnNumberClickListener {
-            override fun onNumberClick(number: String) {
-                val intent = Intent(this@MenuNumberActivity, NumberAnimationActivity::class.java).apply {
-                    putExtra(NumberAnimationActivity.EXTRA_NUMBER, number)
-                    putExtra("student", student)
-                }
-                startActivity(intent)
+    @Deprecated("This method has been deprecated in favor of using the\n {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this@MenuNumberActivity, MainActivity::class.java)
+            .apply {
+                putExtra("student", student)
             }
-        })
-
-        binding.gridView.adapter = adapter
+        startActivity(intent)
+        finish()
     }
+
+    override fun onClick(data: Any?, position: Int?, view: View?, type: String) {
+        val intent = Intent(this@MenuNumberActivity, NumberAnimationActivity::class.java).apply {
+            putExtra(NumberAnimationActivity.EXTRA_NUMBER, data as String)
+            putExtra("student", student)
+        }
+        startActivity(intent)    }
+
+    //    private fun setupGrid() {
+//        val number = ('0'..'9').toList()
+//        val adapter = NumberAdapterBackup(this, number, null)
+//
+//        adapter.setOnNumberClickListener(object : NumberAdapterBackup.OnNumberClickListener {
+//            override fun onNumberClick(number: String) {
+//                val intent = Intent(this@MenuNumberActivity, NumberAnimationActivity::class.java).apply {
+//                    putExtra(NumberAnimationActivity.EXTRA_NUMBER, number)
+//                    putExtra("student", student)
+//                }
+//                startActivity(intent)
+//            }
+//        })
+//
+//        binding.gridView.adapter = adapter
+//    }
 }

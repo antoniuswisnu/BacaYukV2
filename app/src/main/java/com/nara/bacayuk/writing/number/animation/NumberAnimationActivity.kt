@@ -33,6 +33,7 @@ class NumberAnimationActivity : AppCompatActivity() {
             startActivity(
                 Intent(this, TracingNumberActivity::class.java).apply {
                     putExtra(TracingNumberActivity.EXTRA_NUMBER, selectedNumber)
+                    putExtra("student", student)
                 }
             )
         }

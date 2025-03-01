@@ -45,7 +45,7 @@ class RiwayatTulisAngkaAdapter :
             val report = data.reportTulisAngka
             Log.d("TAG", "onBindViewHolder: $data")
             val binding = ItemRiwayatTulisAngkaBinding.bind(this)
-            binding.txtAngka.text = data.tulisName
+            binding.txtAngka.text = data.tulisAngka
 //            binding.imgChecklist.invisible()
             binding.apply {
                 imgMateriTulisAngka.setImageDrawable(

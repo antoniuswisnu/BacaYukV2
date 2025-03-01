@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Tulis (
     var id: String = "",
     var suara: String = "",
-    val tulisName: String = "",
+    val tulisAngka: String = "",
     val reportTulisAngka: ReportTulisAngka? = ReportTulisAngka(),
 //    val reportTulisHuruf: ReportTulisHuruf? = ReportTulisHuruf(),
 //    val reportTulisKata: ReportTulisKata? = ReportTulisKata(),

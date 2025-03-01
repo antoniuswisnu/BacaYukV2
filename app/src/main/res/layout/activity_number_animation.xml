@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".number.animation.NumberAnimationActivity">
+    tools:context=".writing.number.animation.NumberAnimationActivity">
 
     <ImageView
         android:id="@+id/btn_back"
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/plus_jakarta_sans_semibold"
+        android:fontFamily="@font/plus_jakarta_sans"
         android:gravity="center"
         android:padding="16dp"
         android:text="@string/tulis_angka"

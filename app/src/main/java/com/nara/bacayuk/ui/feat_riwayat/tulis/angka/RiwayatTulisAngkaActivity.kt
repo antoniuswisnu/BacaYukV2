@@ -43,18 +43,19 @@ class RiwayatTulisAngkaActivity : AppCompatActivity() {
                 is Response.Success -> {
                     response.data.forEach {
                         val tulis = Tulis(
-                            id = it.tulisName,
-                            tulisName = it.tulisName,
+                            id = it.tulisAngka,
+                            tulisAngka = it.tulisAngka,
                             reportTulisAngka = it
                         )
                         listTulisMenu.add(tulis)
                     }
                     riwayatTulisAngkaAdapter.submitData(listTulisMenu)
+                    Log.d("menuangka", listTulisMenu.toString())
                 }
 
                 is Response.Error -> {
                     response.message?.let {
-                        Log.d("menubaca", it)
+                        Log.d("menuangka", it)
                     }
                 }
 

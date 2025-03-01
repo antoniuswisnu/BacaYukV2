@@ -89,6 +89,7 @@ class MenuBacaHurufActivity : AppCompatActivity(), AdapterListener {
                         listAbjadMenu.add(abjad)
                     }
                     if (!isBacaKata) adapterAbjadMenuAdapter.submitData(listAbjadMenu, "huruf")
+                    Log.d("menubaca", "huruf : $listAbjadMenu")
                 }
 
                 is Response.Error -> {

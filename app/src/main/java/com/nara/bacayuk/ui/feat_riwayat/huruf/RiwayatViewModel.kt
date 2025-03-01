@@ -34,8 +34,6 @@ class RiwayatViewModel(
     private val _reportTulisAngka = MutableLiveData<Response<List<ReportTulisAngka>>>()
     val reportTulisAngka: LiveData<Response<List<ReportTulisAngka>>> = _reportTulisAngka
 
-//    private val _reportTulis = MutableLiveData<Response<List<>>>()
-
     fun getAllBelajarVokal(idStudent: String){
         viewModelScope.launch {
             try {

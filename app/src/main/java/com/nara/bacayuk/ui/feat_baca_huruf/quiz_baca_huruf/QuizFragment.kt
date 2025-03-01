@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -22,7 +21,6 @@ import com.nara.bacayuk.ui.customview.OnDismissDialog
 import com.nara.bacayuk.ui.feat_baca_huruf.materi_baca_huruf.MateriBacaHurufActivity
 import com.nara.bacayuk.utils.playAudioFromRawAssetsFileString
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 private const val ARG_PARAM1 = "param1"
 
@@ -42,7 +40,6 @@ class QuizFragment : Fragment() {
     private var wrongAndCorrectAnswerKapital : List<String>  = listOf()
 
     private val quizBacaHurufViewModel: QuizBacaHurufViewModel by viewModel()
-
     private var isKapital: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,10 +58,6 @@ class QuizFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
-
-//        Toast.makeText(context, "Correct answer: $correctAnswer", Toast.LENGTH_SHORT).show()
-
         _binding = FragmentQuizBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -99,7 +92,6 @@ class QuizFragment : Fragment() {
                     reset(false)
                     txtAbjadQuiz.text = abjad?.abjadNonKapital
                     isKapital = false
-//
                     MaterialIntroView.Builder(requireActivity())
                         .enableDotAnimation(true)
                         .enableIcon(false)
@@ -237,7 +229,7 @@ class QuizFragment : Fragment() {
                         layoutParams.copyFrom(dialog.window?.attributes)
                         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
                         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-                        dialog.getWindow()?.setAttributes(layoutParams)
+                        dialog.window?.setAttributes(layoutParams)
                         if (isKapital) {
                             abjad?.reportHuruf?.quizHurufKapital = true
                         } else abjad?.reportHuruf?.quizHurufNonKapital = true

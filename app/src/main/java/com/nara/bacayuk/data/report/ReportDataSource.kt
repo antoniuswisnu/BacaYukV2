@@ -20,5 +20,8 @@ interface ReportDataSource {
     suspend fun addUpdateReportKalimat(idUser: String,idStudent: String,reportHuruf: ReportKalimat): Boolean
     fun getAllReportKalimatFromFirestore(idUser: String, idStudent: String): Flow<Response<ReportKalimat>>
 
-
+    //angka
+    suspend fun createReportAngkaDataSets(idUser: String,idStudent: String): String
+    suspend fun addUpdateReportAngka(idUser: String,idStudent: String, reportTulisAngka: ReportTulisAngka): Boolean
+    fun getAllReportAngkaFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisAngka>>>
 }

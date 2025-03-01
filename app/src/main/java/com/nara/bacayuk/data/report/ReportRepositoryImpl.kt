@@ -5,8 +5,13 @@ import com.nara.bacayuk.domain.repository.ReportRepository
 import kotlinx.coroutines.flow.Flow
 
 class ReportRepositoryImpl(private val dataSource: ReportDataSource) :ReportRepository {
+
     override suspend fun createReportHurufDataSets(idUser: String, idStudent: String): String {
         return dataSource.createReportHurufDataSets(idUser, idStudent)
+    }
+
+    override suspend fun createReportAngkaDataSets(idUser: String, idStudent: String): String {
+        return dataSource.createReportAngkaDataSets(idUser, idStudent)
     }
 
     override suspend fun updateReportHuruf(
@@ -73,6 +78,21 @@ class ReportRepositoryImpl(private val dataSource: ReportDataSource) :ReportRepo
         idStudent: String
     ): Flow<Response<ReportKalimat>> {
         return dataSource.getAllReportKalimatFromFirestore(idUser, idStudent)
+    }
+
+    override suspend fun getAllReportTulisAngkaFromFirestore(
+        idUser: String,
+        idStudent: String
+    ): Flow<Response<List<ReportTulisAngka>>> {
+        return dataSource.getAllReportAngkaFromFirestore(idUser, idStudent)
+    }
+
+    override suspend fun addUpdateReportTulisAngka(
+        idUser: String,
+        idStudent: String,
+        reportTulisAngka: ReportTulisAngka
+    ): Boolean {
+        return dataSource.addUpdateReportAngka(idUser, idStudent, reportTulisAngka)
     }
 
 }

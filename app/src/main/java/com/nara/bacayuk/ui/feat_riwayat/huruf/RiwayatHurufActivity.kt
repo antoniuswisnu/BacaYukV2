@@ -50,6 +50,7 @@ class RiwayatHurufActivity : AppCompatActivity() {
                         listAbjadMenu.add(abjad)
                     }
                     riwayatHurufAdapter.submitData(listAbjadMenu)
+                    Log.d("menuhuruf", listAbjadMenu.toString())
                 }
 
                 is Response.Error -> {

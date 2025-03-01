@@ -12,11 +12,13 @@ import android.graphics.PathMeasure
 import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import kotlin.math.abs
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, attrs) {
@@ -97,6 +99,7 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
         currentNumber = number
         createTemplatePath(currentNumber, viewWidth, viewHeight)
         loadNumberDrawables(currentNumber)
+        clearCanvas() // Reset user's drawing when number changes
         invalidate()
     }
 
@@ -130,9 +133,10 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
 
     private fun extractPathPoints() {
         val point = FloatArray(2)
-        val step = pathMeasure.length / 50
+        val step = pathMeasure.length / 40
         var distance = 0f
 
+        templatePoints.clear()
         while (distance < pathMeasure.length) {
             pathMeasure.getPosTan(distance, point, null)
             templatePoints.add(PointF(point[0], point[1]))
@@ -141,26 +145,45 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
     }
 
     private fun isTracingCorrect(): Boolean {
-        if (allUserPoints.size < templatePoints.size / 2) return false
+        if (allUserPoints.isEmpty() || templatePoints.isEmpty()) return false
+
+        // Memerlukan minimal setengah dari jumlah titik template untuk diperiksa
+        if (allUserPoints.size < templatePoints.size / 3) {
+            Log.d("TracingCheck", "Not enough user points: ${allUserPoints.size} < ${templatePoints.size / 3}")
+            return false
+        }
 
         var matchCount = 0
-        val tolerance = 140f
+        val tolerance = getDynamicTolerance()
 
-        for (userPoint in allUserPoints) {
-            for (templatePoint in templatePoints) {
+        // Kita periksa apakah titik template berada di dekat jalur yang digambar pengguna
+        for (templatePoint in templatePoints) {
+            var isMatched = false
+            for (userPoint in allUserPoints) {
                 val distance = euclideanDistance(userPoint, templatePoint)
                 if (distance < tolerance) {
+                    isMatched = true
                     matchCount++
                     break
                 }
             }
         }
 
-        return matchCount >= templatePoints.size * 0.95
+        // Minimum 50% dari template points harus cocok dengan user points
+        val matchPercentage = matchCount.toFloat() / templatePoints.size.toFloat()
+        val isCorrect = matchPercentage >= 0.8f
+
+        Log.d("TracingPercentage", "Matched: $matchCount / ${templatePoints.size} (${matchPercentage * 100}%), Tolerance: $tolerance, Result: $isCorrect")
+        return isCorrect
+    }
+
+    private fun getDynamicTolerance(): Float {
+        // Toleransi dinamis berdasarkan ukuran view (5% dari lebar layar)
+        return viewWidth * 0.05f
     }
 
     private fun euclideanDistance(p1: PointF, p2: PointF): Float {
-        return sqrt(abs(p1.x - p2.x) * abs(p1.x - p2.x) + abs(p1.y - p2.y) * abs(p1.y - p2.y))
+        return sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -179,10 +202,11 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
                 allUserPoints.add(PointF(event.x, event.y))
             }
             MotionEvent.ACTION_UP -> {
-                if (allUserPoints.size >= templatePoints.size / 2) {
-                    if (isTracingCorrect()) {
-                        onCorrectTracing?.invoke()
-                    }
+                if (isTracingCorrect()) {
+                    Log.d("TracingResult", "Tracing completed correctly!")
+                    onCorrectTracing?.invoke()
+                } else {
+                    Log.d("TracingResult", "Tracing not correct yet.")
                 }
             }
         }
@@ -194,10 +218,10 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val canvasWidth = width.toFloat()
-        val canvasHeight = height.toFloat()
+        val width = width.toFloat()
+        val height = height.toFloat()
 
-        createTemplatePath(currentNumber, canvasWidth, canvasHeight)
+        createTemplatePath(currentNumber, width, height)
 
         canvas.drawPath(templatePath, templatePaint)
 
@@ -206,12 +230,13 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
         }
 
         outlineBitmap?.let { bitmap ->
-            canvas.drawBitmap(bitmap, null, RectF(0f, 0f, width.toFloat(), height.toFloat()), null)
+            canvas.drawBitmap(bitmap, null, RectF(0f, 0f, width, height), null)
         }
 
+        // Hanya tampilkan bitmap filled jika tracing benar
         if (isTracingCorrect()) {
             filledBitmap?.let { bitmap ->
-                canvas.drawBitmap(bitmap, null, RectF(0f, 0f, width.toFloat(), height.toFloat()), null)
+                canvas.drawBitmap(bitmap, null, RectF(0f, 0f, width, height), null)
             }
         }
     }
@@ -249,8 +274,6 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
                 templatePath.lineTo(width * 0.2f, height * 0.8f)
 
                 templatePath.lineTo(width * 0.8f, height * 0.8f)
-
-
             }
 
             "3" -> {

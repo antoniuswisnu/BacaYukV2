@@ -11,6 +11,9 @@ import com.nara.bacayuk.ui.feat_menu_utama.MainViewModel
 import com.nara.bacayuk.ui.feat_riwayat.huruf.RiwayatViewModel
 import com.nara.bacayuk.ui.feat_student.add_edit_student.AddEditStudentViewModel
 import com.nara.bacayuk.ui.feat_student.list_student.ListStudentViewModel
+import com.nara.bacayuk.writing.number.animation.NumberAnimationViewModel
+import com.nara.bacayuk.writing.number.menu.MenuNumberViewModel
+import com.nara.bacayuk.writing.number.tracing.TracingNumberViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -26,4 +29,8 @@ val viewModelModule = module {
     viewModel { QuizBacaHurufViewModel(get(), get(), get()) }
     viewModel { RiwayatViewModel(get(), get(), get()) }
     viewModel { QuizViewModel(get(), get()) }
+
+    viewModel { TracingNumberViewModel(get(), get(), get()) }
+    viewModel { NumberAnimationViewModel(get(), get(), get()) }
+    viewModel { MenuNumberViewModel(get(), get(), get()) }
 }

@@ -68,7 +68,7 @@ class DataStoreRepositoryImpl (private val context: Context): DataStoreRepositor
         }
     }
 
-    override suspend fun getUser(): User? {
+    override suspend fun getUser(): User {
         val uid = getString(UID)
         val fullName = getString(FULL_NAME_USER)
         val email = getString(EMAIL)
