@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nara.bacayuk.R
@@ -14,10 +13,9 @@ import com.nara.bacayuk.data.model.ReportKata
 import com.nara.bacayuk.data.model.SoalKata
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityQuizKalimatBinding
-import com.nara.bacayuk.databinding.ItemQuizSusunBinding
-import com.nara.bacayuk.ui.customview.AnswerStatusDialog
-import com.nara.bacayuk.ui.customview.CenterLinearLayoutManager
-import com.nara.bacayuk.ui.customview.OnDismissDialog
+import com.nara.bacayuk.ui.custom_view.AnswerStatusDialog
+import com.nara.bacayuk.ui.custom_view.CenterLinearLayoutManager
+import com.nara.bacayuk.ui.custom_view.OnDismissDialog
 import com.nara.bacayuk.ui.feat_baca_kata.quiz.QuizSusunAdapter
 import com.nara.bacayuk.ui.feat_baca_kata.quiz.QuizViewModel
 import com.nara.bacayuk.ui.listener.adapter.AdapterQuizListener

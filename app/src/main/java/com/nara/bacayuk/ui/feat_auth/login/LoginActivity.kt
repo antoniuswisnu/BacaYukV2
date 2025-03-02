@@ -12,14 +12,13 @@ import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.User
 import com.nara.bacayuk.databinding.ActivityLoginBinding
-import com.nara.bacayuk.ui.customview.waitingDialog
+import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.ui.feat_auth.forgot_password.ForgotPasswordActivity
 import com.nara.bacayuk.ui.feat_auth.register.RegisterActivity
 import com.nara.bacayuk.ui.feat_student.list_student.ListStudentActivity
 import com.nara.bacayuk.utils.changeErrorStateEditText
 import com.nara.bacayuk.utils.isValidEmail
 import com.nara.bacayuk.utils.openActivity
-import com.nara.bacayuk.utils.showToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LoginActivity : AppCompatActivity() {

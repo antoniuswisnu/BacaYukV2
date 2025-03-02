@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityAddEditStudentBinding
-import com.nara.bacayuk.ui.customview.waitingDialog
+import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.utils.DATA
 import com.nara.bacayuk.utils.invisible
 import com.nara.bacayuk.utils.showAddSuccessToast

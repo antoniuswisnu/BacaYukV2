@@ -11,7 +11,7 @@ import com.nara.bacayuk.data.model.SoalKata
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityRiwayatKalimatBinding
 import com.nara.bacayuk.databinding.ItemRiwayatBinding
-import com.nara.bacayuk.ui.customview.waitingDialog
+import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.ui.feat_riwayat.huruf.RiwayatViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

@@ -14,8 +14,8 @@ import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.Tulis
 import com.nara.bacayuk.data.model.User
 import com.nara.bacayuk.databinding.ActivityTracingNumberBinding
-import com.nara.bacayuk.ui.customview.AnswerStatusDialog
-import com.nara.bacayuk.ui.customview.OnDismissDialog
+import com.nara.bacayuk.ui.custom_view.AnswerStatusDialog
+import com.nara.bacayuk.ui.custom_view.OnDismissDialog
 import com.nara.bacayuk.ui.feat_baca_huruf.quiz_baca_huruf.QuizBacaHurufActivity.Companion.student
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

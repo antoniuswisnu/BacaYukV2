@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.*
 import com.nara.bacayuk.databinding.FragmentHuruf1Binding
-import com.nara.bacayuk.ui.customview.waitingDialog
+import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.utils.AudioPlayerManager
 import com.nara.bacayuk.utils.playAudioFromRawAssetsFileString
 import org.koin.androidx.viewmodel.ext.android.viewModel

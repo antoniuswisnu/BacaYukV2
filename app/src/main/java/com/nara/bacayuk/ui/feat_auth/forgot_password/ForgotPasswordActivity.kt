@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.nara.bacayuk.databinding.ActivityForgotPasswordBinding
-import com.nara.bacayuk.ui.customview.ConfirmationDialog
+import com.nara.bacayuk.ui.custom_view.ConfirmationDialog
 import com.nara.bacayuk.utils.invisible
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

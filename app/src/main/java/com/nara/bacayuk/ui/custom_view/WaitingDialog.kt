@@ -1,11 +1,8 @@
-package com.nara.bacayuk.ui.customview
+package com.nara.bacayuk.ui.custom_view
 
 import android.app.Dialog
 import android.content.Context
 import androidx.core.content.ContextCompat
-import com.nara.bacayuk.R
-import com.nara.bacayuk.databinding.DialogConfirmationBinding
-import com.nara.bacayuk.databinding.LayoutStatusAnswerBinding
 import com.nara.bacayuk.databinding.LayoutWaitingDialogBinding
 
 class WaitingDialog(

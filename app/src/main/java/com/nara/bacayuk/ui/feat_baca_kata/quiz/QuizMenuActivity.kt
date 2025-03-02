@@ -10,15 +10,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.*
 import com.nara.bacayuk.databinding.ActivityQuizMenuBinding
-import com.nara.bacayuk.ui.customview.waitingDialog
-import com.nara.bacayuk.ui.feat_baca_huruf.menu_baca_huruf.AbjadMenuAdapter
-import com.nara.bacayuk.ui.feat_baca_kata.menu.MenuBacaKataActivity
+import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.ui.feat_belajar_kalimat.QuizKalimatActivity
 import com.nara.bacayuk.ui.feat_belajar_kalimat.QuizPilganKalimatActivity
 import com.nara.bacayuk.ui.listener.adapter.AdapterListener
-import com.nara.bacayuk.ui.listener.adapter.AdapterQuizListener
 import com.nara.bacayuk.utils.invisible
-import com.nara.bacayuk.utils.openActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class QuizMenuActivity : AppCompatActivity(), AdapterListener {

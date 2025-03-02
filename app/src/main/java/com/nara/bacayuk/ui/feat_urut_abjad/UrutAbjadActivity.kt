@@ -1,4 +1,4 @@
-package com.nara.bacayuk.ui.feat_urutabjad
+package com.nara.bacayuk.ui.feat_urut_abjad
 
 import android.annotation.SuppressLint
 import android.content.ClipData

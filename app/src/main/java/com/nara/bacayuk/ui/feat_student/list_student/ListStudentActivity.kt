@@ -16,8 +16,8 @@ import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.User
 import com.nara.bacayuk.databinding.ActivityListStudentBinding
-import com.nara.bacayuk.ui.customview.ConfirmationDialogRedStyle
-import com.nara.bacayuk.ui.customview.waitingDialog
+import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
+import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.ui.feat_auth.register.RegisterActivity
 import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
 import com.nara.bacayuk.ui.feat_menu_utama.MainViewModel

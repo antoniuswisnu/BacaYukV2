@@ -10,7 +10,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.*
 import com.nara.bacayuk.databinding.ActivityMenuBacaHurufBinding
-import com.nara.bacayuk.ui.customview.waitingDialog
+import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.ui.feat_baca_huruf.materi_baca_huruf.MateriBacaHurufActivity
 import com.nara.bacayuk.ui.feat_baca_kata.materi.MateriBacaVokalActivity
 import com.nara.bacayuk.ui.feat_baca_kata.menu.MenuBacaKataActivity

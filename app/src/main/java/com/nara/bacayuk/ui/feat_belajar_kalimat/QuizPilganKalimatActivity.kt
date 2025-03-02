@@ -5,9 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.RadioGroup.OnCheckedChangeListener
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.ReportKalimat
@@ -15,8 +12,8 @@ import com.nara.bacayuk.data.model.ReportKata
 import com.nara.bacayuk.data.model.SoalKata
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityQuizPilganKalimatBinding
-import com.nara.bacayuk.ui.customview.AnswerStatusDialog
-import com.nara.bacayuk.ui.customview.OnDismissDialog
+import com.nara.bacayuk.ui.custom_view.AnswerStatusDialog
+import com.nara.bacayuk.ui.custom_view.OnDismissDialog
 import com.nara.bacayuk.ui.feat_baca_kata.quiz.QuizViewModel
 import com.nara.bacayuk.utils.invisible
 import com.nara.bacayuk.utils.loadImage

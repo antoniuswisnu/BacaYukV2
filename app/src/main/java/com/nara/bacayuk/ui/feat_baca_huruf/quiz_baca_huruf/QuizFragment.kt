@@ -16,8 +16,8 @@ import co.mobiwise.materialintro.view.MaterialIntroView
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.*
 import com.nara.bacayuk.databinding.FragmentQuizBinding
-import com.nara.bacayuk.ui.customview.AnswerStatusDialog
-import com.nara.bacayuk.ui.customview.OnDismissDialog
+import com.nara.bacayuk.ui.custom_view.AnswerStatusDialog
+import com.nara.bacayuk.ui.custom_view.OnDismissDialog
 import com.nara.bacayuk.ui.feat_baca_huruf.materi_baca_huruf.MateriBacaHurufActivity
 import com.nara.bacayuk.utils.playAudioFromRawAssetsFileString
 import org.koin.androidx.viewmodel.ext.android.viewModel

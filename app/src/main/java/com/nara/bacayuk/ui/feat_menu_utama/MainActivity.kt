@@ -12,7 +12,7 @@ import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.User
 import com.nara.bacayuk.databinding.ActivityMainBinding
-import com.nara.bacayuk.ui.customview.ConfirmationDialogRedStyle
+import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
 import com.nara.bacayuk.ui.feat_auth.login.LoginActivity
 import com.nara.bacayuk.ui.feat_baca_huruf.menu_baca_huruf.MenuBacaHurufActivity
 import com.nara.bacayuk.ui.feat_baca_kata.menu.MenuBacaKataActivity

@@ -1,20 +1,19 @@
-package com.nara.bacayuk.ui.customview
+package com.nara.bacayuk.ui.custom_view
 
 import android.app.Dialog
 import android.content.Context
 import androidx.core.content.ContextCompat
 import com.nara.bacayuk.R
 import com.nara.bacayuk.databinding.DialogConfirmationBinding
-import com.nara.bacayuk.databinding.DialogConfirmationRedStyleBinding
 
-class ConfirmationDialogRedStyle(
+class ConfirmationDialog(
     context: Context,
     private val icon: Int = R.drawable.ic_baseline_info_24,
     private val title: String,
     private val message: String,
     private val onConfirmClickListener: () -> Unit
     ): Dialog(context) {
-    private val binding by lazy { DialogConfirmationRedStyleBinding.inflate(layoutInflater) }
+    private val binding by lazy { DialogConfirmationBinding.inflate(layoutInflater) }
         init {
         setContentView(binding.root)
         setCancelable(false)

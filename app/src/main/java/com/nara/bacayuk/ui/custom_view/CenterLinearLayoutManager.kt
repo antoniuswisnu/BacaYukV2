@@ -1,4 +1,4 @@
-package com.nara.bacayuk.ui.customview
+package com.nara.bacayuk.ui.custom_view
 
 import android.content.Context
 import android.util.AttributeSet

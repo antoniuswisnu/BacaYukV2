@@ -88,7 +88,8 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity> <!-- <activity -->
+        </activity>
+        <!-- <activity -->
         <!-- android:name=".ui.feat_baca_kata.quiz.QuizBacaKataActivity" -->
         <!-- android:exported="false"> -->
         <!-- <meta-data -->
@@ -159,14 +160,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.feat_urutabjad.UrutAbjadActivity"
+            android:name=".ui.feat_urut_abjad.UrutAbjadActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.feat_hurufkapital.AbjadKapitalActivity"
+            android:name=".ui.feat_huruf_kapital.AbjadKapitalActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -208,6 +209,41 @@
         </activity>
         <activity
             android:name=".writing.number.tracing.TracingNumberActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".writing.letter.menu.MenuLetterActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".writing.letter.animation.capital.LetterAnimationCapitalActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".writing.letter.animation.lowercase.LetterAnimationLowercaseActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".writing.letter.tracing.capital.TracingLetterCapitalActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".writing.letter.tracing.capital.TracingLetterAnimationActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

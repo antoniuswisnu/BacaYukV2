@@ -1,4 +1,4 @@
-package com.nara.bacayuk.ui.feat_hurufkapital
+package com.nara.bacayuk.ui.feat_huruf_kapital
 
 import android.util.Log
 import android.view.LayoutInflater

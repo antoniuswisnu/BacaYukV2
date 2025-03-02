@@ -9,7 +9,7 @@ import com.nara.bacayuk.data.model.Abjad
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityRiwayatHurufBinding
-import com.nara.bacayuk.ui.customview.waitingDialog
+import com.nara.bacayuk.ui.custom_view.waitingDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RiwayatHurufActivity : AppCompatActivity() {

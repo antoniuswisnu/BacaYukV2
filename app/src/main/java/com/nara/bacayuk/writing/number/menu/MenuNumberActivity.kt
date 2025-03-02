@@ -10,7 +10,7 @@ import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.Tulis
 import com.nara.bacayuk.databinding.ActivityMenuNumberBinding
-import com.nara.bacayuk.ui.customview.waitingDialog
+import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
 import com.nara.bacayuk.ui.listener.adapter.AdapterListener
 import com.nara.bacayuk.writing.number.animation.NumberAnimationActivity
