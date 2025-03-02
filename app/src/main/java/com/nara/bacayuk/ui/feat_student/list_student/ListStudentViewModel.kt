@@ -34,7 +34,7 @@ class ListStudentViewModel(
         if (result){
             _isSuccess.postValue(Response.Success(result))
         } else {
-            _isSuccess.postValue(Response.Error(null, "Galgal Menambahkan"))
+            _isSuccess.postValue(Response.Error(null.toString(), "Galgal Menambahkan"))
         }
     }
 

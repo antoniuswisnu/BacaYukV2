@@ -41,7 +41,7 @@ class RiwayatTulisAngkaActivity : AppCompatActivity() {
             dialog.dismiss()
             when (response) {
                 is Response.Success -> {
-                    response.data.forEach {
+                    response.data.forEach{
                         val tulis = Tulis(
                             id = it.tulisAngka,
                             tulisAngka = it.tulisAngka,
@@ -50,15 +50,12 @@ class RiwayatTulisAngkaActivity : AppCompatActivity() {
                         listTulisMenu.add(tulis)
                     }
                     riwayatTulisAngkaAdapter.submitData(listTulisMenu)
-                    Log.d("menuangka", listTulisMenu.toString())
                 }
-
                 is Response.Error -> {
                     response.message?.let {
                         Log.d("menuangka", it)
                     }
                 }
-
                 else -> {}
             }
         }

@@ -21,11 +21,11 @@ class UserDataSourceImpl(private val firestore: FirebaseFirestore): UserDataSour
                 emit(Response.Success(user)) // jika dapat ditemukan data user dari Firestore
                 Log.d("UserDataSourceImpl", "getUserFromFirestore: $user")
             } else {
-                emit(Response.Error(null,"User not found."))
+                emit(Response.Error(null.toString(),"User not found."))
                 Log.d("UserDataSourceImpl", "getUserFromFirestore: Notfound")// jika tidak dapat ditemukan data user dari Firestore
             }
         }.catch {
-            emit(Response.Error(null,"Failed to fetch user data from Firestore."))
+            emit(Response.Error(null.toString(),"Failed to fetch user data from Firestore."))
             Log.e("UserDataSourceImpl", "Failed to fetch user data from Firestore.", it)
         }
     }

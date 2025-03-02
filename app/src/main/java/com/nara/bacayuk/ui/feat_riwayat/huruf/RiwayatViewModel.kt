@@ -76,17 +76,20 @@ class RiwayatViewModel(
         }
     }
 
-    fun getAllReportTulisAngkaFromFirestore(idStudent: String){
+    fun getAllReportTulisAngkaFromFirestore(idStudent: String) {
         viewModelScope.launch {
-            try {
-                reportUseCase.getAllReportTulisAngkaFromFirestore(getUID() ?: "-", idStudent).collect {
-                    Log.d("ListStudentViewModel", "getUser: success")
-                    _reportTulisAngka.value = it
+            reportUseCase.getAllReportTulisAngkaFromFirestore(getUID() ?: "-", idStudent).collect { response ->
+                    when (response) {
+                        is Response.Success -> {
+                            Log.d("RiwayatViewModel", "Received ${response.data.size} reports from Firestore")
+                            response.data.forEach { report ->
+                                Log.d("RiwayatViewModel", "Report: tulisAngka=${report.tulisAngka}, materi=${report.materiAngka}, latihan=${report.latihanAngka}")
+                            }
+                        }
+                        else -> {}
+                    }
+                    _reportTulisAngka.value = response
                 }
-            } catch (e: Exception) {
-                Log.d("ListStudentViewModel", "getUser: fail")
-                e.printStackTrace()
-            }
         }
     }
 
@@ -94,11 +97,10 @@ class RiwayatViewModel(
         viewModelScope.launch {
             try {
                 reportUseCase.getAllReportFromFirestore(getUID() ?: "-", idStudent).collect {
-                    Log.d("ListStudentViewModel", "getUser: success")
                     _reports.value = it
+
                 }
             } catch (e: Exception) {
-                Log.d("ListStudentViewModel", "getUser: fail")
                 e.printStackTrace()
             }
         }

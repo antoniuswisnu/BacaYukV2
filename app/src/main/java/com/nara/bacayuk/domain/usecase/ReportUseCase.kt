@@ -5,8 +5,9 @@ import com.nara.bacayuk.domain.repository.ReportRepository
 import kotlinx.coroutines.flow.Flow
 
 class ReportUseCase(private val repository: ReportRepository) {
-    suspend fun createReportHurufDataSets(idUser: String, idStudent: String): String =
-        repository.createReportHurufDataSets(idUser, idStudent)
+
+    suspend fun createReportHurufDataSets(idUser: String, idStudent: String): String
+    = repository.createReportHurufDataSets(idUser, idStudent)
 
     suspend fun updateReportHuruf(
         idUser: String,
@@ -50,13 +51,11 @@ class ReportUseCase(private val repository: ReportRepository) {
     = repository.getAllBelajarVokal(idUser, idStudent)
 
     suspend fun updateBelajarSuku(idUser: String,idStudent: String,reportHuruf: BelajarSuku): Boolean
-            = repository.updateBelajarSuku(idUser, idStudent, reportHuruf)
+    = repository.updateBelajarSuku(idUser, idStudent, reportHuruf)
 
     suspend fun addUpdateReportKalimat(idUser: String,idStudent: String,reportHuruf: ReportKalimat): Boolean
     = repository.addUpdateReportKalimat(idUser, idStudent, reportHuruf)
 
     fun getAllReportKalimatFromFirestore(idUser: String, idStudent: String): Flow<Response<ReportKalimat>>
     = repository.getAllReportKalimatFromFirestore(idUser, idStudent)
-
-
 }

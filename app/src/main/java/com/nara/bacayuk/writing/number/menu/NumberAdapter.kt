@@ -1,5 +1,6 @@
 package com.nara.bacayuk.writing.number.menu
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,8 +37,7 @@ class NumberAdapter(val listener: AdapterListener) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentAdapterViewHolder {
-        val binding =
-            ItemAbjadMenuBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemAbjadMenuBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RecentAdapterViewHolder(binding.root)
     }
 
@@ -45,16 +45,23 @@ class NumberAdapter(val listener: AdapterListener) :
         holder.view.apply {
             val data = differ.currentList[position]
             val binding = ItemAbjadMenuBinding.bind(this)
+
+            Log.d("NumberAdapter", "Binding position $position with data: $data")
+
             binding.txtAbjad.text = data?.tulisAngka
             binding.imgChecklist.invisible()
+
             if (data?.reportTulisAngka != null) {
+
                 if (data.reportTulisAngka.materiAngka
                     && data.reportTulisAngka.latihanAngka) {
                     binding.imgChecklist.visible()
+
                 } else {
                     binding.imgChecklist.invisible()
                 }
             }
+
             rootView.setOnClickListener{
                 listener.onClick(data, position, binding.root, "")
             }
@@ -64,5 +71,4 @@ class NumberAdapter(val listener: AdapterListener) :
     override fun getItemCount(): Int {
         return differ.currentList.size
     }
-
 }

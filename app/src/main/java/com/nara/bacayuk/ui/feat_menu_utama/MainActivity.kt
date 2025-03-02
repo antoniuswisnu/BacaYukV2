@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 is Response.Error -> {
-                    Toast.makeText(this, "${response.e?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, response.e, Toast.LENGTH_SHORT).show()
                     Log.d("LoginActivity", "onCreate: ${response.message}")
                 }
                 else -> {

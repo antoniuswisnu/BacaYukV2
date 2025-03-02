@@ -28,11 +28,11 @@ class AuthRepositoryImpl(
                     emit(Response.Success(user))
                 } else {
                     Log.d("AuthRepositoryImpl", "register: fail masuk else user null")
-                    emit(Response.Error(Exception("Failed to register: User is null")))
+                    emit(Response.Error(Exception("Failed to register: User is null").toString()))
                 }
             } catch (exception: Exception) {
                 Log.d("AuthRepositoryImpl", "register fail catch: ${exception.message}")
-                emit(Response.Error(exception))
+                emit(Response.Error(exception.toString()))
             }
         }
     }
@@ -43,7 +43,7 @@ class AuthRepositoryImpl(
                 val user = User(result.user!!.uid, result.user!!.email.orEmpty(), "")
                 emit(Response.Success(user))
             } else {
-                emit(Response.Error(Exception("Failed to login: User is null")))
+                emit(Response.Error(Exception("Failed to login: User is null").toString()))
             }
         }
     }

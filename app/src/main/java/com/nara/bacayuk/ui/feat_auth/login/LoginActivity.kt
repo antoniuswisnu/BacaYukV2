@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
                     getUserDataStore()
                 }
                 is Response.Error -> {
-                    Toast.makeText(this, "${response.e?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, response.e, Toast.LENGTH_SHORT).show()
                     Log.d("LoginActivity", "onCreate: ${response.message}")
                 }
                 else -> {
@@ -77,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
                     getUserDataStore()
                 }
                 is Response.Error -> {
-                    Toast.makeText(this, "${response.e?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, response.e, Toast.LENGTH_SHORT).show()
                     Log.d("LoginActivity", "onCreate: ${response.message}")
                 }
                 else -> {
@@ -206,7 +206,9 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
+    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
     override fun onBackPressed() {
+        super.onBackPressed()
         Log.d("onback", "onBackPressed")
     }
 }

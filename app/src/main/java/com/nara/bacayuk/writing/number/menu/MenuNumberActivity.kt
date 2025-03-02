@@ -10,6 +10,7 @@ import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.Tulis
 import com.nara.bacayuk.databinding.ActivityMenuNumberBinding
+import com.nara.bacayuk.ui.customview.waitingDialog
 import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
 import com.nara.bacayuk.ui.listener.adapter.AdapterListener
 import com.nara.bacayuk.writing.number.animation.NumberAnimationActivity
@@ -19,7 +20,7 @@ class MenuNumberActivity : AppCompatActivity(), AdapterListener {
 
     private lateinit var binding: ActivityMenuNumberBinding
     private val menuNumberViewModel: MenuNumberViewModel by viewModel()
-//    private val dialog by lazy { waitingDialog() }
+    private val dialog by lazy { waitingDialog() }
     private val listNumber = arrayListOf<Tulis>()
     private val adapterNumberAdapter by lazy { NumberAdapter(this@MenuNumberActivity) }
 
@@ -40,29 +41,24 @@ class MenuNumberActivity : AppCompatActivity(), AdapterListener {
             onBackPressed()
         }
 
-        menuNumberViewModel.reportsNumber.observe(
-            this@MenuNumberActivity
-        ) { response ->
-            when (response) {
+        menuNumberViewModel.reportsNumber.observe(this@MenuNumberActivity){ response ->
+            dialog.dismiss()
+            when(response){
                 is Response.Success -> {
-                    response.data.forEach {
-                        val number = Tulis(
+                    response.data.forEach{
+                        val tulis = Tulis(
                             id = it.tulisAngka,
                             tulisAngka = it.tulisAngka,
                             reportTulisAngka = it
                         )
-                        if (!(listNumber.contains(number))) {
-                            listNumber.add(number)
-                        }
+                        listNumber.add(tulis)
                     }
                     adapterNumberAdapter.submitData(listNumber, "number")
-                    Log.d("menubaca", "NUMBERRRR : $listNumber")
                 }
                 is Response.Error -> {
-                    Log.d("MenuNumberActivity", "onCreate: ${response.message}")
+                    Log.e("MenuNumberActivity", "Error: ${response.message}")
                 }
-
-                Response.Loading -> TODO()
+                else -> {}
             }
         }
 
@@ -71,13 +67,13 @@ class MenuNumberActivity : AppCompatActivity(), AdapterListener {
             adapter = adapterNumberAdapter
         }
 
-//        setupGrid()
     }
+
 
     override fun onResume() {
         super.onResume()
         menuNumberViewModel.getAllReportTulisAngkaFromFirestore(student?.uuid ?: "-")
-//        dialog.show()
+        dialog.show()
     }
 
     @Deprecated("This method has been deprecated in favor of using the\n {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
@@ -92,26 +88,15 @@ class MenuNumberActivity : AppCompatActivity(), AdapterListener {
     }
 
     override fun onClick(data: Any?, position: Int?, view: View?, type: String) {
-        val intent = Intent(this@MenuNumberActivity, NumberAnimationActivity::class.java).apply {
-            putExtra(NumberAnimationActivity.EXTRA_NUMBER, data as String)
-            putExtra("student", student)
+        if (data is Tulis) {
+            val numberString = data.tulisAngka
+            val intent = Intent(this@MenuNumberActivity, NumberAnimationActivity::class.java).apply {
+                putExtra(NumberAnimationActivity.EXTRA_NUMBER, numberString)
+                putExtra("student", student)
+            }
+            startActivity(intent)
+        } else {
+            Log.e("MenuNumberActivity", "Unexpected data type: ${data?.javaClass?.simpleName}")
         }
-        startActivity(intent)    }
-
-    //    private fun setupGrid() {
-//        val number = ('0'..'9').toList()
-//        val adapter = NumberAdapterBackup(this, number, null)
-//
-//        adapter.setOnNumberClickListener(object : NumberAdapterBackup.OnNumberClickListener {
-//            override fun onNumberClick(number: String) {
-//                val intent = Intent(this@MenuNumberActivity, NumberAnimationActivity::class.java).apply {
-//                    putExtra(NumberAnimationActivity.EXTRA_NUMBER, number)
-//                    putExtra("student", student)
-//                }
-//                startActivity(intent)
-//            }
-//        })
-//
-//        binding.gridView.adapter = adapter
-//    }
+    }
 }

@@ -26,6 +26,9 @@ class TracingNumberViewModel (
     private val _user = MutableLiveData<Response<User>>()
     val user: LiveData<Response<User>> = _user
 
+    private val _reportTulisAngka = MutableLiveData<Response<List<ReportTulisAngka>>>()
+    val reportTulisAngka: LiveData<Response<List<ReportTulisAngka>>> = _reportTulisAngka
+
     fun updateReportAngka(
         idUser: String,
         idStudent: String,
@@ -36,6 +39,14 @@ class TracingNumberViewModel (
         } catch (e: Exception) {
             Log.d("MainViewModel", "login: fail")
             e.printStackTrace()
+        }
+    }
+
+    fun getReportTulisAngka(idUser: String, idStudent: String) {
+        viewModelScope.launch {
+            reportUseCase.getAllReportTulisAngkaFromFirestore(idUser, idStudent).collect { response ->
+                _reportTulisAngka.value = response
+            }
         }
     }
 

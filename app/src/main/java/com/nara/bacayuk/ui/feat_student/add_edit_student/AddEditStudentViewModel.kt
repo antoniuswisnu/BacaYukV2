@@ -9,7 +9,6 @@ import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.preferences.DataStoreRepository
 import com.nara.bacayuk.domain.usecase.StudentUseCase
-import com.nara.bacayuk.utils.EMAIL
 import com.nara.bacayuk.utils.UID
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -30,7 +29,7 @@ class AddEditStudentViewModel(
         if (result){
             _isSuccess.postValue(Response.Success(result))
         } else {
-            _isSuccess.postValue(Response.Error(null, "Galgal Menambahkan"))
+            _isSuccess.postValue(Response.Error(null.toString(), "Galgal Menambahkan"))
         }
     }
 

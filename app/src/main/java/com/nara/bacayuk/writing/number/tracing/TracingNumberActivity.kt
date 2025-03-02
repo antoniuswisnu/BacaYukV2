@@ -1,18 +1,15 @@
 package com.nara.bacayuk.writing.number.tracing
 
-import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.nara.bacayuk.writing.number.menu.MenuNumberActivity
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.ReportTulisAngka
+import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.Tulis
 import com.nara.bacayuk.data.model.User
@@ -25,7 +22,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class TracingNumberActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTracingNumberBinding
-    private lateinit var successDialog: Dialog
     private val currentNumber: String by lazy {
         intent?.getStringExtra(EXTRA_NUMBER) ?: "0"
     }
@@ -45,10 +41,20 @@ class TracingNumberActivity : AppCompatActivity() {
 
         tulis = Tulis(reportTulisAngka = ReportTulisAngka())
 
-//        successDialog = Dialog(this, R.style.CustomDialog)
-//        successDialog.setContentView(R.layout.success_dialog)
-//        successDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-//        successDialog.dismiss()
+        val user = tracingNumberViewModel.getUserDataStore()
+        if (user != null && student != null) {
+            user.uuid?.let { tracingNumberViewModel.getReportTulisAngka(it, student?.uuid ?: "") }
+        }
+
+        tracingNumberViewModel.reportTulisAngka.observe(this) { response ->
+            if (response is Response.Success && response.data.isNotEmpty()) {
+                val existingReport = response.data.firstOrNull()
+                if (existingReport != null) {
+                    tulis = Tulis(reportTulisAngka = existingReport)
+                    Log.d("TracingNumberActivity", "Loaded existing report: $existingReport")
+                }
+            }
+        }
 
         loadNumber()
 
@@ -79,12 +85,11 @@ class TracingNumberActivity : AppCompatActivity() {
         }
 
         binding.tracingCanvas.setOnCorrectTracingListener {
-//            successDialog.show()
             val user: User? = tracingNumberViewModel.getUserDataStore()
             val dialog = AnswerStatusDialog(
                 context = this,
                 icon = R.drawable.ic_checklist,
-                status =  "Benar",
+                status = "Benar",
                 object: OnDismissDialog {
                     override fun onDismissDialog() {
                     }
@@ -96,28 +101,25 @@ class TracingNumberActivity : AppCompatActivity() {
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
             dialog.window?.setAttributes(layoutParams)
+
             tulis?.reportTulisAngka?.latihanAngka = true
             tulis?.reportTulisAngka?.materiAngka = true
             tulis?.reportTulisAngka?.tulisAngka = currentNumber
-            val reportTulisAngka = tulis?.reportTulisAngka
-            if (reportTulisAngka != null) {
-                tracingNumberViewModel.updateReportAngka(
-                    user?.uuid ?: "-",
-                    student?.uuid ?: "-",
-                    reportTulisAngka
-                )
-            } else {
-                Log.e("TracingNumberActivity", "Report Tulis Angka is null")
-            }
-            Log.d("TracingNumberActivity", "User UUID: ${user?.uuid}")
-            Log.d("TracingNumberActivity", "Student UUID: ${student?.uuid}")
-            Log.d("TracingNumberActivity", "Report Tulis Angka: $reportTulisAngka")
-        }
 
-//        successDialog.findViewById<Button>(R.id.btn_lanjutkan)?.setOnClickListener {
-//            successDialog.dismiss()
-//            startActivity(Intent(this, TracingNumberActivity::class.java))
-//        }
+            val reportTulisAngka = tulis?.reportTulisAngka
+            if (reportTulisAngka != null && user != null && student != null) {
+                user.uuid?.let {
+                    tracingNumberViewModel.updateReportAngka(
+                        it,
+                        student?.uuid ?: "-",
+                        reportTulisAngka
+                    )
+                }
+                Log.d("TracingNumberActivity", "Updating report with: $reportTulisAngka")
+            } else {
+                Log.e("TracingNumberActivity", "Unable to update report. User: $user, Student: $student, Report: $reportTulisAngka")
+            }
+        }
 
         binding.tvTitle.text = currentNumber
     }

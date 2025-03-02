@@ -37,8 +37,21 @@ class MenuNumberViewModel (
     fun getAllReportTulisAngkaFromFirestore(idStudent: String){
         viewModelScope.launch {
             try {
-                reportUseCase.getAllReportTulisAngkaFromFirestore(getUID() ?: "-", idStudent).collect {
-                    _reportsNumber.value = it
+                reportUseCase.getAllReportTulisAngkaFromFirestore(getUID() ?: "-", idStudent).collect { response ->
+                    when (response) {
+                        is Response.Success -> {
+                            response.data.forEach { report ->
+                                Log.d("MenuNumberViewModel", "Report data: $report")
+                            }
+                            _reportsNumber.value = response
+                        }
+                        is Response.Error -> {
+                            _reportsNumber.value = response
+                        }
+                        is Response.Loading -> {
+                            _reportsNumber.value = response
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

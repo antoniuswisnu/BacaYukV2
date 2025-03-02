@@ -43,8 +43,13 @@ class MenuBacaHurufViewModel(
     fun getAllReports(idStudent: String){
         viewModelScope.launch {
             try {
-                reportUseCase.getAllReportFromFirestore(getUID() ?: "-", idStudent).collect {
-                    _reports.value = it
+                reportUseCase.getAllReportFromFirestore(getUID() ?: "-", idStudent).collect { response ->
+                    if (response is Response.Success) {
+                        response.data.forEach { report ->
+                            Log.d("MenuNumberViewModel", "Fetched Report MenuBacaHuruf: $report")
+                        }
+                    }
+                    _reports.value = response
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

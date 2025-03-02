@@ -41,8 +41,6 @@ class MenuBacaHurufActivity : AppCompatActivity(), AdapterListener {
 
         isBacaKata = intent.getBooleanExtra("isKata", false)
 
-        Log.d("menubaca", "${student?.uuid}")
-
         menuBacaHurufViewModel.vokals.observe(
             this@MenuBacaHurufActivity) { response ->
             dialog.dismiss()

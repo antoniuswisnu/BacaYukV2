@@ -43,24 +43,33 @@ class RiwayatTulisAngkaAdapter :
         holder.view.apply {
             val data = differ.currentList[position]
             val report = data.reportTulisAngka
-            Log.d("TAG", "onBindViewHolder: $data")
+
+            Log.d("TulisAngkaAdapter", "Digit: ${data.tulisAngka}, Report: $report, " +
+                    "MateriAngka: ${report?.materiAngka}, LatihanAngka: ${report?.latihanAngka}")
+
             val binding = ItemRiwayatTulisAngkaBinding.bind(this)
             binding.txtAngka.text = data.tulisAngka
-//            binding.imgChecklist.invisible()
-            binding.apply {
-                imgMateriTulisAngka.setImageDrawable(
-                     ContextCompat.getDrawable(
-                        context,
-                        if (report?.materiAngka == true) R.drawable.ic_finished else R.drawable.ic_unfinished
-                    )
-                )
 
-                imgLatihanTulisAngka.setImageDrawable((
-                     ContextCompat.getDrawable(
-                        context,
-                        if (report?.latihanAngka == true) R.drawable.ic_finished else R.drawable.ic_unfinished
-                    )
-                        ))
+            val materiFinished = report?.materiAngka == true
+            val latihanFinished = report?.latihanAngka == true
+
+            Log.d("TulisAngkaAdapter", "MateriFinished: $materiFinished, LatihanFinished: $latihanFinished")
+
+            binding.apply {
+                if (materiFinished) {
+                    imgMateriTulisAngka.setImageResource(R.drawable.ic_finished)
+                } else {
+                    imgMateriTulisAngka.setImageResource(R.drawable.ic_unfinished)
+                }
+
+                if (latihanFinished) {
+                    imgLatihanTulisAngka.setImageResource(R.drawable.ic_finished)
+                } else {
+                    imgLatihanTulisAngka.setImageResource(R.drawable.ic_unfinished)
+                }
+
+                imgMateriTulisAngka.invalidate()
+                imgLatihanTulisAngka.invalidate()
             }
         }
     }
