@@ -16,7 +16,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RiwayatTulisHurufActivity : AppCompatActivity() {
     
-    private val binding by lazy{ ActivityRiwayatTulisHurufBinding.inflate(layoutInflater) }
+    private val binding by lazy {ActivityRiwayatTulisHurufBinding.inflate(layoutInflater) }
     private val riwayatViewModel: RiwayatViewModel by viewModel()
     private val riwayatTulisHurufAdapter by lazy { RiwayatTulisHurufAdapter() }
     var student: Student? = null
@@ -25,7 +25,7 @@ class RiwayatTulisHurufActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_riwayat_tulis_huruf)
+        setContentView(binding.root)
 
         student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("student", Student::class.java)
@@ -50,6 +50,7 @@ class RiwayatTulisHurufActivity : AppCompatActivity() {
                         listTulisHurufMenu.add(tulis)
                     }
                     riwayatTulisHurufAdapter.submitData(listTulisHurufMenu)
+                    Log.d("menuhuruf", "listTulisHurufMenu: $listTulisHurufMenu")
                 }
                 is Response.Error -> {
                     response.message?.let {
@@ -60,7 +61,10 @@ class RiwayatTulisHurufActivity : AppCompatActivity() {
             }
         }
 
+        Log.d("menuhuruf", student.toString())
+
         binding.apply {
+            toolbar.txtTitle.text = "Riwayat Tulis Huruf"
             rvRiwayatTulisHuruf.apply {
                 adapter = riwayatTulisHurufAdapter
                 layoutManager = LinearLayoutManager(this@RiwayatTulisHurufActivity)

@@ -108,8 +108,11 @@ class TracingLetterLowercaseActivity : AppCompatActivity() {
         layoutParams.horizontalMargin = 0.1f
         dialog.window?.setAttributes(layoutParams)
 
+        tulis?.reportTulisHuruf?.materiTulisHurufKapital = true
+        tulis?.reportTulisHuruf?.materiTulisHurufNonKapital = true
+        tulis?.reportTulisHuruf?.latihanTulisHurufKapital = true
         tulis?.reportTulisHuruf?.latihanTulisHurufNonKapital = true
-        tulis?.reportTulisHuruf?.tulisHuruf = currentLetter
+        tulis?.reportTulisHuruf?.tulisHuruf = currentLetter.uppercase()
 
         val reportTulisHuruf = tulis?.reportTulisHuruf
         if (reportTulisHuruf != null && user != null && student != null) {

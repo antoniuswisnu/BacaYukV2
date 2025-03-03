@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.tracingalphabet.quiz.tracing.DrawingQuizView
+    <com.nara.bacayuk.writing.quiz.tracing.DrawingQuizView
         android:id="@+id/pageDrawingView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

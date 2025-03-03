@@ -52,7 +52,6 @@ class DrawingQuizView @JvmOverloads constructor(
                 path.lineTo(x, y)
             }
             MotionEvent.ACTION_UP -> {
-                // Tambahkan logika jika diperlukan
             }
             else -> return false
         }

@@ -10,6 +10,7 @@ import com.nara.bacayuk.ui.feat_riwayat.huruf.RiwayatHurufActivity
 import com.nara.bacayuk.ui.feat_riwayat.kalimat.RiwayatKalimatActivity
 import com.nara.bacayuk.ui.feat_riwayat.kata.RiwayatKataActivity
 import com.nara.bacayuk.ui.feat_riwayat.tulis.angka.RiwayatTulisAngkaActivity
+import com.nara.bacayuk.ui.feat_riwayat.tulis.huruf.RiwayatTulisHurufActivity
 import com.nara.bacayuk.utils.invisible
 
 class MenuRiwayatActivity : AppCompatActivity() {
@@ -64,12 +65,12 @@ class MenuRiwayatActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-//            btnTulisHuruf.setOnClickListener {
-//                val intent = Intent(this@MenuRiwayatActivity, RiwayatTulisHurufActivity::class.java).apply {
-//                    putExtra("student", student)
-//                }
-//                startActivity(intent)
-//            }
+            btnTulisHuruf.setOnClickListener {
+                val intent = Intent(this@MenuRiwayatActivity, RiwayatTulisHurufActivity::class.java).apply {
+                    putExtra("student", student)
+                }
+                startActivity(intent)
+            }
 
 //            btnTulisKata.setOnClickListener {
 //                val intent = Intent(this@MenuRiwayatActivity, RiwayatTulisKataActivity::class.java).apply {

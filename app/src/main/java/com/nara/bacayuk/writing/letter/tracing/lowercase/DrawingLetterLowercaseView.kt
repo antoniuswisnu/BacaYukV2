@@ -306,7 +306,7 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
 
     private fun extractPathPoints() {
         val point = FloatArray(2)
-        val step = pathMeasure.length / 180
+        val step = pathMeasure.length / 100
         var distance = 0f
 
         templatePoints.clear()
@@ -321,7 +321,7 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
         if (allUserPoints.size < templatePoints.size / 2) return false
 
         var matchCount = 0
-        val tolerance = 10f
+        val tolerance = 40f
 
         for (userPoint in allUserPoints) {
             for (templatePoint in templatePoints) {
@@ -333,7 +333,7 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
             }
         }
 
-        val matchPercentage = matchCount >= templatePoints.size * 0.98
+        val matchPercentage = matchCount >= templatePoints.size * 0.95
         Log.d("TracingPercentage", "Matched: $matchCount / ${templatePoints.size} , ($matchPercentage)")
         return matchPercentage
     }
@@ -377,10 +377,10 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val canvasWidth = width.toFloat()
-        val canvasHeight = height.toFloat()
+        val width = width.toFloat()
+        val height = height.toFloat()
 
-        createTemplatePath(currentLetter, canvasWidth, canvasHeight)
+        createTemplatePath(currentLetter, width, height)
 
         canvas.drawPath(templatePath, templatePaint)
 

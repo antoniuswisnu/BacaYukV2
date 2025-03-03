@@ -123,7 +123,7 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
 
     private fun extractPathPoints() {
         val point = FloatArray(2)
-        val step = pathMeasure.length / 180
+        val step = pathMeasure.length / 100
         var distance = 0f
 
         templatePoints.clear()

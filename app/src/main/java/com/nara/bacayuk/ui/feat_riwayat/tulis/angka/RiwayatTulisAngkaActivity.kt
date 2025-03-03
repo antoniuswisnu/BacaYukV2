@@ -16,7 +16,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RiwayatTulisAngkaActivity : AppCompatActivity() {
 
-    private val binding by lazy{ ActivityRiwayatTulisAngkaBinding.inflate(layoutInflater) }
+    private val binding by lazy {ActivityRiwayatTulisAngkaBinding.inflate(layoutInflater) }
     private val riwayatViewModel: RiwayatViewModel by viewModel()
     private val riwayatTulisAngkaAdapter by lazy { RiwayatTulisAngkaAdapter() }
     var student: Student? = null

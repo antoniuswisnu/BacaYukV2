@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pjs_medium"
                 android:paddingVertical="@dimen/_8sdp"
-                android:text="Tulis huruf"
+                android:text="Tulis Angka"
                 android:textAllCaps="false"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/teal_600"
