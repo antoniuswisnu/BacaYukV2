@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.predict
+package com.nara.bacayuk.writing.quiz.predict
 
 data class QuizAnswer(
     val questionId: String = "",

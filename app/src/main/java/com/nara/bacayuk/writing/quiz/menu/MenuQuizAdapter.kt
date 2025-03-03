@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.menu
+package com.nara.bacayuk.writing.quiz.menu
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tracingalphabet.databinding.ItemQuizSetBinding
+import com.nara.bacayuk.databinding.ItemQuizSetBinding
 
 class MenuQuizAdapter(
     private val onMenuQuizClick: (MenuQuiz) -> Unit,

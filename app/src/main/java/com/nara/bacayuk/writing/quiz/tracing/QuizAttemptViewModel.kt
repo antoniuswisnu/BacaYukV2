@@ -3,10 +3,9 @@ package com.nara.bacayuk.writing.quiz.tracing
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.tracingalphabet.quiz.predict.QuizAnswer
-import com.example.tracingalphabet.quiz.predict.QuizAttempt
-import com.example.tracingalphabet.quiz.question.Question
-import com.example.tracingalphabet.quiz.question.QuizRepository
+import com.nara.bacayuk.writing.quiz.predict.QuizAnswer
+import com.nara.bacayuk.writing.quiz.question.Question
+import com.nara.bacayuk.writing.quiz.question.QuizRepository
 
 class QuizAttemptViewModel : ViewModel() {
     private val repository = QuizRepository()

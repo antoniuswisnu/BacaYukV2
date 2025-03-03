@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.predict
+package com.nara.bacayuk.writing.quiz.predict
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -6,9 +6,9 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.tracingalphabet.databinding.ActivityPredictBinding
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.nara.bacayuk.databinding.ActivityPredictBinding
 import kotlinx.coroutines.launch
 
 class PredictActivity : AppCompatActivity() {

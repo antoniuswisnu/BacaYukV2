@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.question
+package com.nara.bacayuk.writing.quiz.question
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

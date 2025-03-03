@@ -1,6 +1,5 @@
-package com.example.tracingalphabet.quiz.question
+package com.nara.bacayuk.writing.quiz.question
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 

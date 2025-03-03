@@ -1,11 +1,8 @@
-package com.example.tracingalphabet.quiz.predict
+package com.nara.bacayuk.writing.quiz.predict
 
 import android.content.Context
 import android.graphics.*
 import android.util.Log
-import com.example.tracingalphabet.BuildConfig
-import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.type.content
 import org.tensorflow.lite.Interpreter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -291,21 +288,5 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         } else {
             "?"
         }
-    }
-
-    private suspend fun getGemini(){
-        val generativeModel = GenerativeModel(
-            modelName = "gemini-1.5-flash",
-            apiKey = BuildConfig.API_KEY
-        )
-
-//        val cookieImage: Bitmap =
-        val inputContent = content() {
-//            image(cookieImage)
-            text("Berikan feedback mnengenai tulisan tangan tersebut")
-        }
-
-        val response = generativeModel.generateContent(inputContent)
-        print(response.text)
     }
 }

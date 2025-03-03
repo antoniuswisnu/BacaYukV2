@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.question
+package com.nara.bacayuk.writing.quiz.question
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tracingalphabet.databinding.ItemQuestionBinding
+import com.nara.bacayuk.databinding.ItemQuestionBinding
 
 class QuestionAdapter(
     private val onDeleteClick: (Question) -> Unit

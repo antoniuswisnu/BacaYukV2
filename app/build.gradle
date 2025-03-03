@@ -10,10 +10,6 @@ android {
     namespace 'com.nara.bacayuk'
     compileSdk 35
 
-    viewBinding {
-        enabled = true
-    }
-
     sourceSets {
         main {
             assets.srcDirs = ['src/main/assets', 'src/main/assets/font']
@@ -28,6 +24,12 @@ android {
         versionName "2.3.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        def properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+//        buildConfigField 'String', 'API_KEY', "\"${properties.getProperty('API_KEY')}\""
+        buildConfigField "String", "GOOGLE_API_KEY", "\"${project.properties['GOOGLE_API_KEY']}\""
     }
 
     buildTypes {
@@ -44,16 +46,25 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+    buildFeatures {
+        mlModelBinding true
+        buildConfig true
+    }
+    viewBinding {
+        enabled = true
+    }
 }
 
 
 dependencies {
 
-
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
     implementation 'androidx.activity:activity:1.10.0'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.1.0'
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
     def lifecycle_version = "2.4.1"
     def coroutines_version = "1.4.2"
 
@@ -80,33 +91,27 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-
     def koin_version = "3.2.0-beta-1"
 
     // Koin for Android
     implementation "io.insert-koin:koin-android:$koin_version"
 
+    // Glide
     implementation 'com.github.bumptech.glide:glide:4.15.1'
-
 
     //datastore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
-
     implementation 'com.google.firebase:firebase-auth-ktx:21.2.0'
-    // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:31.2.3')
 //    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.6'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.2.1'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.5'
     implementation 'com.google.firebase:firebase-firestore:24.4.5'
-    //firebase core
     implementation 'com.google.firebase:firebase-core:21.1.1'
 
     //sdp and ssp
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
     implementation 'com.intuit.ssp:ssp-android:1.1.0'
-
-
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
@@ -128,14 +133,10 @@ dependencies {
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     androidTestImplementation "org.mockito:mockito-android:$mockitoVersion"
 
-
     implementation 'com.github.iammert:MaterialIntroView:1.6.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.3.0'
-//    androidTestImplementation 'androidx.test:runner:1.5.2'
-//    androidTestImplementation 'androidx.test:rules:1.5.0'
-//    implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-//    implementation 'androidx.test.ext:junit-ktx:1.1.5'
     testImplementation 'junit:junit:4.13.2'
 
+    implementation 'com.google.ai.client.generativeai:generativeai:0.9.0'
 }

@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.menu
+package com.nara.bacayuk.writing.quiz.menu
 
 data class MenuQuiz (
     var id: String = "",

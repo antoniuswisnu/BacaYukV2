@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.tracing
+package com.nara.bacayuk.writing.quiz.tracing
 
 import android.annotation.SuppressLint
 import android.content.Context

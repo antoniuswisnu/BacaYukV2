@@ -1,19 +1,19 @@
-package com.example.tracingalphabet.quiz.predict
+package com.nara.bacayuk.writing.quiz.predict
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import com.example.tracingalphabet.BuildConfig
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.nara.bacayuk.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GeminiHelper(private val context: Context) {
 
-    private val apiKey = BuildConfig.API_KEY
+    private val apiKey = BuildConfig.GOOGLE_API_KEY
 
     private val isGooglePlayServicesAvailable: Boolean
         get() {

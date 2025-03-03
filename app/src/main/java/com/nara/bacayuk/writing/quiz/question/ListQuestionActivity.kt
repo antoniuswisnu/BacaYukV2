@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.question
+package com.nara.bacayuk.writing.quiz.question
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tracingalphabet.databinding.ActivityListQuestionBinding
+import com.nara.bacayuk.databinding.ActivityListQuestionBinding
 
 class ListQuestionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListQuestionBinding

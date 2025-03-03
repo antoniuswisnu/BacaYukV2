@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.menu
+package com.nara.bacayuk.writing.quiz.menu
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,12 +8,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tracingalphabet.databinding.ActivityMenuQuizBinding
-import com.example.tracingalphabet.databinding.DialogCreateQuizSetBinding
 import com.nara.bacayuk.writing.quiz.tracing.QuizAttemptActivity
-import com.example.tracingalphabet.quiz.question.ListQuestionActivity
+import com.nara.bacayuk.writing.quiz.question.ListQuestionActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.nara.bacayuk.databinding.ActivityMenuQuizBinding
+import com.nara.bacayuk.databinding.DialogCreateQuizSetBinding
 
 class MenuQuizActivity : AppCompatActivity() {
 

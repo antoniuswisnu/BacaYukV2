@@ -1,4 +1,6 @@
-package com.example.tracingalphabet.quiz.predict
+package com.nara.bacayuk.writing.quiz.tracing
+
+import com.nara.bacayuk.writing.quiz.predict.QuizAnswer
 
 data class QuizAttempt(
     var id: String = "",

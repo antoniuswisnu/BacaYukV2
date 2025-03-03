@@ -1,4 +1,4 @@
-package com.example.tracingalphabet.quiz.predict
+package com.nara.bacayuk.writing.quiz.result
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tracingalphabet.R
+import com.nara.bacayuk.R
 
 class ResultAdapter(private val results: List<String>) :
     RecyclerView.Adapter<ResultAdapter.ResultViewHolder>() {
