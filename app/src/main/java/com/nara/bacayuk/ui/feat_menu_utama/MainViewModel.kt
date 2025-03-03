@@ -43,11 +43,12 @@ class MainViewModel(
     ) =
         viewModelScope.launch {
             val user = getUserDataStore()
-            val arrayList = arrayListOf("","","","")
+            val arrayList = arrayListOf("","","","","")
             arrayList[0] = "Mempersiapkan data huruf.."
             arrayList[1] = "Mempersiapkan data kata.."
             arrayList[2] = "Mempersiapkan data kalimat.."
             arrayList[3] = "Mempersiapkan data angka.."
+            arrayList[4] = "Mempersiapkan data tulis huruf.."
             _statusCreateData.value = arrayList
             try {
                 if (isFirstOpen) {
@@ -61,12 +62,14 @@ class MainViewModel(
                     val statusKata = reportUseCase.createReportKataDataSets(idUser, idStudent)
                     val statusKalimat = reportUseCase.addUpdateReportKalimat(idUser, idStudent, ReportKalimat())
                     val statusAngka = reportUseCase.createReportAngkaDataSets(idUser, idStudent)
+                    val statusTulisHuruf = reportUseCase.createReportTulisHurufDataSets(idUser, idStudent)
 
-                    val arrayList1 = arrayListOf("","","","")
+                    val arrayList1 = arrayListOf("","","","","")
                     arrayList1[0] = status
                     arrayList1[1] = statusKata
                     arrayList1[2] = if (statusKalimat) MESSAGE_KALIMAT_SUCCESS else "Gagal mempersiapkan data kalimat"
                     arrayList1[3] = statusAngka
+                    arrayList1[4] = statusTulisHuruf
                     _statusCreateData.value = arrayList1
                 }
             } catch (e: Exception) {
@@ -74,24 +77,6 @@ class MainViewModel(
                 e.printStackTrace()
             }
         }
-
-//    fun createReportAngkaDataSets(
-//        isFirstOpen: Boolean,
-//        idUser: String,
-//        idStudent: String,
-//        student: Student
-//    ) = viewModelScope.launch {
-//        try {
-//            if (isFirstOpen) {
-//                val status = reportUseCase.createReportAngkaDataSets(idUser, idStudent)
-//                val arrayList = arrayListOf(status)
-//                _statusCreateData.value = arrayList
-//            }
-//        } catch (e: Exception) {
-//            Log.d("MainViewModel", "login: fail")
-//            e.printStackTrace()
-//        }
-//    }
 
     fun saveUser(user: User) = viewModelScope.launch {
         userUseCase.addUpdateUserToFirestore(user)

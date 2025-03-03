@@ -34,8 +34,7 @@ class RiwayatTulisAngkaAdapter :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentAdapterViewHolder {
-        val binding =
-            ItemRiwayatTulisAngkaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemRiwayatTulisAngkaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RecentAdapterViewHolder(binding.root)
     }
 
@@ -68,13 +67,12 @@ class RiwayatTulisAngkaAdapter :
                     imgLatihanTulisAngka.setImageResource(R.drawable.ic_unfinished)
                 }
 
-                imgMateriTulisAngka.invalidate()
-                imgLatihanTulisAngka.invalidate()
+//                imgMateriTulisAngka.invalidate()
+//                imgLatihanTulisAngka.invalidate()
             }
         }
     }
 
     override fun getItemCount(): Int = differ.currentList.size
-
-}
+ }
 

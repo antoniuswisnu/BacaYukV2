@@ -20,6 +20,7 @@ import com.nara.bacayuk.ui.feat_baca_kata.quiz.QuizMenuActivity
 import com.nara.bacayuk.ui.feat_riwayat.menu.MenuRiwayatActivity
 import com.nara.bacayuk.ui.feat_student.list_student.ListStudentActivity
 import com.nara.bacayuk.utils.*
+import com.nara.bacayuk.writing.letter.menu.MenuLetterActivity
 import com.nara.bacayuk.writing.number.menu.MenuNumberActivity
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
@@ -97,6 +98,16 @@ class MainActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             }
+
+            btnTulisHuruf.setOnClickListener {
+                val intent = Intent(
+                    this@MainActivity,
+                    MenuLetterActivity::class.java
+                ).apply {
+                    putExtra("student", student)
+                }
+                startActivity(intent)
+            }
         }
 
         mainViewModel.user.observe(this@MainActivity) { response ->
@@ -110,11 +121,6 @@ class MainActivity : AppCompatActivity() {
                                 it, student.uuid,
                                 student
                             )
-//                            mainViewModel.createReportAngkaDataSets(
-//                                true,
-//                                it, student.uuid,
-//                                student
-//                            )
                         }
                     }
                 }
@@ -159,7 +165,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         deleteSiswaText.setOnClickListener {
-            //todo: show log out dialog
             val dialog = ConfirmationDialogRedStyle(
                 this@MainActivity,
                 icon = R.drawable.ic_baseline_exit_to_app_24,

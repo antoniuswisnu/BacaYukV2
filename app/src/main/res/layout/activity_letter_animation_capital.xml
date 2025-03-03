@@ -54,7 +54,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
 
-    <com.example.tracingalphabet.letter.animation.capital.LetterPathCapitalView
+    <com.nara.bacayuk.writing.letter.animation.capital.LetterPathCapitalView
         android:id="@+id/letterPathView"
         android:layout_width="0dp"
         android:layout_height="0dp"

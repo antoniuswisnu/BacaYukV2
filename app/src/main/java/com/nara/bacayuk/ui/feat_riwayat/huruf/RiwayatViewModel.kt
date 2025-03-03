@@ -34,6 +34,22 @@ class RiwayatViewModel(
     private val _reportTulisAngka = MutableLiveData<Response<List<ReportTulisAngka>>>()
     val reportTulisAngka: LiveData<Response<List<ReportTulisAngka>>> = _reportTulisAngka
 
+    private val _reportTulisHuruf = MutableLiveData<Response<List<ReportTulisHuruf>>>()
+    val reportTulisHuruf: LiveData<Response<List<ReportTulisHuruf>>> = _reportTulisHuruf
+
+    fun getAllReports(idStudent: String){
+        viewModelScope.launch {
+            try {
+                reportUseCase.getAllReportFromFirestore(getUID() ?: "-", idStudent).collect {
+                    _reports.value = it
+
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun getAllBelajarVokal(idStudent: String){
         viewModelScope.launch {
             try {
@@ -93,16 +109,17 @@ class RiwayatViewModel(
         }
     }
 
-    fun getAllReports(idStudent: String){
+    fun getAllReportTulisHurufFromFirestore(idStudent: String) {
         viewModelScope.launch {
-            try {
-                reportUseCase.getAllReportFromFirestore(getUID() ?: "-", idStudent).collect {
-                    _reports.value = it
-
+            reportUseCase.getAllReportTulisHurufFromFirestore(getUID() ?: "-", idStudent).collect { response ->
+                    when (response) {
+                        is Response.Success -> {
+                            Log.d("RiwayatViewModel", "Received ${response.data.size} reports from Firestore")
+                        }
+                        else -> {}
+                    }
+                    _reportTulisHuruf.value = response
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
         }
     }
 

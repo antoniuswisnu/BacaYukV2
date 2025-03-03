@@ -11,6 +11,9 @@ import com.nara.bacayuk.ui.feat_menu_utama.MainViewModel
 import com.nara.bacayuk.ui.feat_riwayat.huruf.RiwayatViewModel
 import com.nara.bacayuk.ui.feat_student.add_edit_student.AddEditStudentViewModel
 import com.nara.bacayuk.ui.feat_student.list_student.ListStudentViewModel
+import com.nara.bacayuk.writing.letter.menu.MenuLetterViewModel
+import com.nara.bacayuk.writing.letter.tracing.capital.TracingLetterCapitalViewModel
+import com.nara.bacayuk.writing.letter.tracing.lowercase.TracingLetterLowercaseViewModel
 import com.nara.bacayuk.writing.number.animation.NumberAnimationViewModel
 import com.nara.bacayuk.writing.number.menu.MenuNumberViewModel
 import com.nara.bacayuk.writing.number.tracing.TracingNumberViewModel
@@ -33,4 +36,8 @@ val viewModelModule = module {
     viewModel { TracingNumberViewModel(get(), get(), get()) }
     viewModel { NumberAnimationViewModel(get(), get(), get()) }
     viewModel { MenuNumberViewModel(get(), get(), get()) }
+
+    viewModel { MenuLetterViewModel(get(), get(), get()) }
+    viewModel { TracingLetterCapitalViewModel(get(), get(), get()) }
+    viewModel { TracingLetterLowercaseViewModel(get(), get(), get()) }
 }

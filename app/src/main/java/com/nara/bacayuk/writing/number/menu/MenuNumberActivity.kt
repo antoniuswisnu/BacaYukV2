@@ -66,9 +66,7 @@ class MenuNumberActivity : AppCompatActivity(), AdapterListener {
             layoutManager = androidx.recyclerview.widget.GridLayoutManager(this@MenuNumberActivity, 4)
             adapter = adapterNumberAdapter
         }
-
     }
-
 
     override fun onResume() {
         super.onResume()

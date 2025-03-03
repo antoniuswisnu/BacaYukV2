@@ -9,6 +9,11 @@ interface ReportDataSource {
     suspend fun updateReportHuruf(idUser: String,idStudent: String,reportHuruf: ReportHuruf): Boolean
     fun getAllReportFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportHuruf>>>
 
+    //tulis huruf
+    suspend fun createReportTulisHurufDataSets(idUser: String, idStudent: String): String
+    suspend fun updateReportTulisHuruf(idUser: String,idStudent: String, reportTulisHuruf: ReportTulisHuruf): Boolean
+    fun getAllReportTulisHurufFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisHuruf>>>
+
     //kata
     suspend fun createReportKataDataSets(idUser: String,idStudent: String): String
     suspend fun updateReportKata(idUser: String,idStudent: String,reportHuruf: ReportKata): Boolean

@@ -17,6 +17,9 @@
         android:theme="@style/Theme.BacaBacaBaca"
         tools:targetApi="31">
         <activity
+            android:name=".ui.feat_riwayat.tulis.huruf.RiwayatTulisHurufActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.feat_riwayat.tulis.angka.RiwayatTulisAngkaActivity"
             android:exported="false" />
         <activity
@@ -88,8 +91,7 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
-        <!-- <activity -->
+        </activity> <!-- <activity -->
         <!-- android:name=".ui.feat_baca_kata.quiz.QuizBacaKataActivity" -->
         <!-- android:exported="false"> -->
         <!-- <meta-data -->
@@ -254,4 +256,5 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
+
 </manifest>

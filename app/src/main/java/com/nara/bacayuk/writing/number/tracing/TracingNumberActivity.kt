@@ -9,14 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.nara.bacayuk.writing.number.menu.MenuNumberActivity
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.ReportTulisAngka
-import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.Tulis
 import com.nara.bacayuk.data.model.User
 import com.nara.bacayuk.databinding.ActivityTracingNumberBinding
 import com.nara.bacayuk.ui.custom_view.AnswerStatusDialog
 import com.nara.bacayuk.ui.custom_view.OnDismissDialog
-import com.nara.bacayuk.ui.feat_baca_huruf.quiz_baca_huruf.QuizBacaHurufActivity.Companion.student
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TracingNumberActivity : AppCompatActivity() {
@@ -25,6 +23,7 @@ class TracingNumberActivity : AppCompatActivity() {
     private val currentNumber: String by lazy {
         intent?.getStringExtra(EXTRA_NUMBER) ?: "0"
     }
+    var student: Student? = null
     private val tracingNumberViewModel: TracingNumberViewModel by viewModel()
     private var tulis: Tulis? = null
 
@@ -41,20 +40,20 @@ class TracingNumberActivity : AppCompatActivity() {
 
         tulis = Tulis(reportTulisAngka = ReportTulisAngka())
 
-        val user = tracingNumberViewModel.getUserDataStore()
-        if (user != null && student != null) {
-            user.uuid?.let { tracingNumberViewModel.getReportTulisAngka(it, student?.uuid ?: "") }
-        }
+//        val user = tracingNumberViewModel.getUserDataStore()
+//        if (user != null && student != null) {
+//            user.uuid?.let { tracingNumberViewModel.getReportTulisAngka(it, student?.uuid ?: "") }
+//        }
 
-        tracingNumberViewModel.reportTulisAngka.observe(this) { response ->
-            if (response is Response.Success && response.data.isNotEmpty()) {
-                val existingReport = response.data.firstOrNull()
-                if (existingReport != null) {
-                    tulis = Tulis(reportTulisAngka = existingReport)
-                    Log.d("TracingNumberActivity", "Loaded existing report: $existingReport")
-                }
-            }
-        }
+//        tracingNumberViewModel.reportTulisAngka.observe(this) { response ->
+//            if (response is Response.Success && response.data.isNotEmpty()) {
+//                val existingReport = response.data.firstOrNull()
+//                if (existingReport != null) {
+//                    tulis = Tulis(reportTulisAngka = existingReport)
+//                    Log.d("TracingNumberActivity", "Loaded existing report: $existingReport")
+//                }
+//            }
+//        }
 
         loadNumber()
 
@@ -100,6 +99,7 @@ class TracingNumberActivity : AppCompatActivity() {
             layoutParams.copyFrom(dialog.window?.attributes)
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
+            layoutParams.horizontalMargin = 0.1f
             dialog.window?.setAttributes(layoutParams)
 
             tulis?.reportTulisAngka?.latihanAngka = true

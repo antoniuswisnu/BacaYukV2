@@ -107,7 +107,8 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_tulis_angka"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:textSize="@dimen/_12ssp"
                 android:layout_width="match_parent"
                 android:background="@drawable/button_rounded_green_10px"
                 android:fontFamily="@font/pjs_medium"
@@ -119,7 +120,8 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_tulis_huruf"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:textSize="@dimen/_12ssp"
                 android:layout_width="match_parent"
                 android:background="@drawable/button_rounded_blue_10px"
                 android:fontFamily="@font/pjs_medium"
@@ -131,7 +133,8 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_tulis_kata"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:textSize="@dimen/_12ssp"
                 android:layout_width="match_parent"
                 android:background="@drawable/button_rounded_purple_10px"
                 android:fontFamily="@font/pjs_medium"
@@ -143,7 +146,8 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_kuis_tulis"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:textSize="@dimen/_12ssp"
                 android:layout_width="match_parent"
                 android:background="@drawable/button_rounded_green_10px"
                 android:fontFamily="@font/pjs_medium"

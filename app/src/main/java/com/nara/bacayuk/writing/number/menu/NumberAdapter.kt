@@ -56,7 +56,6 @@ class NumberAdapter(val listener: AdapterListener) :
                 if (data.reportTulisAngka.materiAngka
                     && data.reportTulisAngka.latihanAngka) {
                     binding.imgChecklist.visible()
-
                 } else {
                     binding.imgChecklist.invisible()
                 }
