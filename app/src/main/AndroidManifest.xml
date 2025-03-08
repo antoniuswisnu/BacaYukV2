@@ -17,13 +17,18 @@
         android:theme="@style/Theme.BacaBacaBaca"
         tools:targetApi="31">
         <activity
+            android:name=".ui.feat_riwayat.tulis.quiz.RiwayatTulisQuizActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.feat_riwayat.tulis.kata.RiwayatTulisKataActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.feat_riwayat.tulis.huruf.RiwayatTulisHurufActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".ui.feat_riwayat.tulis.angka.RiwayatTulisAngkaActivity"
             android:exported="false">
@@ -31,7 +36,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".ui.feat_riwayat.kata.RiwayatKataActivity"
             android:exported="false">
@@ -256,6 +260,54 @@
         </activity>
         <activity
             android:name=".writing.letter.tracing.lowercase.TracingLetterLowercaseActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".writing.quiz.question.AddEditQuestionActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".writing.quiz.question.ListQuestionActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".writing.quiz.result.QuizResultActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".writing.quiz.menu.MenuQuizActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".writing.quiz.predict.PredictActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".writing.quiz.tracing.QuizAttemptActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

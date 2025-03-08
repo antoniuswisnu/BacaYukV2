@@ -72,4 +72,21 @@ class ReportUseCase(private val repository: ReportRepository) {
 
     suspend fun addUpdateReportTulisHuruf(idUser: String, idStudent: String, reportTulisHuruf: ReportTulisHuruf): Boolean
     = repository.addUpdateReportTulisHuruf(idUser, idStudent, reportTulisHuruf)
+
+    // Tulis Kata
+    suspend fun createReportTulisKataDataSets(idUser: String, idStudent: String): String
+    = repository.createReportTulisKataDataSets(idUser, idStudent)
+
+    suspend fun getAllReportTulisKataFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisKata>>>
+    = repository.getAllReportTulisKataFromFirestore(idUser, idStudent)
+
+    suspend fun addUpdateReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Boolean
+    = repository.addUpdateReportTulisKata(idUser, idStudent, reportTulisKata)
+
+    // Kuis Tulis
+//    suspend fun addUpdateReportKuisTulis(idUser: String, idStudent: String, reportKuisTulis: ReportTulisQuiz): Boolean
+//    = repository.addUpdateReportKuisTulis(idUser, idStudent, reportKuisTulis)
+//
+//    suspend fun getAllReportKuisTulisFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisQuiz>>>
+//    = repository.getAllReportKuisTulisFromFirestore(idUser, idStudent)
 }

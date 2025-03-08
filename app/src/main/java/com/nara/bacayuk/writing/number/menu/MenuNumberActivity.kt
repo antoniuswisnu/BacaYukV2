@@ -23,7 +23,6 @@ class MenuNumberActivity : AppCompatActivity(), AdapterListener {
     private val dialog by lazy { waitingDialog() }
     private val listNumber = arrayListOf<Tulis>()
     private val adapterNumberAdapter by lazy { NumberAdapter(this@MenuNumberActivity) }
-
     var student: Student? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

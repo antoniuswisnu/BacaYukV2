@@ -29,4 +29,13 @@ interface ReportRepository {
     suspend fun createReportTulisHurufDataSets(idUser: String,idStudent: String): String
     suspend fun getAllReportTulisHurufFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisHuruf>>>
     suspend fun addUpdateReportTulisHuruf(idUser: String, idStudent: String, reportTulisHuruf: ReportTulisHuruf): Boolean
+
+    // Tulis Kata
+    suspend fun createReportTulisKataDataSets(idUser: String,idStudent: String): String
+    suspend fun getAllReportTulisKataFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisKata>>>
+    suspend fun addUpdateReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Boolean
+
+    // Kuis Tulis
+//    suspend fun addUpdateReportKuisTulis(idUser: String, idStudent: String, reportKuisTulis: ReportTulisQuiz): Boolean
+//    suspend fun getAllReportKuisTulisFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisQuiz>>>
 }

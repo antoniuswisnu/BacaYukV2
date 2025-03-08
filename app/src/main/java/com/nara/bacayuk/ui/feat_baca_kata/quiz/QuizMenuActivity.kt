@@ -74,7 +74,6 @@ class QuizMenuActivity : AppCompatActivity(), AdapterListener {
                 }
             }
 
-
             rvSusunKata.apply {
                 adapter = adapterQuizMenuAdapter1
                 layoutManager = androidx.recyclerview.widget.GridLayoutManager(this@QuizMenuActivity, 4)

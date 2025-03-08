@@ -29,7 +29,7 @@ android {
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 //        buildConfigField 'String', 'API_KEY', "\"${properties.getProperty('API_KEY')}\""
-        buildConfigField "String", "GOOGLE_API_KEY", "\"${project.properties['GOOGLE_API_KEY']}\""
+        buildConfigField "String", "GEMINI_API_KEY", "\"${properties.getProperty('GEMINI_API_KEY', '')}\""
     }
 
     buildTypes {
@@ -139,4 +139,11 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 
     implementation 'com.google.ai.client.generativeai:generativeai:0.9.0'
+
+    implementation 'org.tensorflow:tensorflow-lite:2.14.0'
+    implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:2.14.0'
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.14.0'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.1.0'
+
 }

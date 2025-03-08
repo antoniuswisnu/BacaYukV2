@@ -3,24 +3,32 @@ package com.nara.bacayuk.writing.quiz.question
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityListQuestionBinding
 
 class ListQuestionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListQuestionBinding
-    private lateinit var viewModel: QuizViewModel
+    private lateinit var viewModel: QuizQuestionViewModel
     private lateinit var adapter: QuestionAdapter
     private lateinit var quizSetId: String
+    private var student: Student? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityListQuestionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("student", Student::class.java)
+        } else {
+            intent.getParcelableExtra("student") as Student?
+        }
 
         quizSetId = intent.getStringExtra("quizSetId") ?: run {
             Toast.makeText(this, "Quiz Set ID tidak valid", Toast.LENGTH_SHORT).show()
@@ -40,7 +48,7 @@ class ListQuestionActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this)[QuizViewModel::class.java]
+        viewModel = ViewModelProvider(this)[QuizQuestionViewModel::class.java]
         viewModel.loadQuizzes(quizSetId)
     }
 
@@ -60,6 +68,7 @@ class ListQuestionActivity : AppCompatActivity() {
         binding.btnAddQuestion.setOnClickListener {
             val intent = Intent(this, AddEditQuestionActivity::class.java).apply {
                 putExtra("quizSetId", quizSetId)
+                putExtra("student", student)
             }
             Log.d("QuizListActivity", "Sending quizSetId: $quizSetId")
             startActivity(intent)

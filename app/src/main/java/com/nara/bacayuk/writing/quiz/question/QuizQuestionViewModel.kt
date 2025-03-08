@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class QuizViewModel : ViewModel() {
+class QuizQuestionViewModel : ViewModel() {
     private val repository = QuizRepository()
     private val _quizzes = MutableLiveData<List<Question>>()
     val quizzes: LiveData<List<Question>> = _quizzes

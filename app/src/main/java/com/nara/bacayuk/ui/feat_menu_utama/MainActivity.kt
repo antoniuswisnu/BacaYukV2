@@ -22,6 +22,8 @@ import com.nara.bacayuk.ui.feat_student.list_student.ListStudentActivity
 import com.nara.bacayuk.utils.*
 import com.nara.bacayuk.writing.letter.menu.MenuLetterActivity
 import com.nara.bacayuk.writing.number.menu.MenuNumberActivity
+import com.nara.bacayuk.writing.quiz.menu.MenuQuizActivity
+import com.nara.bacayuk.writing.word.menu.MenuWordActivity
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.BalloonSizeSpec
@@ -103,6 +105,26 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(
                     this@MainActivity,
                     MenuLetterActivity::class.java
+                ).apply {
+                    putExtra("student", student)
+                }
+                startActivity(intent)
+            }
+
+            btnTulisKata.setOnClickListener {
+                val intent = Intent(
+                    this@MainActivity,
+                    MenuWordActivity::class.java
+                ).apply {
+                    putExtra("student", student)
+                }
+                startActivity(intent)
+            }
+
+            btnKuisTulis.setOnClickListener {
+                val intent = Intent(
+                    this@MainActivity,
+                    MenuQuizActivity::class.java
                 ).apply {
                     putExtra("student", student)
                 }

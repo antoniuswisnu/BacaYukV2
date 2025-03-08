@@ -117,5 +117,41 @@ class ReportRepositoryImpl(private val dataSource: ReportDataSource) :ReportRepo
         return dataSource.updateReportTulisHuruf(idUser, idStudent, reportTulisHuruf)
     }
 
+    // Tulis Kata
+    override suspend fun createReportTulisKataDataSets(idUser: String, idStudent: String): String {
+        return dataSource.createReportTulisKataDataSets(idUser, idStudent)
+    }
+
+    override suspend fun getAllReportTulisKataFromFirestore(
+        idUser: String,
+        idStudent: String
+    ): Flow<Response<List<ReportTulisKata>>> {
+        return dataSource.getAllReportTulisKataFromFirestore(idUser, idStudent)
+    }
+
+    override suspend fun addUpdateReportTulisKata(
+        idUser: String,
+        idStudent: String,
+        reportTulisKata: ReportTulisKata
+    ): Boolean {
+        return dataSource.addUpdateReportTulisKata(idUser, idStudent, reportTulisKata)
+    }
+
+    // Quiz Tulis
+//    override suspend fun getAllReportQuizTulisFromFirestore(
+//        idUser: String,
+//        idStudent: String
+//    ): Flow<Response<List<ReportTulisQuiz>>> {
+//        return dataSource.getAllReportKuisTulisFromFirestore(idUser, idStudent)
+//    }
+//
+//    override suspend fun addUpdateReportQuizTulis(
+//        idUser: String,
+//        idStudent: String,
+//        reportQuizTulis: ReportTulisQuiz
+//    ): Boolean {
+//        return dataSource.addUpdateReportKuisTulis(idUser, idStudent, reportQuizTulis)
+//    }
+
 }
 

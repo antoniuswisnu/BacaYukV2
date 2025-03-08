@@ -9,8 +9,10 @@ data class Tulis (
     var suara: String = "",
     val tulisAngka: String = "",
     val tulisHuruf: String = "",
+    val tulisKata: String = "",
+    val tulisQuiz: String = "",
     val reportTulisAngka: ReportTulisAngka? = ReportTulisAngka(),
     val reportTulisHuruf: ReportTulisHuruf? = ReportTulisHuruf(),
-//    val reportTulisKata: ReportTulisKata? = ReportTulisKata(),
-//    val reportTulisKuis: ReportTulisKuis? = ReportTulisKuis(),
+    val reportTulisKata: ReportTulisKata? = ReportTulisKata(),
+    val reportTulisQuiz: ReportTulisQuiz? = ReportTulisQuiz(),
     ): Parcelable

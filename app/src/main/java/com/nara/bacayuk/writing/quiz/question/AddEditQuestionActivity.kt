@@ -1,24 +1,33 @@
 package com.nara.bacayuk.writing.quiz.question
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityAddEditQuestionBinding
 
 class AddEditQuestionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddEditQuestionBinding
-    private lateinit var viewModel: QuizViewModel
+    private lateinit var viewModel: QuizQuestionViewModel
     private var quiz: Question? = null
     private lateinit var quizSetId: String
+    private var student: Student? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddEditQuestionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("student", Student::class.java)
+        } else {
+            intent.getParcelableExtra("student") as Student?
+        }
 
         setupViewModel()
         setupSpinner()
@@ -27,7 +36,7 @@ class AddEditQuestionActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this)[QuizViewModel::class.java]
+        viewModel = ViewModelProvider(this)[QuizQuestionViewModel::class.java]
     }
 
     private fun setupSpinner() {
@@ -44,15 +53,12 @@ class AddEditQuestionActivity : AppCompatActivity() {
     }
 
     private fun loadQuizData() {
-//        quiz = intent.getParcelableExtra("quizSetId")
-//        Log.d("AddEditQuizActivity", "Quiz: $quiz")
-
         quizSetId = intent.getStringExtra("quizSetId") ?: run {
             Toast.makeText(this, "Quiz Set ID tidak valid", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
-        Log.d("AddEditQuizActivity", "QuizSetId: $quizSetId") //
+        Log.d("AddEditQuizActivity", "QuizSetId: $quizSetId")
 
         quiz?.let {
             binding.etQuestion.setText(it.question)

@@ -1,6 +1,6 @@
 package com.nara.bacayuk.writing.number.menu
 
-import android.util.Log
+import  android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

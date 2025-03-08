@@ -1,6 +1,7 @@
 package com.nara.bacayuk.writing.quiz.menu
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,6 +13,7 @@ import com.nara.bacayuk.writing.quiz.tracing.QuizAttemptActivity
 import com.nara.bacayuk.writing.quiz.question.ListQuestionActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityMenuQuizBinding
 import com.nara.bacayuk.databinding.DialogCreateQuizSetBinding
 
@@ -20,11 +22,18 @@ class MenuQuizActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMenuQuizBinding
     private lateinit var adapter: MenuQuizAdapter
     private val firestore = FirebaseFirestore.getInstance()
+    var student: Student? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMenuQuizBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("student", Student::class.java)
+        } else {
+            intent.getParcelableExtra("student") as Student?
+        }
 
         setupRecyclerView()
         setupClickListeners()
@@ -36,6 +45,7 @@ class MenuQuizActivity : AppCompatActivity() {
             onMenuQuizClick = { quizSet ->
                 val intent = Intent(this, QuizAttemptActivity::class.java)
                 intent.putExtra("quizSetId", quizSet.id)
+                intent.putExtra("student", student)
                 startActivity(intent)
             },
             onDeleteClick = { quizSet ->
@@ -45,6 +55,7 @@ class MenuQuizActivity : AppCompatActivity() {
                 val intent = Intent(this, ListQuestionActivity::class.java)
                 intent.putExtra("quizSetId", quizSet.id)
                 intent.putExtra("title", quizSet.title)
+                intent.putExtra("student", student)
                 startActivity(intent)
             }
         )

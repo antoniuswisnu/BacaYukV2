@@ -395,4 +395,102 @@ class ReportDataSourceImpl: ReportDataSource {
             false
         }
     }
+
+    // Tulis Kata
+    override suspend fun createReportTulisKataDataSets(idUser: String, idStudent: String): String {
+        return try {
+            val datasetTulisKata = createDatasetTulisKata()
+            var lastStatus = "Menyiapkan data tulis kata.."
+            val firestoreInstance = FirebaseFirestore.getInstance()
+            for (item in datasetTulisKata) {
+                val documentReference =
+                    firestoreInstance.collection("Users").document(idUser)
+                        .collection("Students").document(idStudent)
+                        .collection("ReportTulisKata").document(item.tulisKata)
+
+                documentReference.set(item).await()
+                if (item.tulisKata == "Z") lastStatus = MESSAGE_KATA_SUCCESS
+            }
+            lastStatus
+        } catch (e: Exception) {
+            Log.e("UserDataSourceImpl", "Error adding or updating user to Firestore.", e)
+            "Gagal menyiapkan data belajar tulis kata"
+        }
+    }
+
+    private fun createDatasetTulisKata(): List<ReportTulisKata>{
+        val reportTulisKatas = mutableListOf<ReportTulisKata>()
+        val listKata = listOf(
+            "Buku",
+            "Tulis",
+            "Baca",
+            "Huruf",
+            "Saya",
+            "Ayah",
+            "Ibu",
+            "Bisa",
+            "Pintar",
+            "Baik"
+        )
+        for (i in listKata) {
+            val reportTulisKata = ReportTulisKata(
+                tulisKata = i
+            )
+            reportTulisKatas.add(reportTulisKata)
+        }
+        return reportTulisKatas
+    }
+
+    override fun getAllReportTulisKataFromFirestore(
+        idUser: String,
+        idStudent: String
+    ): Flow<Response<List<ReportTulisKata>>> {
+        return flow {
+            val firestoreInstance = FirebaseFirestore.getInstance()
+            val students = mutableListOf<ReportTulisKata>()
+            val snapshot = firestoreInstance.collection("Users")
+                .document(idUser).collection("Students").document(idStudent)
+                .collection("ReportTulisKata").get().await()
+            for (doc in snapshot.documents) {
+                doc.toObject(ReportTulisKata::class.java)?.let { students.add(it) }
+            }
+            emit(Response.Success(students))
+        }.catch {
+            Log.e("getAllUserFromFirestore", "Failed to fetch user data from Firestore.", it)
+        }
+    }
+
+    override suspend fun addUpdateReportTulisKata(
+        idUser: String,
+        idStudent: String,
+        reportTulisKata: ReportTulisKata
+    ): Boolean {
+        return try {
+            val firestoreInstance = FirebaseFirestore.getInstance()
+            val snapshot = firestoreInstance.collection("Users")
+                .document(idUser).collection("Students").document(idStudent)
+                .collection("ReportTulisKata").document(reportTulisKata.tulisKata).set(reportTulisKata).await()
+            true
+        } catch (e: Exception) {
+            Log.e("UserDataSourceImpl", "Error adding or updating user to Firestore.", e)
+            false
+        }
+    }
+
+    // Kuis Tulis
+
+//    override suspend fun addUpdateReportKuisTulis(
+//        idUser: String,
+//        idStudent: String,
+//        reportKuisTulis: ReportTulisQuiz
+//    ): Boolean {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun getAllReportKuisTulisFromFirestore(
+//        idUser: String,
+//        idStudent: String
+//    ): Flow<Response<List<ReportTulisQuiz>>> {
+//        TODO("Not yet implemented")
+//    }
 }

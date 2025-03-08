@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 class GeminiHelper(private val context: Context) {
 
-    private val apiKey = BuildConfig.GOOGLE_API_KEY
+    private val apiKey = BuildConfig.GEMINI_API_KEY
 
     private val isGooglePlayServicesAvailable: Boolean
         get() {

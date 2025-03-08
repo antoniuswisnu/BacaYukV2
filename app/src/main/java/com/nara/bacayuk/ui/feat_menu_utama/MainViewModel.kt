@@ -43,12 +43,13 @@ class MainViewModel(
     ) =
         viewModelScope.launch {
             val user = getUserDataStore()
-            val arrayList = arrayListOf("","","","","")
+            val arrayList = arrayListOf("","","","","","")
             arrayList[0] = "Mempersiapkan data huruf.."
             arrayList[1] = "Mempersiapkan data kata.."
             arrayList[2] = "Mempersiapkan data kalimat.."
-            arrayList[3] = "Mempersiapkan data angka.."
+            arrayList[3] = "Mempersiapkan data tulis angka.."
             arrayList[4] = "Mempersiapkan data tulis huruf.."
+            arrayList[5] = "Mempersiapkan data tulis kata.."
             _statusCreateData.value = arrayList
             try {
                 if (isFirstOpen) {
@@ -61,15 +62,17 @@ class MainViewModel(
                     val status = reportUseCase.createReportHurufDataSets(idUser, idStudent)
                     val statusKata = reportUseCase.createReportKataDataSets(idUser, idStudent)
                     val statusKalimat = reportUseCase.addUpdateReportKalimat(idUser, idStudent, ReportKalimat())
-                    val statusAngka = reportUseCase.createReportAngkaDataSets(idUser, idStudent)
+                    val statusTulisAngka = reportUseCase.createReportAngkaDataSets(idUser, idStudent)
                     val statusTulisHuruf = reportUseCase.createReportTulisHurufDataSets(idUser, idStudent)
+                    val statusTulisKata = reportUseCase.createReportTulisKataDataSets(idUser, idStudent)
 
-                    val arrayList1 = arrayListOf("","","","","")
+                    val arrayList1 = arrayListOf("","","","","","")
                     arrayList1[0] = status
                     arrayList1[1] = statusKata
                     arrayList1[2] = if (statusKalimat) MESSAGE_KALIMAT_SUCCESS else "Gagal mempersiapkan data kalimat"
-                    arrayList1[3] = statusAngka
+                    arrayList1[3] = statusTulisAngka
                     arrayList1[4] = statusTulisHuruf
+                    arrayList1[5] = statusTulisKata
                     _statusCreateData.value = arrayList1
                 }
             } catch (e: Exception) {

@@ -1,6 +1,8 @@
 package com.nara.bacayuk.writing.quiz.predict
 
+import android.content.Intent
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityPredictBinding
 import kotlinx.coroutines.launch
 
@@ -15,11 +18,18 @@ class PredictActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPredictBinding
     private var geminiFeedbackHelper: GeminiHelper? = null
+    private var student: Student? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPredictBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("student", Student::class.java)
+        } else {
+            intent.getParcelableExtra("student") as Student?
+        }
 
         val userAnswer = intent.getStringExtra("userAnswer") ?: ""
         val correctAnswer = intent.getStringExtra("correctAnswer") ?: ""
@@ -28,6 +38,7 @@ class PredictActivity : AppCompatActivity() {
 
         binding.imgTracing.setImageBitmap(bitmap)
         binding.tvPredictionResult.text = userAnswer
+        binding.tvCorrectAnswer.text = correctAnswer
 
         binding.tvFeedback.visibility = View.GONE
 
@@ -44,7 +55,6 @@ class PredictActivity : AppCompatActivity() {
                         correctChar = correctAnswer
                     ) ?: getFallbackFeedback(userAnswer, correctAnswer)
 
-                    // Tampilkan umpan balik
                     binding.tvFeedback.visibility = View.VISIBLE
                     binding.tvFeedback.text = feedback
                 } catch (e: Exception) {

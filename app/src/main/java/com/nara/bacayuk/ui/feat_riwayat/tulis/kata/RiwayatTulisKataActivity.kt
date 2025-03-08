@@ -1,4 +1,4 @@
-package com.nara.bacayuk.ui.feat_riwayat.tulis.huruf
+package com.nara.bacayuk.ui.feat_riwayat.tulis.kata
 
 import android.os.Build
 import android.os.Bundle
@@ -8,20 +8,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.Tulis
-import com.nara.bacayuk.databinding.ActivityRiwayatTulisHurufBinding
+import com.nara.bacayuk.databinding.ActivityRiwayatTulisKataBinding
 import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.ui.feat_riwayat.huruf.RiwayatViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RiwayatTulisHurufActivity : AppCompatActivity() {
-    
-    private val binding by lazy {ActivityRiwayatTulisHurufBinding.inflate(layoutInflater) }
+class RiwayatTulisKataActivity : AppCompatActivity() {
+
+    private val binding by lazy { ActivityRiwayatTulisKataBinding.inflate(layoutInflater) }
     private val riwayatViewModel: RiwayatViewModel by viewModel()
-    private val riwayatTulisHurufAdapter by lazy { RiwayatTulisHurufAdapter() }
+    private val riwayatTulisKataAdapter by lazy { RiwayatTulisKataAdapter() }
     var student: Student? = null
     private val dialog by lazy { waitingDialog() }
-    private val listTulisHurufMenu = arrayListOf<Tulis>()
-    
+    private val listTulisKataMenu = arrayListOf<Tulis>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -32,41 +32,38 @@ class RiwayatTulisHurufActivity : AppCompatActivity() {
             intent.getParcelableExtra("student") as Student?
         }
 
-        riwayatViewModel.getAllReportTulisHurufFromFirestore(student?.uuid ?: "-").also {
+        riwayatViewModel.getAllReportTulisKataFromFirestore(student?.uuid ?: "-").also {
             dialog.show()
         }
 
-        riwayatViewModel.reportTulisHuruf.observe(this@RiwayatTulisHurufActivity) { response ->
+        riwayatViewModel.reportTulisKata.observe(this@RiwayatTulisKataActivity) { response ->
             dialog.dismiss()
             when (response) {
                 is Response.Success -> {
                     response.data.forEach{
                         val tulis = Tulis(
-                            id = it.tulisHuruf,
-                            tulisHuruf = it.tulisHuruf,
-                            reportTulisHuruf = it
+                            id = it.tulisKata,
+                            tulisKata = it.tulisKata,
+                            reportTulisKata = it
                         )
-                        listTulisHurufMenu.add(tulis)
+                        listTulisKataMenu.add(tulis)
                     }
-                    riwayatTulisHurufAdapter.submitData(listTulisHurufMenu)
-                    Log.d("menuhuruf", "listTulisHurufMenu: $listTulisHurufMenu")
+                    riwayatTulisKataAdapter.submitData(listTulisKataMenu)
                 }
                 is Response.Error -> {
                     response.message?.let {
-                        Log.d("menuhuruf", it)
+                        Log.d("menukata", it)
                     }
                 }
                 else -> {}
             }
         }
 
-        Log.d("menuhuruf", student.toString())
-
         binding.apply {
-            toolbar.txtTitle.text = "Riwayat Tulis Huruf"
-            rvRiwayatTulisHuruf.apply {
-                adapter = riwayatTulisHurufAdapter
-                layoutManager = LinearLayoutManager(this@RiwayatTulisHurufActivity)
+            toolbar.txtTitle.text = "Riwayat Tulis Kata"
+            rvRiwayatTulisKata.apply{
+                layoutManager = LinearLayoutManager(this@RiwayatTulisKataActivity)
+                adapter = riwayatTulisKataAdapter
             }
         }
     }
