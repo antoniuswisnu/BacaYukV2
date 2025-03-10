@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityListQuestionBinding
+import com.nara.bacayuk.writing.quiz.menu.MenuQuizActivity
 
 class ListQuestionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListQuestionBinding
@@ -31,7 +32,7 @@ class ListQuestionActivity : AppCompatActivity() {
         }
 
         quizSetId = intent.getStringExtra("quizSetId") ?: run {
-            Toast.makeText(this, "Quiz Set ID tidak valid", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Quiz Set ID tidak valid", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -45,6 +46,13 @@ class ListQuestionActivity : AppCompatActivity() {
         setupRecyclerView()
         setupClickListeners()
         observeViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::viewModel.isInitialized && ::quizSetId.isInitialized) {
+            viewModel.loadQuizzes(quizSetId)
+        }
     }
 
     private fun setupViewModel() {
@@ -73,6 +81,13 @@ class ListQuestionActivity : AppCompatActivity() {
             Log.d("QuizListActivity", "Sending quizSetId: $quizSetId")
             startActivity(intent)
         }
+
+        binding.btnSaveQuiz.setOnClickListener {
+            val intent = Intent(this, MenuQuizActivity::class.java).apply {
+                putExtra("student", student)
+            }
+            startActivity(intent)
+        }
     }
 
     private fun observeViewModel() {
@@ -85,10 +100,10 @@ class ListQuestionActivity : AppCompatActivity() {
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
-        viewModel.error.observe(this) { error ->
-            error?.let {
-                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-            }
-        }
+//        viewModel.error.observe(this) { error ->
+//            error?.let {
+//                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
 }

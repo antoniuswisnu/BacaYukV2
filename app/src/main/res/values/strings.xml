@@ -54,7 +54,7 @@
     <string name="tulis_angka">Tulis Angka</string>
     <string name="tulis_kata">Tulis Kata</string>
     <string name="tulis_kalimat">Tulis Kalimat</string>
-    <string name="ujian_tulis">Ujian Tulis</string>
+    <string name="ujian_tulis">Kuis Menulis</string>
     <string name="riwayat_belajar">Riwayat Belajar</string>
     <string name="ahmad_widodo">Ahmad Widodo</string>
     <string name="menu_utama">Menu Utama</string>
@@ -74,10 +74,12 @@
     <string name="tulisan_ini_sudah_benar_namun_terdapat_garis_yang_masih_belum_lurus_dan_perlu_diperbaiki">Tulisan ini sudah benar namun terdapat garis yang masih belum lurus dan perlu diperbaiki.</string>
     <string name="ujian_menulis">Ujian Menulis</string>
     <string name="_1_5">1/5</string>
-    <string name="hasil_kuis">Hasil Kuis</string>
+    <string name="hasil_kuis">Hasil Kuis Menulis</string>
     <string name="benar_0">Benar: 0</string>
     <string name="salah_0">Salah: 0</string>
     <string name="selesai">Selesai</string>
+    <string name="buku">Buku</string>
+    <string name="pertemuan_ke_1">Pertemuan ke 1</string>
 
 
 </resources>

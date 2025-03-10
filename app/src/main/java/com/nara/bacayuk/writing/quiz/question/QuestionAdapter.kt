@@ -1,19 +1,20 @@
 package com.nara.bacayuk.writing.quiz.question
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.nara.bacayuk.databinding.ItemQuestionBinding
+import com.nara.bacayuk.databinding.ItemQuizQuestionBinding
 
 class QuestionAdapter(
     private val onDeleteClick: (Question) -> Unit
 ) : ListAdapter<Question, QuestionAdapter.QuestionViewHolder>(QuestionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
-        val binding = ItemQuestionBinding.inflate(
+        val binding = ItemQuizQuestionBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -22,22 +23,26 @@ class QuestionAdapter(
     }
 
     override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(
+            getItem(position),
+            position = position
+        )
     }
 
     inner class QuestionViewHolder(
-        private val binding: ItemQuestionBinding
+        private val binding: ItemQuizQuestionBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(quiz: Question) {
-            binding.tvQuestion.text = quiz.question
-            binding.tvQuestionType.text = quiz.questionType
+        @SuppressLint("SetTextI18n")
+        fun bind(quiz: Question, position: Int) {
+            binding.tvQuestion.text = "${position + 1}. ${quiz.question}"
             binding.btnDelete.setOnClickListener {
                 onDeleteClick(quiz)
             }
             binding.root.setOnClickListener {
                 val intent = Intent(binding.root.context, AddEditQuestionActivity::class.java)
-                intent.putExtra("quizSetId", quiz.id)
+                intent.putExtra("quizSetId", quiz.quizSetId) // Kirim quizSetId, bukan quiz.id
+                intent.putExtra("quiz", quiz) // Kirim objek quiz untuk diedit
                 binding.root.context.startActivity(intent)
             }
         }

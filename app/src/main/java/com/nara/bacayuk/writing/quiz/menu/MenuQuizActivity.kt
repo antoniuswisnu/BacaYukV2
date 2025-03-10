@@ -16,6 +16,7 @@ import com.google.firebase.firestore.Query
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityMenuQuizBinding
 import com.nara.bacayuk.databinding.DialogCreateQuizSetBinding
+import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
 
 class MenuQuizActivity : AppCompatActivity() {
 
@@ -28,6 +29,14 @@ class MenuQuizActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMenuQuizBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.btnBack.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java)
+                .apply {
+                    putExtra("student", student)
+                }
+            )
+        }
 
         student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("student", Student::class.java)
@@ -43,10 +52,17 @@ class MenuQuizActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = MenuQuizAdapter(
             onMenuQuizClick = { quizSet ->
-                val intent = Intent(this, QuizAttemptActivity::class.java)
-                intent.putExtra("quizSetId", quizSet.id)
-                intent.putExtra("student", student)
-                startActivity(intent)
+                AlertDialog.Builder(this)
+                    .setTitle("Mulai Kuis")
+                    .setMessage("Apakah Anda yakin ingin memulai mengerjakan soal?")
+                    .setPositiveButton("Ya") { _, _ ->
+                        val intent = Intent(this, QuizAttemptActivity::class.java)
+                        intent.putExtra("quizSetId", quizSet.id)
+                        intent.putExtra("student", student)
+                        startActivity(intent)
+                    }
+                    .setNegativeButton("Tidak", null)
+                    .show()
             },
             onDeleteClick = { quizSet ->
                 deleteQuizSet(quizSet.id)

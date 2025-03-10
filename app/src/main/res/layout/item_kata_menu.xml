@@ -25,15 +25,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/txt_abjad"
-        style="@style/TextViewH16Bold"
+        style="@style/TextViewH24Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="A"
+        android:text="Buku"
         android:textColor="@color/teal_700"
+        android:layout_marginStart="32dp"
         app:layout_constraintBottom_toBottomOf="@+id/img_abjad"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/img_abjad"
         app:layout_constraintTop_toTopOf="@+id/img_abjad" />
 

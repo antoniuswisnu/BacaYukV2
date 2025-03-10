@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.Tulis
@@ -64,7 +65,7 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
         }
 
         binding.rvKata.apply {
-            layoutManager = GridLayoutManager(this@MenuWordActivity, 4)
+            layoutManager = GridLayoutManager(this@MenuWordActivity, 2)
             adapter = adapterWordAdapter
         }
     }
@@ -90,13 +91,17 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
             val intent = Intent(this@MenuWordActivity, TracingWordActivity::class.java)
                 .apply {
                     putExtra("student", student)
-                    putExtra("word", data.tulisKata)
+                    putExtra(EXTRA_WORD, data.tulisKata)
                 }
             startActivity(intent)
             finish()
         } else {
             Log.e("MenuWordActivity", "Data is not Tulis")
         }
+    }
+
+    companion object {
+        const val EXTRA_WORD = "SELECTED_WORD"
     }
 
 }

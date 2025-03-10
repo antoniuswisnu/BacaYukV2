@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".quiz.predict.QuizResultActivity">
+    tools:context=".writing.quiz.result.QuizResultActivity">
 
     <TextView
         android:id="@+id/tv_title"
@@ -48,6 +48,7 @@
         android:text="@string/benar_0"
         android:textColor="@android:color/holo_green_dark"
         android:textSize="18sp"
+        android:fontFamily="@font/plus_jakarta_sans"
         android:layout_marginEnd="64dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,6 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/salah_0"
+        android:fontFamily="@font/plus_jakarta_sans"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/tv_correct_answers"

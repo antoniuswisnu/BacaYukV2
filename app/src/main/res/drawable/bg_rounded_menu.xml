@@ -1,17 +1,17 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="78dp"
-    android:height="78dp"
-    android:viewportWidth="78"
-    android:viewportHeight="78">
-    <path
-        android:fillColor="#FFEDFDFF"
-        android:pathData="M6 20c0-7.73 6.27-14 14-14h38c7.73 0 14 6.27 14 14v38c0 7.73-6.27 14-14 14h-38c-7.73 0-14-6.27-14-14z"/>
-    <path
-        android:strokeColor="#FF006774"
-        android:strokeWidth="4"
-        android:pathData="M6 20c0-7.73 6.27-14 14-14h38c7.73 0 14 6.27 14 14v38c0 7.73-6.27 14-14 14h-38c-7.73 0-14-6.27-14-14z"/>
-    <path
-        android:strokeColor="#FFC0E9EE"
-        android:strokeWidth="4"
-        android:pathData="M2 20c0-9.94 8.06-18 18-18h38c9.94 0 18 8.06 18 18v38c0 9.94-8.06 18-18 18h-38c-9.94 0-18-8.06-18-18z"/>
-</vector>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<item>
+    <shape android:shape="rectangle">
+        <solid android:color="#FFC0E9EE"/>
+        <corners android:radius="16dp"/>
+        <stroke android:width="4dp" android:color="#FFC0E9EE"/>
+    </shape>
+</item>
+
+<item android:left="4dp" android:top="4dp" android:right="4dp" android:bottom="4dp">
+    <shape android:shape="rectangle">
+        <solid android:color="#FFEDFDFF "/>
+        <corners android:radius="12dp"/>
+        <stroke android:width="4dp" android:color="#FF006774"/>
+    </shape>
+</item>
+</layer-list>

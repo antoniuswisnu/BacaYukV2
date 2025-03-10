@@ -23,7 +23,8 @@ class QuizQuestionViewModel : ViewModel() {
         repository.getQuizzesByQuizSetId(
             quizSetId = quizSetId,
             onSuccess = { quizList ->
-                _quizzes.value = quizList
+                val sortedList = quizList.sortedBy { it.createdAt}
+                _quizzes.value = sortedList
                 _loading.value = false
             },
             onFailure = { e ->

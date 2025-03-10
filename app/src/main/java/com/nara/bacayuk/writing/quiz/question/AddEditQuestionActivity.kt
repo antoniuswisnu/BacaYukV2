@@ -100,6 +100,7 @@ class AddEditQuestionActivity : AppCompatActivity() {
             viewModel.updateQuiz(newQuiz)
         }
 
+        setResult(RESULT_OK)
         finish()
     }
 }

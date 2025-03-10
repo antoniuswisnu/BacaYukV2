@@ -44,7 +44,12 @@ class TracingWordActivity : AppCompatActivity() {
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-        binding.btnPlayTutorial.setOnClickListener {
+        binding.btnBack.setOnClickListener {
+            startActivity(Intent(this, MenuWordActivity::class.java)
+                .apply {
+                    putExtra("student", student)
+                }
+            )
             finish()
         }
 

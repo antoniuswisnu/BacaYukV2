@@ -1,6 +1,5 @@
 package com.nara.bacayuk.writing.quiz.predict
 
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
@@ -39,7 +38,6 @@ class PredictActivity : AppCompatActivity() {
         binding.imgTracing.setImageBitmap(bitmap)
         binding.tvPredictionResult.text = userAnswer
         binding.tvCorrectAnswer.text = correctAnswer
-
         binding.tvFeedback.visibility = View.GONE
 
         try {
