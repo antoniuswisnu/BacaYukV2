@@ -47,5 +47,4 @@ val viewModelModule = module {
     viewModel { TracingWordViewModel(get(), get(), get()) }
 
 //    viewModel { QuizQuestionViewModel(get(), get(), get()) }
-
 }

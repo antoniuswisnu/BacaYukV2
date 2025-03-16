@@ -46,7 +46,7 @@ class RiwayatTulisKataAdapter : RecyclerView.Adapter<RiwayatTulisKataAdapter.Rec
             val report = data.reportTulisKata
 
             val binding = ItemRiwayatTulisKataBinding.bind(this)
-            binding.textKata.text = data.tulisKata
+            binding.textTulisKata.text = data.tulisKata
 
             val materiKataFinished = report?.materiTulisKata == true
             val latihanKataFinished = report?.latihanTulisKata == true
@@ -58,9 +58,9 @@ class RiwayatTulisKataAdapter : RecyclerView.Adapter<RiwayatTulisKataAdapter.Rec
                     imgMateriTulisKata.setImageResource(R.drawable.ic_unfinished)
                 }
                 if (latihanKataFinished) {
-                    imgMateriTulisKata.setImageResource(R.drawable.ic_finished)
+                    imgLatihanTulisKata.setImageResource(R.drawable.ic_finished)
                 } else {
-                    imgMateriTulisKata.setImageResource(R.drawable.ic_unfinished)
+                    imgLatihanTulisKata.setImageResource(R.drawable.ic_unfinished)
                 }
             }
         }

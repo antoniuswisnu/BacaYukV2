@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/text_kata"
+            android:id="@+id/text_judul_kata"
             style="@style/TextViewH18Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/text_tulis_huruf"
+            android:id="@+id/text_tulis_kata"
             style="@style/TextViewH18Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

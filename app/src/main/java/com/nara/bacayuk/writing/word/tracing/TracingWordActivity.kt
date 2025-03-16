@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ import com.nara.bacayuk.databinding.ActivityTracingWordBinding
 import com.nara.bacayuk.ui.custom_view.AnswerStatusDialog
 import com.nara.bacayuk.ui.custom_view.OnDismissDialog
 import com.nara.bacayuk.writing.word.menu.MenuWordActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TracingWordActivity : AppCompatActivity() {
 
@@ -24,7 +26,7 @@ class TracingWordActivity : AppCompatActivity() {
         intent?.getStringExtra(EXTRA_WORD) ?: "word"
     }
     var student: Student? = null
-    private val tracingWordViewModel: TracingWordViewModel by viewModels()
+    private val tracingWordViewModel: TracingWordViewModel by viewModel()
     private var tulis: Tulis? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,15 +46,6 @@ class TracingWordActivity : AppCompatActivity() {
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-        binding.btnBack.setOnClickListener {
-            startActivity(Intent(this, MenuWordActivity::class.java)
-                .apply {
-                    putExtra("student", student)
-                }
-            )
-            finish()
-        }
-
         binding.btnPencil.setOnClickListener {
             binding.tracingCanvas.setDrawingMode(true)
             binding.btnPencil.setImageResource(R.drawable.ic_pencil_active)
@@ -69,6 +62,15 @@ class TracingWordActivity : AppCompatActivity() {
             binding.tracingCanvas.clearCanvas()
         }
 
+        binding.btnBack.setOnClickListener {
+            startActivity(Intent(this, MenuWordActivity::class.java)
+                .apply {
+                    putExtra("student", student)
+                }
+            )
+            finish()
+        }
+
         binding.btnNext.setOnClickListener {
             startActivity(Intent(this, MenuWordActivity::class.java)
                 .apply {
@@ -79,12 +81,12 @@ class TracingWordActivity : AppCompatActivity() {
         binding.tracingCanvas.setOnCorrectTracingListener {
             sendData()
         }
-
-        binding.tvTitle.text = intent.getStringExtra(EXTRA_WORD)
     }
 
     private fun sendData(){
         val user: User? = tracingWordViewModel.getUserDataStore()
+        Log.d("tracingWordActivity", "user: $user")
+        Log.d("tracingWordActivity", "student: $student")
         val dialog = AnswerStatusDialog(
             context = this,
             icon = R.drawable.ic_checklist,

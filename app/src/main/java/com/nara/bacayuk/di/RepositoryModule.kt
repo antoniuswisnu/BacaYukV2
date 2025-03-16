@@ -11,10 +11,8 @@ import com.nara.bacayuk.domain.repository.UserRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-
     single<UserRepository> { UserRepositoryImpl(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
     single<StudentRepository> { StudentRepositoryImpl(get()) }
     single<ReportRepository> { ReportRepositoryImpl(get()) }
-
 }

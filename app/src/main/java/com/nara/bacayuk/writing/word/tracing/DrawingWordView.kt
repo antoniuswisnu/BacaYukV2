@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PathMeasure
@@ -16,6 +17,8 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import kotlin.math.pow
 import kotlin.math.sqrt
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.withClip
 
 class DrawingWordView @JvmOverloads constructor(
     context: Context,
@@ -56,6 +59,7 @@ class DrawingWordView @JvmOverloads constructor(
         color = Color.LTGRAY
         style = Paint.Style.STROKE
         strokeWidth = 5f
+        pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
     }
 
     private var isDrawing = true
@@ -174,7 +178,7 @@ class DrawingWordView @JvmOverloads constructor(
 
         try {
             val drawable = ContextCompat.getDrawable(context, resourceId)
-            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val bitmap = createBitmap(width, height)
             val canvas = Canvas(bitmap)
             drawable?.setBounds(0, 0, canvas.width, canvas.height)
             drawable?.draw(canvas)
@@ -192,7 +196,6 @@ class DrawingWordView @JvmOverloads constructor(
         val offsetX = boundingRect.left
         val offsetY = boundingRect.top
 
-        // Gunakan template path yang sama dari DrawingLetterCapitalView
         when (letter) {
             "A" -> {
                 templatePath.moveTo(offsetX + width * 0.1f, offsetY + height * 0.8f)
@@ -526,15 +529,14 @@ class DrawingWordView @JvmOverloads constructor(
             val currentLetterBox = letterBoxes[currentLetterIndex]
 
             // Gambar dashed template path (opsional, hilangkan jika tidak diinginkan)
-            // canvas.drawPath(currentLetterBox.templatePath, templatePaint)
+             canvas.drawPath(currentLetterBox.templatePath, templatePaint)
 
             // Clip ke area huruf sekarang saja dan gambar user path
-            canvas.save()
-            canvas.clipRect(currentLetterBox.rect)
-            userPath.forEach { path ->
-                canvas.drawPath(path, paint)
+            canvas.withClip(currentLetterBox.rect) {
+                userPath.forEach { path ->
+                    drawPath(path, paint)
+                }
             }
-            canvas.restore()
         }
     }
 

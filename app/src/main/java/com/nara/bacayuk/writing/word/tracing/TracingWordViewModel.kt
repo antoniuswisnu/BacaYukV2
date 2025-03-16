@@ -87,5 +87,4 @@ class TracingWordViewModel (
     fun getFullName(): String? = runBlocking {
         dataStore.getString(FULL_NAME_USER)
     }
-
 }
