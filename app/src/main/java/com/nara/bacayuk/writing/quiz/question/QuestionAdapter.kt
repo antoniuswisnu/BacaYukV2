@@ -39,10 +39,11 @@ class QuestionAdapter(
             binding.btnDelete.setOnClickListener {
                 onDeleteClick(quiz)
             }
-            binding.root.setOnClickListener {
+            binding.btnEdit.setOnClickListener {
                 val intent = Intent(binding.root.context, AddEditQuestionActivity::class.java)
                 intent.putExtra("quizSetId", quiz.quizSetId) // Kirim quizSetId, bukan quiz.id
                 intent.putExtra("quiz", quiz) // Kirim objek quiz untuk diedit
+                intent.putExtra("quizId", quiz.id) // Kirim quiz.id untuk mengupdate data
                 binding.root.context.startActivity(intent)
             }
         }

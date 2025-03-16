@@ -1,5 +1,6 @@
 package com.nara.bacayuk.writing.quiz.question
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ class AddEditQuestionActivity : AppCompatActivity() {
     private lateinit var viewModel: QuizQuestionViewModel
     private var quiz: Question? = null
     private lateinit var quizSetId: String
+    private lateinit var quizId: String
     private var student: Student? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +31,28 @@ class AddEditQuestionActivity : AppCompatActivity() {
             intent.getParcelableExtra("student") as Student?
         }
 
+        quiz = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("quiz", Question::class.java)
+        } else {
+            intent.getParcelableExtra("quiz") as Question?
+        }
+
+        quizSetId = intent.getStringExtra("quizSetId") ?: ""
+        quizId = intent.getStringExtra("quizId") ?: ""
+
+        if (quizId.isBlank()) {
+            binding.btnSave.text = "Tambah Soal"
+        } else {
+            binding.btnSave.text = "Update Soal"
+        }
+
+        binding.btnBack.setOnClickListener {
+            startActivity(Intent(this, ListQuestionActivity::class.java).apply {
+                putExtra("student", student)
+            })
+            finish()
+        }
+
         setupViewModel()
         setupSpinner()
         setupClickListeners()
@@ -40,7 +64,7 @@ class AddEditQuestionActivity : AppCompatActivity() {
     }
 
     private fun setupSpinner() {
-        val questionTypes = arrayOf("LETTER", "NUMBER", "WORD")
+        val questionTypes = arrayOf("Huruf", "Angka", "Kata")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, questionTypes)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerType.adapter = adapter
@@ -53,11 +77,6 @@ class AddEditQuestionActivity : AppCompatActivity() {
     }
 
     private fun loadQuizData() {
-        quizSetId = intent.getStringExtra("quizSetId") ?: run {
-            Toast.makeText(this, "Quiz Set ID tidak valid", Toast.LENGTH_SHORT).show()
-            finish()
-            return
-        }
         Log.d("AddEditQuizActivity", "QuizSetId: $quizSetId")
 
         quiz?.let {
@@ -65,9 +84,9 @@ class AddEditQuestionActivity : AppCompatActivity() {
             binding.etAnswer.setText(it.correctAnswer)
             binding.spinnerType.setSelection(
                 when (it.questionType) {
-                    "LETTER" -> 0
-                    "NUMBER" -> 1
-                    "WORD" -> 2
+                    "Huruf" -> 0
+                    "Angka" -> 1
+                    "Kata" -> 2
                     else -> 0
                 }
             )

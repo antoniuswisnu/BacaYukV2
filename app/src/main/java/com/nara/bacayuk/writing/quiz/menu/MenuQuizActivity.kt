@@ -13,9 +13,11 @@ import com.nara.bacayuk.writing.quiz.tracing.QuizAttemptActivity
 import com.nara.bacayuk.writing.quiz.question.ListQuestionActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityMenuQuizBinding
 import com.nara.bacayuk.databinding.DialogCreateQuizSetBinding
+import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
 import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
 
 class MenuQuizActivity : AppCompatActivity() {
@@ -65,7 +67,17 @@ class MenuQuizActivity : AppCompatActivity() {
                     .show()
             },
             onDeleteClick = { quizSet ->
-                deleteQuizSet(quizSet.id)
+                val dialogDelete = ConfirmationDialogRedStyle(
+                    this@MenuQuizActivity,
+                    icon = R.drawable.ic_baseline_delete_24,
+                    title = "Apakah Anda yakin akan menghapus kuis ini?",
+                    message = "kuis akan dihapus permanen",
+                    onConfirmClickListener = {
+                        deleteQuizSet(quizSet.id)
+                        onResume()
+                    }
+                )
+                dialogDelete.show()
             },
             onEditClick = { quizSet ->
                 val intent = Intent(this, ListQuestionActivity::class.java)

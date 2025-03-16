@@ -17,7 +17,6 @@ import com.nara.bacayuk.utils.loadImage
 
 class StudentAdapter(val listener: AdapterListener): RecyclerView.Adapter<StudentAdapter.RecentAdapterViewHolder>() {
 
-    //selected student
     var selectedStudent: Student? = null
 
     inner class RecentAdapterViewHolder(val view: View) :
@@ -40,7 +39,6 @@ class StudentAdapter(val listener: AdapterListener): RecyclerView.Adapter<Studen
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentAdapterViewHolder {
-        //return binding
         val binding = ItemSiswaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RecentAdapterViewHolder(binding.root)
     }
@@ -53,7 +51,6 @@ class StudentAdapter(val listener: AdapterListener): RecyclerView.Adapter<Studen
 //            binding.imgProfile.loadImage(holder.view.context,data.profilPicture)
             binding.txtName.text = data.fullName
 
-            //if selected change border image and background text to primary_500
             if (data == selectedStudent) {
                 binding.imgProfile.borderColor = resources.getColor(R.color.primary_500)
                 binding.txtName.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary_500))

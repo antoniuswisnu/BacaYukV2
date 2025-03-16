@@ -101,7 +101,6 @@ class ListStudentActivity : AppCompatActivity(), AdapterListener {
             }
         }
 
-
         binding.apply {
             toolbar.apply {
                 txtTitle.text = getString(com.nara.bacayuk.R.string.pilih_siswa)
@@ -117,8 +116,7 @@ class ListStudentActivity : AppCompatActivity(), AdapterListener {
 
             layoutStudent.rvListStudent.apply {
                 adapter = this@ListStudentActivity.studentAdapter
-                layoutManager =
-                    androidx.recyclerview.widget.GridLayoutManager(this@ListStudentActivity, 4)
+                layoutManager = androidx.recyclerview.widget.GridLayoutManager(this@ListStudentActivity, 4)
             }
 
             binding.layoutStudent.btnSelectStudent.isEnabled = selectedStudent!= null
@@ -127,7 +125,7 @@ class ListStudentActivity : AppCompatActivity(), AdapterListener {
                 if (selectedStudent?.isReadyHurufDataSet == false ) {
                     mainViewModel.createReportHurufDataSets(
                         true,
-                        user?.uuid?: "-", selectedStudent!!.uuid ?: "-",
+                        user?.uuid?: "-", selectedStudent!!.uuid,
                         selectedStudent!!
                     )
                 } else {
@@ -167,15 +165,14 @@ class ListStudentActivity : AppCompatActivity(), AdapterListener {
             .showArrow(false)
             .margin(16f)
             .backgroundColor(resources.getColor(R.color.white))
-            .contentView(com.nara.bacayuk.R.layout.layout_action_siswa)
+            .contentView(R.layout.layout_action_siswa)
             .focusable(true)
             .build()
         tooltip.show()
 
-        val editSiswaText: TextView = tooltip?.findViewById(com.nara.bacayuk.R.id.txt_edit_siswa)!!
-        val addSiswaText: TextView = tooltip?.findViewById(com.nara.bacayuk.R.id.txt_add_siswa)!!
-        val deleteSiswaText: TextView =
-            tooltip?.findViewById(com.nara.bacayuk.R.id.txt_delete_siswa)!!
+        val editSiswaText: TextView = tooltip.findViewById(R.id.txt_edit_siswa)!!
+        val addSiswaText: TextView = tooltip.findViewById(R.id.txt_add_siswa)!!
+        val deleteSiswaText: TextView = tooltip.findViewById(R.id.txt_delete_siswa)!!
         addSiswaText.setOnClickListener {
             openActivity(this@ListStudentActivity, AddEditStudentActivity::class.java)
         }
@@ -222,7 +219,6 @@ class ListStudentActivity : AppCompatActivity(), AdapterListener {
     }
 
     private fun showBalloon(isSelected: Boolean = false) {
-
         val height = if (isSelected) 140 else 70
         balloon = createBalloon(this@ListStudentActivity) {
             setArrowSize(10)
@@ -233,23 +229,21 @@ class ListStudentActivity : AppCompatActivity(), AdapterListener {
             setAlpha(0.9f)
             setPaddingHorizontal(8)
             setPaddingVertical(4)
-            setBackgroundColorResource(com.nara.bacayuk.R.color.white)
+            setBackgroundColorResource(R.color.white)
             setMarginHorizontal(24)
-            setLayout(com.nara.bacayuk.R.layout.layout_action_siswa)
-            setTextColorResource(com.nara.bacayuk.R.color.white)
+            setLayout(R.layout.layout_action_siswa)
+            setTextColorResource(R.color.white)
             setTextIsHtml(true)
-            setBackgroundColorResource(com.nara.bacayuk.R.color.white)
+            setBackgroundColorResource(R.color.white)
             setBalloonAnimation(BalloonAnimation.FADE)
             setLifecycleOwner(lifecycleOwner)
 
             balloon?.showAlignBottom(binding.toolbar.imgActionRight)
             Handler(Looper.getMainLooper()).postDelayed({ balloon?.dismiss() }, 2000)
         }
-
-
     }
 
-    fun handleEmptyState(isEmpty: Boolean) {
+    private fun handleEmptyState(isEmpty: Boolean) {
         if (isEmpty) {
             binding.layoutEmpty.root.visible()
             binding.layoutStudent.root.gone()
@@ -259,10 +253,12 @@ class ListStudentActivity : AppCompatActivity(), AdapterListener {
         }
     }
 
+    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
     override fun onBackPressed() {
+        super.onBackPressed()
         if (backPressedTime + 2000 > System.currentTimeMillis()) {
             backToast.cancel()
-            finishAffinity()  // Menutup semua aktivitas dan keluar dari aplikasi
+            finishAffinity()
             return
         } else {
             backToast = Toast.makeText(this, "Tekan sekali lagi untuk keluar", Toast.LENGTH_SHORT)
