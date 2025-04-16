@@ -48,7 +48,6 @@ class QuizRepository {
             }
     }
 
-
     fun updateQuiz(quiz: Question, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         quizCollection.document(quiz.id)
             .set(quiz)

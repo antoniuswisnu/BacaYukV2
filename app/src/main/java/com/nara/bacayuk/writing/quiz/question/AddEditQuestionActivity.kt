@@ -42,8 +42,10 @@ class AddEditQuestionActivity : AppCompatActivity() {
 
         if (quizId.isBlank()) {
             binding.btnSave.text = "Tambah Soal"
+            binding.tvTitle.text = "Tambah Soal"
         } else {
             binding.btnSave.text = "Update Soal"
+            binding.tvTitle.text = "Update Soal"
         }
 
         binding.btnBack.setOnClickListener {
@@ -77,8 +79,6 @@ class AddEditQuestionActivity : AppCompatActivity() {
     }
 
     private fun loadQuizData() {
-        Log.d("AddEditQuizActivity", "QuizSetId: $quizSetId")
-
         quiz?.let {
             binding.etQuestion.setText(it.question)
             binding.etAnswer.setText(it.correctAnswer)

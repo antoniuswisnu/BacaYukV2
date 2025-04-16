@@ -5,7 +5,6 @@ import android.os.*
 import android.util.Log
 import android.view.Gravity
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Response
@@ -208,7 +207,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showBalloon() {
-
         val height =  120
 //        val height = if (isSelected) 175 else 105
         balloon = createBalloon(this@MainActivity) {

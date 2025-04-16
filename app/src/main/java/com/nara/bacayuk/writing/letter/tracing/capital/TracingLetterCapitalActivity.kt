@@ -109,7 +109,6 @@ class TracingLetterCapitalActivity : AppCompatActivity() {
                 )
             }
         }
-
     }
 
     private fun loadLetter() {

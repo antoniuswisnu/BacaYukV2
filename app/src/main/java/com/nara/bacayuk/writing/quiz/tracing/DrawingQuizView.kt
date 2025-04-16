@@ -6,6 +6,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.createBitmap
 
 class DrawingQuizView @JvmOverloads constructor(
     context: Context,
@@ -38,6 +39,18 @@ class DrawingQuizView @JvmOverloads constructor(
 //        paint = pencil
     }
 
+    fun clearCanvas() {
+        path.reset()
+        invalidate()
+    }
+
+    fun getBitmap(): Bitmap {
+        val bitmap = createBitmap(width, height)
+        val canvas = Canvas(bitmap)
+        draw(canvas)
+        return bitmap
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
@@ -58,17 +71,5 @@ class DrawingQuizView @JvmOverloads constructor(
 
         invalidate()
         return true
-    }
-
-    fun clearCanvas() {
-        path.reset()
-        invalidate()
-    }
-
-    fun getBitmap(): Bitmap {
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        draw(canvas)
-        return bitmap
     }
 }

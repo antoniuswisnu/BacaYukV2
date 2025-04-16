@@ -42,12 +42,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tulis_huruf"
-        android:layout_margin="@dimen/_16sdp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_70sdp"
+        android:layout_marginBottom="@dimen/_24sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

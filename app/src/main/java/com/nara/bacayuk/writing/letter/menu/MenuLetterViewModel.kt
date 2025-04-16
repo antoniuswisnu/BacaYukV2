@@ -58,6 +58,7 @@ class MenuLetterViewModel (
             }
         }
     }
+
     fun getUID(): String? = runBlocking {
         dataStoreRepository.getString(UID)
     }

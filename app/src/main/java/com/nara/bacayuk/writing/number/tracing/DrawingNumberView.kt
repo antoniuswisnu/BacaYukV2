@@ -17,18 +17,16 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
-    private var userPath = mutableListOf<Path>()
-    private val allUserPoints = mutableListOf<PointF>()
-    private val templatePoints = mutableListOf<PointF>()
+    private val userPaths = mutableListOf<Path>()
+    private val userStrokes = mutableListOf<MutableList<PointF>>()
+    private var currentStrokePoints = mutableListOf<PointF>()
 
-    private var pathMeasure = PathMeasure()
-    private var currentPath = Path()
+    private val numberStrokes = mutableListOf<NumberStroke>()
     private var templatePath = Path()
 
     private var isDrawing = false
@@ -41,25 +39,26 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
     private var viewWidth: Float = 0f
     private var viewHeight: Float = 0f
 
-    private var paint = Paint().apply {
-        color = Color.BLACK
-        style = Paint.Style.STROKE
-        strokeWidth = 30f
-    }
+    private var completedStrokes = mutableSetOf<Int>()
+    private var strokesProgress = mutableMapOf<Int, Float>()
 
     private var pencil = Paint().apply {
         color = Color.BLACK
         style = Paint.Style.STROKE
         strokeWidth = 30f
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
     }
 
-    private val eraser = Paint().apply {
+    private var eraser = Paint().apply {
         color = Color.WHITE
         style = Paint.Style.STROKE
         strokeWidth = 30f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
     }
+
+    private var paint = pencil
 
     private val templatePaint = Paint().apply {
         color = Color.LTGRAY
@@ -68,10 +67,18 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
         pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
     }
 
+    private val completedStrokePaint = Paint().apply {
+        color = Color.GREEN
+        style = Paint.Style.STROKE
+        strokeWidth = 8f
+        alpha = 100
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         viewWidth = w.toFloat()
         viewHeight = h.toFloat()
+        setNumber(currentNumber)
         loadNumberDrawables(currentNumber)
     }
 
@@ -86,8 +93,11 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
     }
 
     fun clearCanvas() {
-        userPath.clear()
-        allUserPoints.clear()
+        userPaths.clear()
+        userStrokes.clear()
+        currentStrokePoints.clear()
+        completedStrokes.clear()
+        strokesProgress.clear()
         invalidate()
     }
 
@@ -97,9 +107,10 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
 
     fun setNumber(number: String) {
         currentNumber = number
-        createTemplatePath(currentNumber, viewWidth, viewHeight)
-        loadNumberDrawables(currentNumber)
-        clearCanvas() // Reset user's drawing when number changes
+        setNumberStrokes(number)
+        createTemplatePath()
+        loadNumberDrawables(number)
+        clearCanvas()
         invalidate()
     }
 
@@ -131,59 +142,243 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
         }
     }
 
-    private fun extractPathPoints() {
+    data class NumberStroke(
+        val path: Path,
+        val points: MutableList<PointF> = mutableListOf(),
+        val isRequired: Boolean = true,
+        var completed: Boolean = false
+    )
+
+    private fun setNumberStrokes(number: String) {
+        numberStrokes.clear()
+
+        when (number) {
+            "0" -> {
+                val oval = Path()
+                oval.addOval(
+                    RectF(
+                        viewWidth * 0.18f, viewHeight * 0.25f,
+                        viewWidth * 0.82f, viewHeight * 0.8f
+                    ),
+                    Path.Direction.CW
+                )
+                numberStrokes.add(NumberStroke(oval))
+                extractPointsForStroke(numberStrokes.last())
+            }
+            "1" -> {
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.6f, viewHeight * 0.26f)
+                })
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.6f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.6f, viewHeight * 0.8f)
+                })
+            }
+            "2" -> {
+                val topCurve = Path()
+                topCurve.moveTo(viewWidth * 0.2f, viewHeight * 0.35f)
+                topCurve.quadTo(
+                    viewWidth * 0.6f, viewHeight * 0.15f,
+                    viewWidth * 0.8f, viewHeight * 0.4f
+                )
+                numberStrokes.add(NumberStroke(topCurve))
+                extractPointsForStroke(numberStrokes.last())
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.4f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                })
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.8f)
+                })
+            }
+            "3" -> {
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.27f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.27f)
+                })
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.27f)
+                    lineTo(viewWidth * 0.44f, viewHeight * 0.5f)
+                })
+
+                val bottomCurve = Path()
+                bottomCurve.moveTo(viewWidth * 0.44f, viewHeight * 0.5f)
+                bottomCurve.quadTo(
+                    viewWidth * 1.1f, viewHeight * 0.5f,
+                    viewWidth * 0.65f, viewHeight * 0.8f
+                )
+                bottomCurve.quadTo(
+                    viewWidth * 0.3f, viewHeight * 0.8f,
+                    viewWidth * 0.2f, viewHeight * 0.7f
+                )
+                numberStrokes.add(NumberStroke(bottomCurve))
+                extractPointsForStroke(numberStrokes.last())
+            }
+            "4" -> {
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.69f, viewHeight * 0.25f)
+                    lineTo(viewWidth * 0.69f, viewHeight * 0.8f)
+                })
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.69f, viewHeight * 0.25f)
+                    lineTo(viewWidth * 0.63f, viewHeight * 0.25f)
+                })
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.63f, viewHeight * 0.25f)
+                    lineTo(viewWidth * 0.12f, viewHeight * 0.62f)
+                })
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.12f, viewHeight * 0.62f)
+                    lineTo(viewWidth * 0.12f, viewHeight * 0.67f)
+                })
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.12f, viewHeight * 0.67f)
+                    lineTo(viewWidth * 0.86f, viewHeight * 0.67f)
+                })
+            }
+            "5" -> {
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.27f)
+                    lineTo(viewWidth * 0.27f, viewHeight * 0.27f)
+                })
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.27f, viewHeight * 0.27f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.55f)
+                })
+
+                val bottomCurve = Path()
+                bottomCurve.moveTo(viewWidth * 0.2f, viewHeight * 0.55f)
+                bottomCurve.quadTo(
+                    viewWidth * 0.6f, viewHeight * 0.4f,
+                    viewWidth * 0.8f, viewHeight * 0.6f
+                )
+                bottomCurve.quadTo(
+                    viewWidth * 0.8f, viewHeight * 0.9f,
+                    viewWidth * 0.2f, viewHeight * 0.73f
+                )
+                numberStrokes.add(NumberStroke(bottomCurve))
+                extractPointsForStroke(numberStrokes.last())
+            }
+            "6" -> {
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.20f, viewHeight * 0.6f)
+                    lineTo(viewWidth * 0.62f, viewHeight * 0.24f)
+                })
+
+                val oval = Path()
+                oval.addOval(
+                    RectF(
+                        viewWidth * 0.18f, viewHeight * 0.48f,
+                        viewWidth * 0.82f, viewHeight * 0.8f
+                    ),
+                    Path.Direction.CW
+                )
+                numberStrokes.add(NumberStroke(oval))
+                extractPointsForStroke(numberStrokes.last())
+            }
+            "7" -> {
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.82f, viewHeight * 0.26f)
+                })
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.82f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.3f, viewHeight * 0.8f)
+                })
+            }
+            "8" -> {
+                val topOval = Path()
+                topOval.addOval(
+                    RectF(
+                        viewWidth * 0.2f, viewHeight * 0.25f,
+                        viewWidth * 0.8f, viewHeight * 0.5f
+                    ),
+                    Path.Direction.CW
+                )
+                numberStrokes.add(NumberStroke(topOval))
+                extractPointsForStroke(numberStrokes.last())
+
+                val bottomOval = Path()
+                bottomOval.addOval(
+                    RectF(
+                        viewWidth * 0.2f, viewHeight * 0.5f,
+                        viewWidth * 0.8f, viewHeight * 0.8f
+                    ),
+                    Path.Direction.CW
+                )
+                numberStrokes.add(NumberStroke(bottomOval))
+                extractPointsForStroke(numberStrokes.last())
+            }
+            "9" -> {
+                val oval = Path()
+                oval.addOval(
+                    RectF(
+                        viewWidth * 0.18f, viewHeight * 0.25f,
+                        viewWidth * 0.82f, viewHeight * 0.58f
+                    ),
+                    Path.Direction.CW
+                )
+                numberStrokes.add(NumberStroke(oval))
+                extractPointsForStroke(numberStrokes.last())
+
+                numberStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.77f, viewHeight * 0.5f)
+                    lineTo(viewWidth * 0.33f, viewHeight * 0.8f)
+                })
+            }
+            else -> {
+                val defaultPath = Path()
+                defaultPath.addRect(
+                    viewWidth * 0.2f,
+                    viewHeight * 0.2f,
+                    viewWidth * 0.8f,
+                    viewHeight * 0.8f,
+                    Path.Direction.CW
+                )
+                numberStrokes.add(NumberStroke(defaultPath))
+                extractPointsForStroke(numberStrokes.last())
+            }
+        }
+    }
+
+    private fun createStroke(pathBuilder: Path.() -> Unit): NumberStroke {
+        val strokePath = Path()
+        strokePath.pathBuilder()
+        val stroke = NumberStroke(strokePath)
+        extractPointsForStroke(stroke)
+        return stroke
+    }
+
+    private fun extractPointsForStroke(stroke: NumberStroke) {
+        val pathMeasure = PathMeasure(stroke.path, false)
         val point = FloatArray(2)
-        val step = pathMeasure.length / 40
+        val step = 5f
         var distance = 0f
 
-        templatePoints.clear()
-        while (distance < pathMeasure.length) {
+        while (distance <= pathMeasure.length) {
             pathMeasure.getPosTan(distance, point, null)
-            templatePoints.add(PointF(point[0], point[1]))
+            stroke.points.add(PointF(point[0], point[1]))
             distance += step
         }
     }
 
-    private fun isTracingCorrect(): Boolean {
-        if (allUserPoints.isEmpty() || templatePoints.isEmpty()) return false
-
-        // Memerlukan minimal setengah dari jumlah titik template untuk diperiksa
-        if (allUserPoints.size < templatePoints.size / 3) {
-            Log.d("TracingCheck", "Not enough user points: ${allUserPoints.size} < ${templatePoints.size / 3}")
-            return false
+    private fun createTemplatePath() {
+        templatePath.reset()
+        for (stroke in numberStrokes) {
+            templatePath.addPath(stroke.path)
         }
-
-        var matchCount = 0
-        val tolerance = getDynamicTolerance()
-
-        // Kita periksa apakah titik template berada di dekat jalur yang digambar pengguna
-        for (templatePoint in templatePoints) {
-            var isMatched = false
-            for (userPoint in allUserPoints) {
-                val distance = euclideanDistance(userPoint, templatePoint)
-                if (distance < tolerance) {
-                    isMatched = true
-                    matchCount++
-                    break
-                }
-            }
-        }
-
-        // Minimum 50% dari template points harus cocok dengan user points
-        val matchPercentage = matchCount.toFloat() / templatePoints.size.toFloat()
-        val isCorrect = matchPercentage >= 0.8f
-
-        Log.d("TracingPercentage", "Matched: $matchCount / ${templatePoints.size} (${matchPercentage * 100}%), Tolerance: $tolerance, Result: $isCorrect")
-        return isCorrect
-    }
-
-    private fun getDynamicTolerance(): Float {
-        // Toleransi dinamis berdasarkan ukuran view (5% dari lebar layar)
-        return viewWidth * 0.05f
-    }
-
-    private fun euclideanDistance(p1: PointF, p2: PointF): Float {
-        return sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -192,21 +387,25 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                currentPath = Path()
+                val currentPath = Path()
                 currentPath.moveTo(event.x, event.y)
-                userPath.add(currentPath)
-                allUserPoints.add(PointF(event.x, event.y))
+                userPaths.add(currentPath)
+
+                currentStrokePoints = mutableListOf()
+                currentStrokePoints.add(PointF(event.x, event.y))
             }
             MotionEvent.ACTION_MOVE -> {
-                currentPath.lineTo(event.x, event.y)
-                allUserPoints.add(PointF(event.x, event.y))
+                userPaths.last().lineTo(event.x, event.y)
+                currentStrokePoints.add(PointF(event.x, event.y))
             }
             MotionEvent.ACTION_UP -> {
-                if (isTracingCorrect()) {
-                    Log.d("TracingResult", "Tracing completed correctly!")
-                    onCorrectTracing?.invoke()
-                } else {
-                    Log.d("TracingResult", "Tracing not correct yet.")
+                if (currentStrokePoints.isNotEmpty()) {
+                    userStrokes.add(currentStrokePoints)
+                    checkStrokeCompletion()
+
+                    if (isAllRequiredStrokesCompleted()) {
+                        onCorrectTracing?.invoke()
+                    }
                 }
             }
         }
@@ -214,171 +413,94 @@ class DrawingNumberView(context: Context, attrs: AttributeSet) : View(context, a
         return true
     }
 
-    @SuppressLint("DrawAllocation")
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+    private fun checkStrokeCompletion() {
+        val lastStroke = currentStrokePoints
 
-        val width = width.toFloat()
-        val height = height.toFloat()
+        for (i in numberStrokes.indices) {
+            if (completedStrokes.contains(i)) continue
 
-        createTemplatePath(currentNumber, width, height)
+            val numberStroke = numberStrokes[i]
+            val progress = calculateStrokeProgress(lastStroke, numberStroke.points)
+            strokesProgress[i] = progress
 
-        canvas.drawPath(templatePath, templatePaint)
-
-        for (path in userPath) {
-            canvas.drawPath(path, paint)
-        }
-
-        outlineBitmap?.let { bitmap ->
-            canvas.drawBitmap(bitmap, null, RectF(0f, 0f, width, height), null)
-        }
-
-        // Hanya tampilkan bitmap filled jika tracing benar
-        if (isTracingCorrect()) {
-            filledBitmap?.let { bitmap ->
-                canvas.drawBitmap(bitmap, null, RectF(0f, 0f, width, height), null)
+            if (progress >= 0.7f) {
+                completedStrokes.add(i)
+                numberStroke.completed = true
+                Log.d("TracingDebug", "Stroke $i completed with progress $progress")
             }
         }
     }
 
-    private fun createTemplatePath(letter: String, width: Float, height: Float) {
-        templatePath.reset()
+    private fun calculateStrokeProgress(userStroke: List<PointF>, templatePoints: List<PointF>): Float {
+        if (templatePoints.isEmpty()) return 0f
 
-        when (letter) {
-            "0" -> {
-                templatePath.addOval(
-                    RectF(
-                        width * 0.18f, height * 0.25f,
-                        width * 0.82f, height * 0.8f
-                    ),
-                    Path.Direction.CW
-                )
-            }
+        var coveredPoints = 0
+        val tolerance = getStrokeTolerance()
 
-            "1" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.6f, height * 0.26f)
-
-                templatePath.moveTo(width * 0.6f, height * 0.26f)
-                templatePath.lineTo(width * 0.6f, height * 0.8f)
-            }
-
-            "2" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.35f)
-                templatePath.quadTo(
-                    width * 0.6f, height * 0.15f,
-                    width * 0.8f, height * 0.4f
-                )
-
-                templatePath.moveTo(width * 0.8f, height * 0.4f)
-                templatePath.lineTo(width * 0.2f, height * 0.8f)
-
-                templatePath.lineTo(width * 0.8f, height * 0.8f)
-            }
-
-            "3" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.27f)
-                templatePath.lineTo(width * 0.8f, height * 0.27f)
-
-                templatePath.moveTo(width * 0.8f, height * 0.27f)
-                templatePath.lineTo(width * 0.44f, height * 0.5f)
-
-                templatePath.moveTo(width * 0.44f, height * 0.5f)
-                templatePath.quadTo(
-                    width * 1.1f, height * 0.5f,
-                    width * 0.65f, height * 0.8f
-                )
-
-                templatePath.quadTo(
-                    width * 0.3f, height * 0.8f,
-                    width * 0.2f, height * 0.7f
-                )
-            }
-
-            "4" -> {
-                templatePath.moveTo(width * 0.69f, height * 0.25f)
-                templatePath.lineTo(width * 0.69f, height * 0.8f)
-
-                templatePath.moveTo(width * 0.69f, height * 0.25f)
-                templatePath.lineTo(width * 0.63f, height * 0.25f)
-
-                templatePath.moveTo(width * 0.63f, height * 0.25f)
-                templatePath.lineTo(width * 0.12f, height * 0.62f)
-
-                templatePath.moveTo(width * 0.12f, height * 0.62f)
-                templatePath.lineTo(width * 0.12f, height * 0.67f)
-
-                templatePath.moveTo(width * 0.12f, height * 0.67f)
-                templatePath.lineTo(width * 0.86f, height * 0.67f)
-            }
-
-            "5" -> {
-                templatePath.moveTo(width * 0.8f, height * 0.27f)
-                templatePath.lineTo(width * 0.27f, height * 0.27f)
-                templatePath.lineTo(width * 0.2f, height * 0.55f)
-
-                templatePath.moveTo(width * 0.2f, height * 0.55f)
-                templatePath.quadTo(
-                    width * 0.6f, height * 0.4f,
-                    width * 0.8f, height * 0.6f
-                )
-                templatePath.quadTo(
-                    width * 0.8f, height * 0.9f,
-                    width * 0.2f, height * 0.73f
-                )
-            }
-
-            "6" -> {
-                templatePath.addOval(
-                    RectF(
-                        width * 0.18f, height * 0.48f,
-                        width * 0.82f, height * 0.8f
-                    ),
-                    Path.Direction.CW
-                )
-                templatePath.moveTo(width * 0.20f, height * 0.6f)
-                templatePath.lineTo(width * 0.62f, height * 0.24f)
-            }
-
-            "7" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.82f, height * 0.26f)
-
-                templatePath.moveTo(width * 0.82f, height * 0.26f)
-                templatePath.lineTo(width * 0.3f, height * 0.8f)
-            }
-
-            "8" -> {
-                templatePath.addOval(
-                    RectF(
-                        width * 0.2f, height * 0.25f,
-                        width * 0.8f, height * 0.5f
-                    ),
-                    Path.Direction.CW
-                )
-                templatePath.addOval(
-                    RectF(
-                        width * 0.2f, height * 0.5f,
-                        width * 0.8f, height * 0.8f
-                    ),
-                    Path.Direction.CW
-                )
-            }
-
-            "9" -> {
-                templatePath.addOval(
-                    RectF(
-                        width * 0.18f, height * 0.25f,
-                        width * 0.82f, height * 0.58f
-                    ),
-                    Path.Direction.CW
-                )
-                templatePath.moveTo(width * 0.77f, height * 0.5f)
-                templatePath.lineTo(width * 0.33f, height * 0.8f)
+        for (templatePoint in templatePoints) {
+            for (userPoint in userStroke) {
+                if (euclideanDistance(templatePoint, userPoint) <= tolerance) {
+                    coveredPoints++
+                    break
+                }
             }
         }
 
-        pathMeasure.setPath(templatePath, false)
-        extractPathPoints()
+        return coveredPoints.toFloat() / templatePoints.size
+    }
+
+    private fun getStrokeTolerance(): Float {
+        val diagonal = sqrt(viewWidth.pow(2) + viewHeight.pow(2))
+        return diagonal * 0.04f
+    }
+
+    private fun euclideanDistance(p1: PointF, p2: PointF): Float {
+        return sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))
+    }
+
+    private fun isAllRequiredStrokesCompleted(): Boolean {
+        var requiredCount = 0
+        var completedRequiredCount = 0
+
+        for (i in numberStrokes.indices) {
+            val stroke = numberStrokes[i]
+            if (stroke.isRequired) {
+                requiredCount++
+                if (completedStrokes.contains(i)) {
+                    completedRequiredCount++
+                }
+            }
+        }
+
+        Log.d("TracingDebug", "Completed $completedRequiredCount of $requiredCount required strokes")
+        return completedRequiredCount == requiredCount && requiredCount > 0
+    }
+
+    @SuppressLint("DrawAllocation")
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        outlineBitmap?.let { bitmap ->
+            canvas.drawBitmap(bitmap, null, RectF(0f, 0f, viewWidth, viewHeight), null)
+        }
+
+        canvas.drawPath(templatePath, templatePaint)
+
+        for (i in numberStrokes.indices) {
+            if (completedStrokes.contains(i)) {
+                canvas.drawPath(numberStrokes[i].path, completedStrokePaint)
+            }
+        }
+
+        for (path in userPaths) {
+            canvas.drawPath(path, paint)
+        }
+
+        if (isAllRequiredStrokesCompleted()) {
+            filledBitmap?.let { bitmap ->
+                val alphaPaint = Paint().apply { alpha = 180 }
+                canvas.drawBitmap(bitmap, null, RectF(0f, 0f, viewWidth, viewHeight), alphaPaint)
+            }
+        }
     }
 }

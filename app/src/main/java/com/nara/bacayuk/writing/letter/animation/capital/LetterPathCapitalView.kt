@@ -13,6 +13,14 @@ class LetterPathCapitalView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private val paths = mutableListOf<Path>()
+    private var pathMeasure = PathMeasure()
+    private var currentLength = 0f
+    private var totalLength = 0f
+    private var currentPath = 0
+    private val drawPath = Path()
+    private var currentLetter = "A"
+
     private val pathPaint = Paint().apply {
         color = Color.BLUE
         strokeWidth = 10f
@@ -21,15 +29,6 @@ class LetterPathCapitalView @JvmOverloads constructor(
         strokeJoin = Paint.Join.ROUND
         isAntiAlias = true
     }
-
-    private val paths = mutableListOf<Path>()
-    private var pathMeasure = PathMeasure()
-    private var currentLength = 0f
-    private var totalLength = 0f
-    private var currentPath = 0
-
-    private val drawPath = Path()
-    private var currentLetter = "A"
 
     private val pathAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
         duration = 3000
@@ -97,27 +96,27 @@ class LetterPathCapitalView @JvmOverloads constructor(
 
     private fun createLetterB() {
         val path1 = Path().apply {
-            moveTo(width * 0.3f, height * 0.2f)
-            lineTo(width * 0.3f, height * 0.8f)
+            moveTo(width * 0.4f, height * 0.2f)
+            lineTo(width * 0.4f, height * 0.8f)
         }
         paths.add(path1)
 
         val path2 = Path().apply {
-            moveTo(width * 0.3f, height * 0.2f)
+            moveTo(width * 0.4f, height * 0.2f)
             cubicTo(
                 width * 0.8f, height * 0.2f,
                 width * 0.8f, height * 0.45f,
-                width * 0.3f, height * 0.5f
+                width * 0.4f, height * 0.5f
             )
         }
         paths.add(path2)
 
         val path3 = Path().apply {
-            moveTo(width * 0.3f, height * 0.5f)
+            moveTo(width * 0.4f, height * 0.5f)
             cubicTo(
                 width * 0.8f, height * 0.5f,
                 width * 0.8f, height * 0.8f,
-                width * 0.3f, height * 0.8f
+                width * 0.4f, height * 0.8f
             )
         }
         paths.add(path3)
@@ -125,21 +124,24 @@ class LetterPathCapitalView @JvmOverloads constructor(
 
     private fun createLetterC() {
         val path = Path().apply {
-            moveTo(width * 0.8f, height * 0.3f)
+            moveTo(width * 0.7f, height * 0.3f)
+
             cubicTo(
-                width * 0.8f, height * 0.2f,
-                width * 0.6f, height * 0.2f,
-                width * 0.4f, height * 0.2f
+                width * 0.7f, height * 0.22f,
+                width * 0.5f, height * 0.2f,
+                width * 0.35f, height * 0.25f
             )
+
             cubicTo(
-                width * 0.2f, height * 0.2f,
+                width * 0.25f, height * 0.3f,
                 width * 0.2f, height * 0.5f,
-                width * 0.2f, height * 0.8f
+                width * 0.25f, height * 0.7f
             )
+
             cubicTo(
-                width * 0.2f, height * 0.8f,
-                width * 0.4f, height * 0.8f,
-                width * 0.8f, height * 0.7f
+                width * 0.3f, height * 0.8f,
+                width * 0.5f, height * 0.8f,
+                width * 0.7f, height * 0.7f
             )
         }
         paths.add(path)
@@ -147,13 +149,13 @@ class LetterPathCapitalView @JvmOverloads constructor(
 
     private fun createLetterD() {
         val path1 = Path().apply {
-            moveTo(width * 0.3f, height * 0.2f)
-            lineTo(width * 0.3f, height * 0.8f)
+            moveTo(width * 0.4f, height * 0.2f)
+            lineTo(width * 0.4f, height * 0.8f)
         }
         paths.add(path1)
 
         val path2 = Path().apply {
-            moveTo(width * 0.3f, height * 0.2f)
+            moveTo(width * 0.4f, height * 0.2f)
             cubicTo(
                 width * 0.6f, height * 0.2f,
                 width * 0.65f, height * 0.4f,
@@ -162,7 +164,7 @@ class LetterPathCapitalView @JvmOverloads constructor(
             cubicTo(
                 width * 0.65f, height * 0.6f,
                 width * 0.6f, height * 0.8f,
-                width * 0.3f, height * 0.8f
+                width * 0.4f, height * 0.8f
             )
         }
         paths.add(path2)
@@ -196,49 +198,54 @@ class LetterPathCapitalView @JvmOverloads constructor(
 
     private fun createLetterF() {
         val path1 = Path().apply {
-            moveTo(width * 0.3f, height * 0.2f)
-            lineTo(width * 0.3f, height * 0.9f)
+            moveTo(width * 0.4f, height * 0.2f)
+            lineTo(width * 0.4f, height * 0.9f)
         }
         paths.add(path1)
 
         val path2 = Path().apply {
-            moveTo(width * 0.3f, height * 0.2f)
-            lineTo(width * 0.5f, height * 0.2f)
+            moveTo(width * 0.4f, height * 0.2f)
+            lineTo(width * 0.65f, height * 0.2f)
         }
         paths.add(path2)
 
         val path3 = Path().apply {
-            moveTo(width * 0.3f, height * 0.5f)
-            lineTo(width * 0.5f, height * 0.5f)
+            moveTo(width * 0.4f, height * 0.5f)
+            lineTo(width * 0.65f, height * 0.5f)
         }
         paths.add(path3)
     }
 
     private fun createLetterG() {
         val path1 = Path().apply {
-            moveTo(width * 0.8f, height * 0.3f)
+            moveTo(width * 0.7f, height * 0.3f)
             cubicTo(
-                width * 0.8f, height * 0.2f,
+                width * 0.7f, height * 0.25f,
                 width * 0.6f, height * 0.2f,
-                width * 0.4f, height * 0.2f
+                width * 0.5f, height * 0.2f
             )
             cubicTo(
-                width * 0.2f, height * 0.2f,
-                width * 0.2f, height * 0.5f,
-                width * 0.2f, height * 0.8f
+                width * 0.35f, height * 0.2f,
+                width * 0.25f, height * 0.3f,
+                width * 0.25f, height * 0.5f
             )
             cubicTo(
-                width * 0.2f, height * 0.8f,
-                width * 0.4f, height * 0.8f,
-                width * 0.8f, height * 0.7f
+                width * 0.25f, height * 0.7f,
+                width * 0.35f, height * 0.8f,
+                width * 0.5f, height * 0.8f
+            )
+            cubicTo(
+                width * 0.6f, height * 0.8f,
+                width * 0.7f, height * 0.7f,
+                width * 0.7f, height * 0.6f
             )
         }
         paths.add(path1)
 
         val path2 = Path().apply {
-            moveTo(width * 0.8f, height * 0.7f)   // Bottom right
-            lineTo(width * 0.8f, height * 0.5f)   // Vertical line
-            lineTo(width * 0.5f, height * 0.5f)   // Horizontal line
+            moveTo(width * 0.7f, height * 0.6f)
+            lineTo(width * 0.7f, height * 0.5f)
+            lineTo(width * 0.5f, height * 0.5f)
         }
         paths.add(path2)
     }
@@ -272,7 +279,6 @@ class LetterPathCapitalView @JvmOverloads constructor(
 
 
         val path2 = Path().apply {
-//            addCircle(width * 0.5f, height * 0.1f, 10f, Path.Direction.CW)
             moveTo(width * 0.4f, height * 0.2f)
             lineTo(width * 0.6f, height * 0.2f)
         }
@@ -300,19 +306,19 @@ class LetterPathCapitalView @JvmOverloads constructor(
 
     private fun createLetterK() {
         val path1 = Path().apply {
-            moveTo(width * 0.2f, height * 0.2f)
-            lineTo(width * 0.2f, height * 1.8f)
+            moveTo(width * 0.3f, height * 0.2f)
+            lineTo(width * 0.3f, height * 1.8f)
         }
         paths.add(path1)
 
         val path2 = Path().apply {
-            moveTo(width * 0.2f, height * 0.6f)
+            moveTo(width * 0.3f, height * 0.6f)
             lineTo(width * 0.6f, height * 0.2f)
         }
         paths.add(path2)
 
         val path3 = Path().apply {
-            moveTo(width * 0.3f, height * 0.5f)
+            moveTo(width * 0.4f, height * 0.48f)
             lineTo(width * 1.0f, height * 1.8f)
         }
         paths.add(path3)
@@ -386,13 +392,13 @@ class LetterPathCapitalView @JvmOverloads constructor(
 
     private fun createLetterQ() {
         val path1 = Path().apply {
-           addOval(
-               RectF(
-                   width * 0.3f, height * 0.2f,
-                   width * 0.7f, height * 0.9f
-               ),
-               Path.Direction.CW
-           )
+            addOval(
+                RectF(
+                    width * 0.3f, height * 0.2f,
+                    width * 0.7f, height * 0.9f
+                ),
+                Path.Direction.CW
+            )
         }
         paths.add(path1)
 
@@ -428,31 +434,28 @@ class LetterPathCapitalView @JvmOverloads constructor(
     }
 
     private fun createLetterS() {
-        val path1 = Path().apply {
-            moveTo(width * 0.8f, height * 0.2f)   // Top right
+        val path = Path().apply {
+            moveTo(width * 0.7f, height * 0.2f)
+
             cubicTo(
-                width * 0.8f, height * 0.1f,      // Control point 1
-                width * 0.6f, height * 0.1f,      // Control point 2
-                width * 0.4f, height * 0.1f       // End point top
-            )
-            cubicTo(
-                width * 0.2f, height * 0.1f,      // Control point 1
-                width * 0.2f, height * 0.4f,      // Control point 2
-                width * 0.2f, height * 0.5f       // End point middle
-            )
-            cubicTo(
-                width * 0.2f, height * 0.6f,      // Control point 1
-                width * 0.4f, height * 0.6f,      // Control point 2
-                width * 0.6f, height * 0.6f       // End point middle
-            )
-            cubicTo(
-                width * 0.8f, height * 0.6f,      // Control point 1
-                width * 0.8f, height * 0.9f,      // Control point 2
-                width * 0.8f, height * 0.8f       // End point bottom
+                width * 0.5f, height * 0.1f,
+                width * 0.25f, height * 0.15f,
+                width * 0.3f, height * 0.35f
             )
 
+            cubicTo(
+                width * 0.35f, height * 0.45f,
+                width * 0.65f, height * 0.45f,
+                width * 0.7f, height * 0.55f
+            )
+
+            cubicTo(
+                width * 0.75f, height * 0.7f,
+                width * 0.45f, height * 0.8f,
+                width * 0.35f, height * 0.7f
+            )
         }
-        paths.add(path1)
+        paths.add(path)
     }
 
     private fun createLetterT() {

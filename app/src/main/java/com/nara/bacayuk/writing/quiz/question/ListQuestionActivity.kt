@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nara.bacayuk.data.model.Student
@@ -32,7 +31,6 @@ class ListQuestionActivity : AppCompatActivity() {
         }
 
         quizSetId = intent.getStringExtra("quizSetId") ?: run {
-//            Toast.makeText(this, "Quiz Set ID tidak valid", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -99,11 +97,5 @@ class ListQuestionActivity : AppCompatActivity() {
         viewModel.loading.observe(this) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
-
-//        viewModel.error.observe(this) { error ->
-//            error?.let {
-//                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-//            }
-//        }
     }
 }

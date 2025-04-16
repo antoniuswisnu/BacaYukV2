@@ -1,6 +1,6 @@
 package com.nara.bacayuk.writing.letter.tracing.capital
 
-import android.annotation.SuppressLint
+import  android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -14,12 +14,11 @@ import kotlin.math.sqrt
 
 class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
-    private var userPath = mutableListOf<Path>()
-    private val allUserPoints = mutableListOf<PointF>()
-    private val templatePoints = mutableListOf<PointF>()
+    private val userPaths = mutableListOf<Path>()
+    private val userStrokes = mutableListOf<MutableList<PointF>>()
+    private var currentStrokePoints = mutableListOf<PointF>()
 
-    private var pathMeasure = PathMeasure()
-    private var currentPath = Path()
+    private val letterStrokes = mutableListOf<LetterStroke>()
     private var templatePath = Path()
 
     private var isDrawing = false
@@ -32,25 +31,26 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
     private var viewWidth: Float = 0f
     private var viewHeight: Float = 0f
 
-    private var paint = Paint().apply {
-        color = Color.BLACK
-        style = Paint.Style.STROKE
-        strokeWidth = 30f
-    }
+    private var completedStrokes = mutableSetOf<Int>()
+    private var strokesProgress = mutableMapOf<Int, Float>()
 
     private var pencil = Paint().apply {
         color = Color.BLACK
         style = Paint.Style.STROKE
         strokeWidth = 30f
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
     }
 
-    private val eraser = Paint().apply {
+    private var eraser = Paint().apply {
         color = Color.WHITE
         style = Paint.Style.STROKE
         strokeWidth = 30f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
     }
+
+    private var paint = pencil.apply { color = Color.BLUE }
 
     private val templatePaint = Paint().apply {
         color = Color.LTGRAY
@@ -59,10 +59,19 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
         pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
     }
 
+    private val completedStrokePaint = Paint().apply {
+        color = Color.GREEN
+        style = Paint.Style.STROKE
+        strokeWidth = 8f
+        alpha = 100
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         viewWidth = w.toFloat()
         viewHeight = h.toFloat()
+
+        setLetter(currentLetter)
         loadLetterDrawables(currentLetter)
     }
 
@@ -77,8 +86,11 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
     }
 
     fun clearCanvas() {
-        userPath.clear()
-        allUserPoints.clear()
+        userPaths.clear()
+        userStrokes.clear()
+        currentStrokePoints.clear()
+        completedStrokes.clear()
+        strokesProgress.clear()
         invalidate()
     }
 
@@ -88,9 +100,10 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
 
     fun setLetter(letter: String) {
         currentLetter = letter
-        createTemplatePath(currentLetter, viewWidth, viewHeight)
-        loadLetterDrawables(currentLetter)
-        invalidate()
+        setLetterStrokes(letter)
+        createTemplatePath()
+        loadLetterDrawables(letter)
+        clearCanvas()
     }
 
     private fun loadLetterDrawables(letter: String) {
@@ -121,46 +134,498 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
         }
     }
 
-    private fun extractPathPoints() {
+    data class LetterStroke(
+        val path: Path,
+        val points: MutableList<PointF> = mutableListOf(),
+        val isRequired: Boolean = true,
+        var completed: Boolean = false
+    )
+
+    private fun setLetterStrokes(letter: String) {
+        letterStrokes.clear()
+
+        when (letter) {
+            "A" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.1f, viewHeight * 0.8f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.25f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.5f, viewHeight * 0.25f)
+                    lineTo(viewWidth * 0.9f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.24f, viewHeight * 0.65f)
+                    lineTo(viewWidth * 0.75f, viewHeight * 0.65f)
+                })
+            }
+            "B" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.19f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.19f, viewHeight * 0.8f)
+                })
+
+                val topCurve = Path()
+                topCurve.moveTo(viewWidth * 0.19f, viewHeight * 0.26f)
+                topCurve.lineTo(viewWidth * 0.6f, viewHeight * 0.26f)
+                topCurve.arcTo(
+                    viewWidth * 0.5f,
+                    viewHeight * 0.26f,
+                    viewWidth * 0.8f,
+                    viewHeight * 0.5f,
+                    270f,
+                    180f,
+                    false
+                )
+                topCurve.lineTo(viewWidth * 0.19f, viewHeight * 0.5f)
+                letterStrokes.add(LetterStroke(topCurve))
+                extractPointsForStroke(letterStrokes.last())
+
+                val bottomCurve = Path()
+                bottomCurve.moveTo(viewWidth * 0.19f, viewHeight * 0.5f)
+                bottomCurve.lineTo(viewWidth * 0.6f, viewHeight * 0.5f)
+                bottomCurve.arcTo(
+                    viewWidth * 0.5f,
+                    viewHeight * 0.5f,
+                    viewWidth * 0.8f,
+                    viewHeight * 0.8f,
+                    270f,
+                    180f,
+                    false
+                )
+                bottomCurve.lineTo(viewWidth * 0.19f, viewHeight * 0.8f)
+                letterStrokes.add(LetterStroke(bottomCurve))
+                extractPointsForStroke(letterStrokes.last())
+            }
+            "C" -> {
+                val cPath = Path()
+                cPath.moveTo(viewWidth * 0.8f, viewHeight * 0.35f)
+                cPath.quadTo(viewWidth * 0.29f, viewHeight * 0.1f, viewWidth * 0.18f, viewHeight * 0.5f)
+                cPath.quadTo(viewWidth * 0.18f, viewHeight * 0.9f, viewWidth * 0.8f, viewHeight * 0.75f)
+                letterStrokes.add(LetterStroke(cPath))
+                extractPointsForStroke(letterStrokes.last())
+            }
+            "D" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.27f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.79f)
+                })
+
+                val curve = Path()
+                curve.moveTo(viewWidth * 0.2f, viewHeight * 0.27f)
+                curve.lineTo(viewWidth * 0.3f, viewHeight * 0.27f)
+                curve.arcTo(
+                    viewWidth * 0.3f,
+                    viewHeight * 0.27f,
+                    viewWidth * 0.85f,
+                    viewHeight * 0.79f,
+                    270f,
+                    180f,
+                    false
+                )
+                curve.lineTo(viewWidth * 0.2f, viewHeight * 0.79f)
+                letterStrokes.add(LetterStroke(curve))
+                extractPointsForStroke(letterStrokes.last())
+            }
+            "E" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.25f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.25f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.25f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.85f, viewHeight * 0.26f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.25f, viewHeight * 0.53f)
+                    lineTo(viewWidth * 0.85f, viewHeight * 0.53f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.25f, viewHeight * 0.8f)
+                    lineTo(viewWidth * 0.85f, viewHeight * 0.8f)
+                })
+            }
+            "F" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.25f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.25f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.25f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.85f, viewHeight * 0.26f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.25f, viewHeight * 0.53f)
+                    lineTo(viewWidth * 0.85f, viewHeight * 0.53f)
+                })
+            }
+            "G" -> {
+                val curve = Path()
+                curve.moveTo(viewWidth * 0.8f, viewHeight * 0.35f)
+                curve.quadTo(viewWidth * 0.5f, viewHeight * 0.2f, viewWidth * 0.25f, viewHeight * 0.3f)
+                curve.quadTo(viewWidth * 0.15f, viewHeight * 0.4f, viewWidth * 0.15f, viewHeight * 0.55f)
+                curve.quadTo(viewWidth * 0.15f, viewHeight * 0.7f, viewWidth * 0.35f, viewHeight * 0.8f)
+                curve.quadTo(viewWidth * 0.7f, viewHeight * 0.85f, viewWidth * 0.85f, viewHeight * 0.7f)
+                letterStrokes.add(LetterStroke(curve))
+                extractPointsForStroke(letterStrokes.last())
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.85f, viewHeight * 0.55f)
+                    lineTo(viewWidth * 0.57f, viewHeight * 0.55f)
+                })
+            }
+            "H" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.53f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.53f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.8f)
+                })
+            }
+            "I" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.5f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.8f)
+                })
+            }
+            "J" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.65f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.65f, viewHeight * 0.7f)
+                })
+
+                val curve = Path()
+                curve.moveTo(viewWidth * 0.65f, viewHeight * 0.7f)
+                curve.quadTo(viewWidth * 0.65f, viewHeight * 0.78f, viewWidth * 0.2f, viewHeight * 0.78f)
+                letterStrokes.add(LetterStroke(curve))
+                extractPointsForStroke(letterStrokes.last())
+            }
+            "K" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.5f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.26f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.5f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.8f)
+                })
+            }
+            "L" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.23f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.23f, viewHeight * 0.79f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.23f, viewHeight * 0.79f)
+                    lineTo(viewWidth * 0.82f, viewHeight * 0.79f)
+                })
+            }
+            "M" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.15f, viewHeight * 0.82f)
+                    lineTo(viewWidth * 0.15f, viewHeight * 0.25f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.15f, viewHeight * 0.25f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.6f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.5f, viewHeight * 0.6f)
+                    lineTo(viewWidth * 0.84f, viewHeight * 0.25f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.84f, viewHeight * 0.25f)
+                    lineTo(viewWidth * 0.84f, viewHeight * 0.82f)
+                })
+            }
+            "N" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.25f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.25f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.8f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.25f)
+                })
+            }
+            "O" -> {
+                val oval = Path()
+                oval.addOval(
+                    viewWidth * 0.12f,
+                    viewHeight * 0.25f,
+                    viewWidth * 0.88f,
+                    viewHeight * 0.8f,
+                    Path.Direction.CW
+                )
+                letterStrokes.add(LetterStroke(oval))
+                extractPointsForStroke(letterStrokes.last())
+            }
+            "P" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                })
+
+                val loop = Path()
+                loop.moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                loop.lineTo(viewWidth * 0.6f, viewHeight * 0.26f)
+                loop.arcTo(
+                    viewWidth * 0.5f,
+                    viewHeight * 0.26f,
+                    viewWidth * 0.82f,
+                    viewHeight * 0.55f,
+                    270f,
+                    180f,
+                    false
+                )
+                loop.lineTo(viewWidth * 0.2f, viewHeight * 0.55f)
+                letterStrokes.add(LetterStroke(loop))
+                extractPointsForStroke(letterStrokes.last())
+            }
+            "Q" -> {
+                val circle = Path()
+                circle.addOval(
+                    viewWidth * 0.12f,
+                    viewHeight * 0.25f,
+                    viewWidth * 0.88f,
+                    viewHeight * 0.8f,
+                    Path.Direction.CW
+                )
+                letterStrokes.add(LetterStroke(circle))
+                extractPointsForStroke(letterStrokes.last())
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.51f, viewHeight * 0.61f)
+                    lineTo(viewWidth * 0.76f, viewHeight * 0.9f)
+                })
+            }
+            "R" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                })
+
+                val loop = Path()
+                loop.moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                loop.lineTo(viewWidth * 0.6f, viewHeight * 0.26f)
+                loop.arcTo(
+                    viewWidth * 0.5f,
+                    viewHeight * 0.26f,
+                    viewWidth * 0.8f,
+                    viewHeight * 0.55f,
+                    270f,
+                    180f,
+                    false
+                )
+                loop.lineTo(viewWidth * 0.2f, viewHeight * 0.55f)
+                letterStrokes.add(LetterStroke(loop))
+                extractPointsForStroke(letterStrokes.last())
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.53f, viewHeight * 0.55f)
+                    lineTo(viewWidth * 0.82f, viewHeight * 0.8f)
+                })
+            }
+            "S" -> {
+                val sPath = Path()
+                sPath.moveTo(viewWidth * 0.75f, viewHeight * 0.33f)
+                sPath.cubicTo(
+                    viewWidth * 0.35f, viewHeight * 0.1f,
+                    viewWidth * 0.1f, viewHeight * 0.4f,
+                    viewWidth * 0.3f, viewHeight * 0.5f
+                )
+                sPath.cubicTo(
+                    viewWidth * 0.8f, viewHeight * 0.6f,
+                    viewWidth * 1.1f, viewHeight * 0.7f,
+                    viewWidth * 0.55f, viewHeight * 0.8f
+                )
+                sPath.quadTo(viewWidth * 0.3f, viewHeight * 0.85f, viewWidth * 0.2f, viewHeight * 0.7f)
+                letterStrokes.add(LetterStroke(sPath))
+                extractPointsForStroke(letterStrokes.last())
+            }
+            "T" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.1f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.9f, viewHeight * 0.26f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.5f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.8f)
+                })
+            }
+            "U" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.65f)
+                })
+
+                val curve = Path()
+                curve.moveTo(viewWidth * 0.2f, viewHeight * 0.65f)
+                curve.arcTo(
+                    viewWidth * 0.2f,
+                    viewHeight * 0.6f,
+                    viewWidth * 0.8f,
+                    viewHeight * 0.8f,
+                    180f,
+                    180f,
+                    false
+                )
+                letterStrokes.add(LetterStroke(curve))
+                extractPointsForStroke(letterStrokes.last())
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.65f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.26f)
+                })
+            }
+            "V" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.16f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.5f, viewHeight * 0.8f)
+                    lineTo(viewWidth * 0.84f, viewHeight * 0.26f)
+                })
+            }
+            "W" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.1f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.3f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.3f, viewHeight * 0.8f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.26f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.5f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.72f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.72f, viewHeight * 0.8f)
+                    lineTo(viewWidth * 0.9f, viewHeight * 0.26f)
+                })
+            }
+            "X" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                })
+            }
+            "Y" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.5f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.5f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.5f, viewHeight * 0.5f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.8f)
+                })
+            }
+            "Z" -> {
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.26f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.26f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.8f)
+                    lineTo(viewWidth * 0.8f, viewHeight * 0.8f)
+                })
+            }
+            else -> {
+                val defaultPath = Path()
+                defaultPath.addRect(
+                    viewWidth * 0.2f,
+                    viewHeight * 0.2f,
+                    viewWidth * 0.8f,
+                    viewHeight * 0.8f,
+                    Path.Direction.CW
+                )
+                letterStrokes.add(LetterStroke(defaultPath))
+                extractPointsForStroke(letterStrokes.last())
+            }
+        }
+    }
+
+    private fun createStroke(pathBuilder: Path.() -> Unit): LetterStroke {
+        val strokePath = Path()
+        strokePath.pathBuilder()
+        val stroke = LetterStroke(strokePath)
+        extractPointsForStroke(stroke)
+        return stroke
+    }
+
+    private fun extractPointsForStroke(stroke: LetterStroke) {
+        val pathMeasure = PathMeasure(stroke.path, false)
         val point = FloatArray(2)
-        val step = pathMeasure.length / 100
+        val step = 5f
         var distance = 0f
 
-        templatePoints.clear()
-        while (distance < pathMeasure.length) {
+        while (distance <= pathMeasure.length) {
             pathMeasure.getPosTan(distance, point, null)
-            templatePoints.add(PointF(point[0], point[1]))
+            stroke.points.add(PointF(point[0], point[1]))
             distance += step
         }
     }
 
-    private fun isTracingCorrect(): Boolean {
-        if (allUserPoints.size < templatePoints.size / 2) return false
-
-        var matchCount = 0
-        val tolerance = 10f
-
-        for (userPoint in allUserPoints) {
-            for (templatePoint in templatePoints) {
-                val distance = euclideanDistance(userPoint, templatePoint)
-                if (distance < tolerance) {
-                    matchCount++
-                    break
-                }
-            }
+    private fun createTemplatePath() {
+        templatePath.reset()
+        for (stroke in letterStrokes) {
+            templatePath.addPath(stroke.path)
         }
-
-        val matchPercentage = matchCount >= templatePoints.size * 0.98
-        Log.d("TracingPercentage", "Matched: $matchCount / ${templatePoints.size} , ($matchPercentage)")
-        return matchPercentage
-    }
-
-    private fun getDynamicTolerance(): Float {
-        return viewWidth * 0.05f  // 5% dari lebar layar sebagai toleransi
-    }
-
-    private fun euclideanDistance(p1: PointF, p2: PointF): Float {
-        return sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -169,18 +634,23 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                currentPath = Path()
+                val currentPath = Path()
                 currentPath.moveTo(event.x, event.y)
-                userPath.add(currentPath)
-                allUserPoints.add(PointF(event.x, event.y))
+                userPaths.add(currentPath)
+
+                currentStrokePoints = mutableListOf()
+                currentStrokePoints.add(PointF(event.x, event.y))
             }
             MotionEvent.ACTION_MOVE -> {
-                currentPath.lineTo(event.x, event.y)
-                allUserPoints.add(PointF(event.x, event.y))
+                userPaths.last().lineTo(event.x, event.y)
+                currentStrokePoints.add(PointF(event.x, event.y))
             }
             MotionEvent.ACTION_UP -> {
-                if (allUserPoints.size >= templatePoints.size / 2) {
-                    if (isTracingCorrect()) {
+                if (currentStrokePoints.isNotEmpty()) {
+                    userStrokes.add(currentStrokePoints)
+                    checkStrokeCompletion()
+
+                    if (isAllRequiredStrokesCompleted()) {
                         onCorrectTracing?.invoke()
                     }
                 }
@@ -190,299 +660,94 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
         return true
     }
 
-    @SuppressLint("DrawAllocation")
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+    private fun checkStrokeCompletion() {
+        val lastStroke = currentStrokePoints
 
-        val width = width.toFloat()
-        val height = height.toFloat()
+        for (i in letterStrokes.indices) {
+            if (completedStrokes.contains(i)) continue
 
-        createTemplatePath(currentLetter, width, height)
+            val letterStroke = letterStrokes[i]
+            val progress = calculateStrokeProgress(lastStroke, letterStroke.points)
+            strokesProgress[i] = progress
 
-        canvas.drawPath(templatePath, templatePaint)
-
-        for (path in userPath) {
-            canvas.drawPath(path, paint)
-        }
-
-        outlineBitmap?.let { bitmap ->
-            canvas.drawBitmap(bitmap, null, RectF(0f, 0f, width.toFloat(), height.toFloat()), null)
-        }
-
-        if (isTracingCorrect()) {
-            filledBitmap?.let { bitmap ->
-                canvas.drawBitmap(bitmap, null, RectF(0f, 0f, width.toFloat(), height.toFloat()), null)
+            if (progress >= 0.7f) {
+                completedStrokes.add(i)
+                letterStroke.completed = true
+                Log.d("TracingDebug", "Stroke $i completed with progress $progress")
             }
         }
     }
 
-    private fun createTemplatePath(letter: String, width: Float, height: Float) {
-        templatePath.reset()
+    private fun calculateStrokeProgress(userStroke: List<PointF>, templatePoints: List<PointF>): Float {
+        if (templatePoints.isEmpty()) return 0f
 
-        when (letter) {
-            "A" -> {
-                templatePath.moveTo(width * 0.1f, height * 0.8f)
-                templatePath.lineTo(width * 0.5f, height * 0.25f)
-                templatePath.lineTo(width * 0.9f, height * 0.8f)
-                templatePath.moveTo(width * 0.24f, height * 0.65f)
-                templatePath.lineTo(width * 0.75f, height * 0.65f)
-            }
-            "B" -> {
-                templatePath.moveTo(width * 0.19f, height * 0.26f)
-                templatePath.lineTo(width * 0.19f, height * 0.8f)
-                templatePath.moveTo(width * 0.19f, height * 0.26f)
-                templatePath.lineTo(width * 0.6f, height * 0.26f)
-                templatePath.arcTo(
-                    width * 0.5f,
-                    height * 0.26f,
-                    width * 0.8f,
-                    height * 0.5f,
-                    270f,
-                    180f,
-                    false
-                )
-                templatePath.lineTo(width * 0.19f, height * 0.5f)
-                templatePath.moveTo(width * 0.6f, height * 0.5f)
-                templatePath.arcTo(
-                    width * 0.5f,
-                    height * 0.5f,
-                    width * 0.8f,
-                    height * 0.8f,
-                    270f,
-                    180f,
-                    false
-                )
-                templatePath.lineTo(width * 0.19f, height * 0.8f)
-            }
-            "C" -> {
-                templatePath.moveTo(width * 0.8f, height * 0.3f)
-                templatePath.quadTo(width * 0.18f, height * 0.2f, width * 0.18f, height * 0.5f)
-                templatePath.quadTo(width * 0.18f, height * 0.9f, width * 0.8f, height * 0.75f)
-            }
-            "D" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.27f)
-                templatePath.lineTo(width * 0.2f, height * 0.79f)
-                templatePath.moveTo(width * 0.2f, height * 0.27f)
-                templatePath.lineTo(width * 0.3f, height * 0.27f)
-                templatePath.arcTo(
-                    width * 0.3f,
-                    height * 0.27f,
-                    width * 0.85f,
-                    height * 0.79f,
-                    270f,
-                    180f,
-                    false
-                )
-                templatePath.lineTo(width * 0.2f, height * 0.79f)
-            }
-            "E" -> {
-                templatePath.moveTo(width * 0.25f, height * 0.26f)
-                templatePath.lineTo(width * 0.25f, height * 0.8f)
-                templatePath.moveTo(width * 0.25f, height * 0.26f)
-                templatePath.lineTo(width * 0.85f, height * 0.26f)
-                templatePath.moveTo(width * 0.25f, height * 0.53f)
-                templatePath.lineTo(width * 0.85f, height * 0.53f)
-                templatePath.moveTo(width * 0.25f, height * 0.8f)
-                templatePath.lineTo(width * 0.85f, height * 0.8f)
-            }
-            "F" -> {
-                templatePath.moveTo(width * 0.25f, height * 0.26f)
-                templatePath.lineTo(width * 0.25f, height * 0.8f)
-                templatePath.moveTo(width * 0.25f, height * 0.26f)
-                templatePath.lineTo(width * 0.85f, height * 0.26f)
-                templatePath.moveTo(width * 0.25f, height * 0.53f)
-                templatePath.lineTo(width * 0.85f, height * 0.53f)
-            }
-            "G" -> {
-                templatePath.moveTo(width * 0.8f, height * 0.3f)
-                templatePath.quadTo(width * 0.18f, height * 0.2f, width * 0.18f, height * 0.5f)
-                templatePath.quadTo(width * 0.18f, height * 0.9f, width * 0.8f, height * 0.75f)
-                templatePath.moveTo(width * 0.5f, height * 0.5f)
-                templatePath.lineTo(width * 0.8f, height * 0.5f)
-            }
-            "H" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.2f, height * 0.8f)
-                templatePath.moveTo(width * 0.2f, height * 0.53f)
-                templatePath.lineTo(width * 0.8f, height * 0.53f)
-                templatePath.moveTo(width * 0.8f, height * 0.26f)
-                templatePath.lineTo(width * 0.8f, height * 0.8f)
-            }
-            "I" -> {
-                templatePath.moveTo(width * 0.5f, height * 0.26f)
-                templatePath.lineTo(width * 0.5f, height * 0.8f)
-//                templatePath.moveTo(w * 0.25f, h * 0.26f)
-//                templatePath.lineTo(w * 0.75f, h * 0.26f)
-//                templatePath.moveTo(w * 0.25f, h * 0.8f)
-//                templatePath.lineTo(w * 0.75f, h * 0.8f)
-            }
-            "J" -> {
-                templatePath.moveTo(width * 0.65f, height * 0.26f)
-                templatePath.lineTo(width * 0.65f, height * 0.7f)
-                templatePath.quadTo(width * 0.65f, height * 0.78f, width * 0.2f, height * 0.78f)
-            }
-            "K" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.2f, height * 0.8f)
-                templatePath.moveTo(width * 0.2f, height * 0.63f)
-                templatePath.lineTo(width * 0.8f, height * 0.26f)
-                templatePath.moveTo(width * 0.46f, height * 0.48f)
-                templatePath.lineTo(width * 0.82f, height * 0.8f)
-            }
-            "L" -> {
-                templatePath.moveTo(width * 0.23f, height * 0.26f)
-                templatePath.lineTo(width * 0.23f, height * 0.79f)
-                templatePath.moveTo(width * 0.23f, height * 0.79f)
-                templatePath.lineTo(width * 0.82f, height * 0.79f)
-            }
-            "M" -> {
-                templatePath.moveTo(width * 0.15f, height * 0.82f)
-                templatePath.lineTo(width * 0.15f, height * 0.25f)
-                templatePath.lineTo(width * 0.5f, height * 0.6f)
-                templatePath.lineTo(width * 0.84f, height * 0.25f)
-                templatePath.lineTo(width * 0.84f, height * 0.82f)
-            }
-            "N" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.8f)
-                templatePath.lineTo(width * 0.2f, height * 0.25f)
-                templatePath.lineTo(width * 0.8f, height * 0.8f)
-                templatePath.lineTo(width * 0.8f, height * 0.25f)
-            }
-            "O" -> {
-                templatePath.addOval(
-                    width * 0.12f,
-                    height * 0.25f,
-                    width * 0.88f,
-                    height * 0.8f,
-                    Path.Direction.CW
-                )
-            }
-            "P" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.2f, height * 0.8f)
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.6f, height * 0.26f)
-                templatePath.arcTo(
-                    width * 0.5f,
-                    height * 0.26f,
-                    width * 0.82f,
-                    height * 0.55f,
-                    270f,
-                    180f,
-                    false
-                )
-                templatePath.lineTo(width * 0.2f, height * 0.55f)
+        var coveredPoints = 0
+        val tolerance = getStrokeTolerance()
 
-            }
-            "Q" -> {
-                templatePath.addOval(
-                    width * 0.12f,
-                    height * 0.25f,
-                    width * 0.88f,
-                    height * 0.8f,
-                    Path.Direction.CW
-                )
-                templatePath.moveTo(width * 0.51f, height * 0.61f)
-                templatePath.lineTo(width * 0.76f, height * 0.9f)
-            }
-            "R" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.2f, height * 0.8f)
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.6f, height * 0.26f)
-                templatePath.arcTo(
-                    width * 0.5f,
-                    height * 0.26f,
-                    width * 0.8f,
-                    height * 0.55f,
-                    270f,
-                    180f,
-                    false
-                )
-                templatePath.moveTo(width * 0.65f, height * 0.55f)
-                templatePath.lineTo(width * 0.2f, height * 0.55f)
-                templatePath.moveTo(width * 0.53f, height * 0.55f)
-                templatePath.lineTo(width * 0.82f, height * 0.8f)
-            }
-            "S" -> {
-//                templatePath.moveTo(w * 0.78f, h * 0.36f) // Mulai dari kanan atas
-//                templatePath.quadTo(w * 0.3f, h * 0.1f, w * 0.25f, h * 0.4f) // Lekukan atas ke kiri
-//                templatePath.quadTo(w * 0.2f, h * 0.6f, w * 0.7f, h * 0.65f) // Lengkungan tengah
-//                templatePath.quadTo(w * 0.8f, h * 0.7f, w * 0.7f, h * 0.85f) // Lengkungan bawah ke kanan
-//                templatePath.quadTo(w * 0.6f, h * 0.9f, w * 0.3f, h * 0.85f) // Lekukan bawah ke kiri
-
-                templatePath.moveTo(width * 0.75f, height * 0.33f)
-                templatePath.cubicTo(
-                    width * 0.35f, height * 0.1f,   // Kontrol kiri atas
-                    width * 0.1f, height * 0.4f,   // Kontrol kiri bawah
-                    width * 0.3f, height * 0.5f     // Titik tengah
-                )
-                templatePath.cubicTo(
-                    width * 0.8f, height * 0.6f,   // Kontrol kanan atas
-                    width * 1.1f, height * 0.7f,   // Kontrol kanan bawah
-                    width * 0.55f, height * 0.8f   // Akhir di kiri bawah
-                )
-                templatePath.quadTo(width * 0.3f, height * 0.85f, width * 0.2f, height * 0.7f)
-            }
-            "T" -> {
-                templatePath.moveTo(width * 0.1f, height * 0.26f)
-                templatePath.lineTo(width * 0.9f, height * 0.26f)
-                templatePath.moveTo(width * 0.5f, height * 0.26f)
-                templatePath.lineTo(width * 0.5f, height * 0.8f)
-            }
-            "U" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.2f, height * 0.8f)
-                templatePath.arcTo(
-                    width * 0.2f,
-                    height * 0.8f,
-                    width * 0.8f,
-                    height * 0.8f,
-                    180f,
-                    270f,
-                    false
-                )
-                templatePath.lineTo(width * 0.8f, height * 0.26f)
-
-                templatePath.moveTo(width * 0.2f, height * 0.2f)
-                templatePath.quadTo(width * 0.5f, height * 0.8f, width * 0.8f, height * 0.2f)
-            }
-            "V" -> {
-                templatePath.moveTo(width * 0.16f, height * 0.26f)
-                templatePath.lineTo(width * 0.5f, height * 0.8f)
-                templatePath.lineTo(width * 0.84f, height * 0.26f)
-            }
-            "W" -> {
-                templatePath.moveTo(width * 0.1f, height * 0.26f)
-                templatePath.lineTo(width * 0.3f, height * 0.8f)
-                templatePath.lineTo(width * 0.5f, height * 0.26f)
-                templatePath.lineTo(width * 0.72f, height * 0.8f)
-                templatePath.lineTo(width * 0.9f, height * 0.26f)
-            }
-            "X" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.5f, height * 0.5f)
-                templatePath.lineTo(width * 0.8f, height * 0.26f)
-                templatePath.moveTo(width * 0.2f, height * 0.8f)
-                templatePath.lineTo(width * 0.5f, height * 0.5f)
-                templatePath.lineTo(width * 0.8f, height * 0.8f)
-            }
-            "Y" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.5f, height * 0.5f)
-                templatePath.lineTo(width * 0.8f, height * 0.26f)
-                templatePath.moveTo(width * 0.5f, height * 0.5f)
-                templatePath.lineTo(width * 0.5f, height * 0.8f)
-            }
-            "Z" -> {
-                templatePath.moveTo(width * 0.2f, height * 0.26f)
-                templatePath.lineTo(width * 0.8f, height * 0.26f)
-                templatePath.lineTo(width * 0.2f, height * 0.8f)
-                templatePath.lineTo(width * 0.8f, height * 0.8f)
+        for (templatePoint in templatePoints) {
+            for (userPoint in userStroke) {
+                if (euclideanDistance(templatePoint, userPoint) <= tolerance) {
+                    coveredPoints++
+                    break
+                }
             }
         }
 
-        pathMeasure.setPath(templatePath, false)
-        extractPathPoints()
+        return coveredPoints.toFloat() / templatePoints.size
+    }
+
+    private fun getStrokeTolerance(): Float {
+        val diagonal = sqrt(viewWidth.pow(2) + viewHeight.pow(2))
+        return diagonal * 0.04f
+    }
+
+    private fun euclideanDistance(p1: PointF, p2: PointF): Float {
+        return sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))
+    }
+
+    private fun isAllRequiredStrokesCompleted(): Boolean {
+        var requiredCount = 0
+        var completedRequiredCount = 0
+
+        for (i in letterStrokes.indices) {
+            val stroke = letterStrokes[i]
+            if (stroke.isRequired) {
+                requiredCount++
+                if (completedStrokes.contains(i)) {
+                    completedRequiredCount++
+                }
+            }
+        }
+
+        Log.d("TracingDebug", "Completed $completedRequiredCount of $requiredCount required strokes")
+        return completedRequiredCount == requiredCount && requiredCount > 0
+    }
+
+    @SuppressLint("DrawAllocation")
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        outlineBitmap?.let { bitmap ->
+            canvas.drawBitmap(bitmap, null, RectF(0f, 0f, viewWidth, viewHeight), null)
+        }
+
+        canvas.drawPath(templatePath, templatePaint)
+
+        for (i in letterStrokes.indices) {
+            if (completedStrokes.contains(i)) {
+                canvas.drawPath(letterStrokes[i].path, completedStrokePaint)
+            }
+        }
+
+        for (path in userPaths) {
+            canvas.drawPath(path, paint)
+        }
+
+        if (isAllRequiredStrokesCompleted()) {
+            filledBitmap?.let { bitmap ->
+                val alphaPaint = Paint().apply { alpha = 180 }
+                canvas.drawBitmap(bitmap, null, RectF(0f, 0f, viewWidth, viewHeight), alphaPaint)
+            }
+        }
     }
 }

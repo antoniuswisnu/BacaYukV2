@@ -10,6 +10,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.nara.bacayuk.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.core.graphics.scale
 
 class GeminiHelper(private val context: Context) {
 
@@ -102,7 +103,7 @@ class GeminiHelper(private val context: Context) {
             newWidth = (newHeight * ratio).toInt()
         }
 
-        return Bitmap.createScaledBitmap(original, newWidth, newHeight, true)
+        return original.scale(newWidth, newHeight)
     }
 
     private fun getFallbackFeedback(predictedChar: String, correctChar: String): String {

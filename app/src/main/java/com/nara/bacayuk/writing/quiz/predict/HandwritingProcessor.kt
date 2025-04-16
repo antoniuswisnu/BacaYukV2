@@ -4,10 +4,12 @@ import android.content.Context
 import android.graphics.*
 import android.util.Log
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.support.common.FileUtil
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.*
+import androidx.core.graphics.scale
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.get
 
 class HandwritingProcessor(private val context: Context, private val tflite: Interpreter) {
 
@@ -34,7 +36,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             val letterBitmaps = segmentLetters(wordBitmap)
             // Jika segmentasi gagal (tidak menemukan huruf terpisah), gunakan seluruh bounding box
             if(letterBitmaps.isEmpty()){
-                val letter = predictLetter(Bitmap.createScaledBitmap(wordBitmap, 32, 32, true))
+                val letter = predictLetter(wordBitmap.scale(32, 32))
                 wordBuilder.append(letter)
             } else {
                 for (letterBmp in letterBitmaps) {
@@ -112,7 +114,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
     private fun convertToBinary(bitmap: Bitmap): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
-        val binaryBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val binaryBitmap = createBitmap(width, height)
 
         val canvas = Canvas(binaryBitmap)
         val paint = Paint()
@@ -166,7 +168,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
     private fun extractLetterBitmap(originalBitmap: Bitmap, rect: Rect): Bitmap {
         if (rect.width() <= 0 || rect.height() <= 0) {
             Log.e("HandwritingProcessor", "Invalid bounding box: $rect")
-            return Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888)
+            return createBitmap(32, 32)
         }
         val croppedBitmap = Bitmap.createBitmap(originalBitmap, rect.left, rect.top, rect.width(), rect.height())
         return Bitmap.createScaledBitmap(croppedBitmap, 32, 32, true)
@@ -182,7 +184,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         for (x in 0 until width) {
             var count = 0
             for (y in 0 until height) {
-                if (wordBitmap.getPixel(x, y) == Color.BLACK) {
+                if (wordBitmap[x, y] == Color.BLACK) {
                     count++
                 }
             }
@@ -215,7 +217,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         for ((start, end) in segments) {
             if (end - start + 1 > 2) { // Minimal width agar dianggap valid
                 val letterBmp = Bitmap.createBitmap(wordBitmap, start, 0, end - start + 1, height)
-                val resized = Bitmap.createScaledBitmap(letterBmp, 32, 32, true)
+                val resized = letterBmp.scale(32, 32)
                 letters.add(resized)
             }
         }
@@ -233,7 +235,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         // Cari bounding box huruf (pixel hitam)
         for (y in 0 until height) {
             for (x in 0 until width) {
-                if (bitmap.getPixel(x, y) == Color.BLACK) {
+                if (bitmap[x, y] == Color.BLACK) {
                     if (x < minX) minX = x
                     if (x > maxX) maxX = x
                     if (y < minY) minY = y
@@ -243,14 +245,14 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         }
         // Jika tidak ditemukan pixel hitam, kembalikan bitmap kosong
         if (maxX < minX || maxY < minY) {
-            return Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888).apply {
+            return createBitmap(32, 32).apply {
                 eraseColor(Color.WHITE)
             }
         }
         // Crop huruf
         val letterBitmap = Bitmap.createBitmap(bitmap, minX, minY, maxX - minX + 1, maxY - minY + 1)
         // Buat bitmap 32x32 dengan latar belakang putih
-        val centeredBitmap = Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888)
+        val centeredBitmap = createBitmap(32, 32)
         val canvas = Canvas(centeredBitmap)
         canvas.drawColor(Color.WHITE)
         val offsetX = (32 - letterBitmap.width) / 2f
@@ -271,7 +273,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             for (x in 0 until 32) {
                 // Karena latar belakang putih dan tulisan hitam,
                 // kita asumsikan bahwa nilai huruf = 1 - (grayscale/255)
-                val pixel = centeredBitmap.getPixel(x, y)
+                val pixel = centeredBitmap[x, y]
                 val gray = (Color.red(pixel) + Color.green(pixel) + Color.blue(pixel)) / 3f
                 // Inversi: Tulisan hitam (0) menjadi 1, latar putih (255) menjadi 0
                 val normalized = 1f - (gray / 255.0f)
