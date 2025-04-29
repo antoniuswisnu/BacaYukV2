@@ -159,6 +159,7 @@ class DrawingWordView @JvmOverloads constructor(
         }
     }
 
+    @SuppressLint("DiscouragedApi")
     private fun getBitmapForLetter(letter: Char, isFilled: Boolean, width: Int, height: Int): Bitmap? {
         if (width <= 0 || height <= 0) return null
 
@@ -274,8 +275,8 @@ class DrawingWordView @JvmOverloads constructor(
                 templatePath.moveTo(offsetX + width * 0.8f, offsetY + height * 0.3f)
                 templatePath.quadTo(offsetX + width * 0.18f, offsetY + height * 0.2f, offsetX + width * 0.18f, offsetY + height * 0.5f)
                 templatePath.quadTo(offsetX + width * 0.18f, offsetY + height * 0.9f, offsetX + width * 0.8f, offsetY + height * 0.75f)
-                templatePath.moveTo(offsetX + width * 0.5f, offsetY + height * 0.5f)
-                templatePath.lineTo(offsetX + width * 0.8f, offsetY + height * 0.5f)
+                templatePath.lineTo(offsetX + width * 0.83f, offsetY + height * 0.55f)
+                templatePath.lineTo(offsetX + width * 0.55f, offsetY + height * 0.55f)
             }
             "H" -> {
                 templatePath.moveTo(offsetX + width * 0.2f, offsetY + height * 0.26f)
@@ -398,8 +399,9 @@ class DrawingWordView @JvmOverloads constructor(
             }
             "U" -> {
                 templatePath.moveTo(offsetX + width * 0.2f, offsetY + height * 0.26f)
-                templatePath.lineTo(offsetX + width * 0.2f, offsetY + height * 0.65f)
-                templatePath.quadTo(offsetX + width * 0.5f, offsetY + height * 0.8f, offsetX + width * 0.8f, offsetY + height * 0.65f)
+                templatePath.lineTo(offsetX + width * 0.2f, offsetY + height * 0.70f)
+                templatePath.quadTo(offsetX + width * 0.5f, offsetY + height * 0.87f,
+                    offsetX + width * 0.8f, offsetY + height * 0.70f)
                 templatePath.lineTo(offsetX + width * 0.8f, offsetY + height * 0.26f)
             }
             "V" -> {
@@ -511,8 +513,7 @@ class DrawingWordView @JvmOverloads constructor(
 
         if (!isInitialized || letterBoxes.isEmpty()) return
 
-        // Gambar semua huruf
-        letterBoxes.forEachIndexed { index, letterBox ->
+        letterBoxes.forEachIndexed { _, letterBox ->
             val bitmap = if (letterBox.isCompleted) {
                 letterBox.filledBitmap
             } else {
@@ -524,14 +525,11 @@ class DrawingWordView @JvmOverloads constructor(
             }
         }
 
-        // Jika masih ada huruf yang sedang ditrace
         if (currentLetterIndex < letterBoxes.size) {
             val currentLetterBox = letterBoxes[currentLetterIndex]
 
-            // Gambar dashed template path (opsional, hilangkan jika tidak diinginkan)
              canvas.drawPath(currentLetterBox.templatePath, templatePaint)
 
-            // Clip ke area huruf sekarang saja dan gambar user path
             canvas.withClip(currentLetterBox.rect) {
                 userPath.forEach { path ->
                     drawPath(path, paint)
@@ -541,13 +539,11 @@ class DrawingWordView @JvmOverloads constructor(
     }
 
     private fun isLetterTracedCorrectly(): Boolean {
-        // Minimal jumlah titik yang harus diikuti user
         if (allUserPoints.size < templatePoints.size / 3) return false
 
         var matchCount = 0
-        val tolerance = width * 0.05f  // 5% dari lebar sebagai toleransi
+        val tolerance = width * 0.01f
 
-        // Hitung berapa banyak titik user yang dekat dengan titik template
         for (templatePoint in templatePoints) {
             for (userPoint in allUserPoints) {
                 val distance = euclideanDistance(userPoint, templatePoint)
@@ -558,8 +554,7 @@ class DrawingWordView @JvmOverloads constructor(
             }
         }
 
-        // Persentase keberhasilan (harus mencapai 70% dari titik template)
-        return matchCount >= templatePoints.size * 0.7f
+        return matchCount >= templatePoints.size * 0.97f
     }
 
     private fun euclideanDistance(p1: PointF, p2: PointF): Float {

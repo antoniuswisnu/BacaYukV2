@@ -58,10 +58,7 @@ class MenuWordViewModel (
         }
     }
 
-
     fun getUID(): String? = runBlocking {
         dataStoreRepository.getString(UID)
     }
-
-
 }

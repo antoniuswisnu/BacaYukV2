@@ -43,9 +43,12 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_kata"
-        android:layout_margin="@dimen/_16sdp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_64sdp"
+        android:layout_marginBottom="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />

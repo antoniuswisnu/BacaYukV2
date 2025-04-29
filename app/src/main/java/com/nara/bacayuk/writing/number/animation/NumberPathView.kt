@@ -112,24 +112,30 @@ class NumberPathView @JvmOverloads constructor(
 
     private fun number3() {
         val path1 = Path().apply {
-            moveTo(width * 0.2f, height * 0.2f)
-            lineTo(width * 0.8f, height * 0.2f)
+            moveTo(width * 0.4f, height * 0.25f)
+            quadTo(
+                width * 0.75f, height * 0.10f,
+                width * 0.75f, height * 0.4f
+            )
+            quadTo(
+                width * 0.75f, height * 0.55f,
+                width * 0.5f, height * 0.5f
+            )
         }
         paths.add(path1)
 
         val path2 = Path().apply {
-            moveTo(width * 0.8f, height * 0.2f)
-            lineTo(width * 0.2f, height * 0.5f)
-            lineTo(width * 0.8f, height * 0.5f)
-            lineTo(width * 0.2f, height * 0.8f)
+            moveTo(width * 0.5f, height * 0.5f)
+            quadTo(
+                width * 0.75f, height * 0.55f,
+                width * 0.75f, height * 0.8f
+            )
+            quadTo(
+                width * 0.75f, height * 0.95f,
+                width * 0.4f, height * 0.85f
+            )
         }
         paths.add(path2)
-
-        val path3 = Path().apply {
-            moveTo(width * 0.2f, height * 0.8f)
-            lineTo(width * 0.8f, height * 0.8f)
-        }
-        paths.add(path3)
     }
 
     private fun number4() {

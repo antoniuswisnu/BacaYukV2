@@ -28,7 +28,6 @@ android {
         def properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-//        buildConfigField 'String', 'API_KEY', "\"${properties.getProperty('API_KEY')}\""
         buildConfigField "String", "GEMINI_API_KEY", "\"${properties.getProperty('GEMINI_API_KEY', '')}\""
     }
 
@@ -62,9 +61,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
     implementation 'androidx.activity:activity:1.10.0'
-    implementation 'org.tensorflow:tensorflow-lite-support:0.1.0'
-    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
-    implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
+
     def lifecycle_version = "2.4.1"
     def coroutines_version = "1.4.2"
 
@@ -73,7 +70,7 @@ dependencies {
     // alternately - if using Java8, use the following instead of lifecycle-compiler
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
-    //viewmodel
+    // ViewModel
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
@@ -99,11 +96,10 @@ dependencies {
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.15.1'
 
-    //datastore
+    // Firebase Datastore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation 'com.google.firebase:firebase-auth-ktx:21.2.0'
     implementation platform('com.google.firebase:firebase-bom:31.2.3')
-//    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.6'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.2.1'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.5'
     implementation 'com.google.firebase:firebase-firestore:24.4.5'
@@ -125,10 +121,7 @@ dependencies {
     implementation 'com.github.douglasjunior:android-simple-tooltip:1.1.0'
     implementation 'com.github.IgnacioCarrionN:WheelPicker:0.0.1-Alpha04'
 
-//    implementation 'com.yarolegovich:discrete-scrollview:1.5.1'
-//    implementation 'com.github.yarolegovich:DiscreteScrollView:v1.5.1'
-
-    //mockito
+    // Mockito
     def mockitoVersion = "3.12.4"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     androidTestImplementation "org.mockito:mockito-android:$mockitoVersion"
@@ -138,11 +131,21 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.3.0'
     testImplementation 'junit:junit:4.13.2'
 
+    // Gemini
     implementation 'com.google.ai.client.generativeai:generativeai:0.9.0'
 
-    implementation 'org.tensorflow:tensorflow-lite:2.14.0'
-    implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:2.14.0'
-    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
-    implementation 'org.tensorflow:tensorflow-lite-gpu:2.14.0'
-    implementation 'org.tensorflow:tensorflow-lite-support:0.1.0'
+    // LiteRT
+    implementation 'com.google.ai.edge.litert:litert:1.2.0'
+    implementation 'com.google.ai.edge.litert:litert-gpu:1.2.0'
+    implementation 'com.google.ai.edge.litert:litert-support:1.2.0'
+
+    // TensorFlow Lite
+//    implementation 'org.tensorflow:tensorflow-lite:2.17.0'
+//    implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:2.17.0'
+//    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
+//    implementation 'org.tensorflow:tensorflow-lite-gpu:2.14.0'
+//    implementation 'org.tensorflow:tensorflow-lite-support:0.1.0'
+
+    //    implementation 'com.yarolegovich:discrete-scrollview:1.5.1'
+//    implementation 'com.github.yarolegovich:DiscreteScrollView:v1.5.1'
 }

@@ -40,21 +40,6 @@ class TracingNumberActivity : AppCompatActivity() {
 
         tulis = Tulis(reportTulisAngka = ReportTulisAngka())
 
-//        val user = tracingNumberViewModel.getUserDataStore()
-//        if (user != null && student != null) {
-//            user.uuid?.let { tracingNumberViewModel.getReportTulisAngka(it, student?.uuid ?: "") }
-//        }
-
-//        tracingNumberViewModel.reportTulisAngka.observe(this) { response ->
-//            if (response is Response.Success && response.data.isNotEmpty()) {
-//                val existingReport = response.data.firstOrNull()
-//                if (existingReport != null) {
-//                    tulis = Tulis(reportTulisAngka = existingReport)
-//                    Log.d("TracingNumberActivity", "Loaded existing report: $existingReport")
-//                }
-//            }
-//        }
-
         loadNumber()
 
         binding.btnPlayTutorial.setOnClickListener {
@@ -64,13 +49,6 @@ class TracingNumberActivity : AppCompatActivity() {
         binding.btnPencil.setOnClickListener {
             binding.tracingCanvas.setDrawingMode(true)
             binding.btnPencil.setImageResource(R.drawable.ic_pencil_active)
-            binding.btnEraser.setImageResource(R.drawable.ic_eraser)
-        }
-
-        binding.btnEraser.setOnClickListener {
-            binding.tracingCanvas.setDrawingEraser(true)
-            binding.btnPencil.setImageResource(R.drawable.ic_pencil)
-            binding.btnEraser.setImageResource(R.drawable.ic_eraser_active)
         }
 
         binding.btnReload.setOnClickListener {

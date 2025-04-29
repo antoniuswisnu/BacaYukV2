@@ -19,6 +19,7 @@ class PredictActivity : AppCompatActivity() {
     private var geminiFeedbackHelper: GeminiHelper? = null
     private var student: Student? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPredictBinding.inflate(layoutInflater)

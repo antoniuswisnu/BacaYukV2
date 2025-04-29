@@ -40,20 +40,6 @@ class TracingLetterLowercaseActivity : AppCompatActivity() {
 
         tulis = Tulis(reportTulisHuruf = ReportTulisHuruf())
 
-//        val user = tracingLetterLowercaseViewModel.getUserDataStore()
-//        if (user != null && student != null) {
-//            user.uuid?.let { tracingLetterLowercaseViewModel.getReportTulisHurufKecil(it, student?.uuid ?: "") }
-//        }
-//
-//        tracingLetterLowercaseViewModel.reportTulisHurufKecil.observe(this){ response ->
-//            if (response is Response.Success && response.data.isNotEmpty()) {
-//                val existingReport = response.data.firstOrNull()
-//                if (existingReport != null) {
-//                    tulis = Tulis(reportTulisHuruf = existingReport)
-//                }
-//            }
-//        }
-
         loadLetter()
 
         binding.btnPlayTutorial.setOnClickListener {
@@ -63,13 +49,6 @@ class TracingLetterLowercaseActivity : AppCompatActivity() {
         binding.btnPencil.setOnClickListener {
             binding.tracingCanvas.setDrawingMode(true)
             binding.btnPencil.setImageResource(R.drawable.ic_pencil_active)
-            binding.btnEraser.setImageResource(R.drawable.ic_eraser)
-        }
-
-        binding.btnEraser.setOnClickListener {
-            binding.tracingCanvas.setDrawingEraser(true)
-            binding.btnPencil.setImageResource(R.drawable.ic_pencil)
-            binding.btnEraser.setImageResource(R.drawable.ic_eraser_active)
         }
 
         binding.btnReload.setOnClickListener {

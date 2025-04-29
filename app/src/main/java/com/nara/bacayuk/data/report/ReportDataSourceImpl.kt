@@ -430,7 +430,13 @@ class ReportDataSourceImpl: ReportDataSource {
             "Ibu",
             "Bisa",
             "Pintar",
-            "Baik"
+            "Baik",
+            "ABCD",
+            "EFGHIJ",
+            "KLMN",
+            "OPQR",
+            "STUV",
+            "WXYZ"
         )
         for (i in listKata) {
             val reportTulisKata = ReportTulisKata(

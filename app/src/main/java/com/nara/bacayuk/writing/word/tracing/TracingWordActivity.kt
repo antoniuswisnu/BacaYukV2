@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.ReportTulisKata
@@ -49,13 +48,6 @@ class TracingWordActivity : AppCompatActivity() {
         binding.btnPencil.setOnClickListener {
             binding.tracingCanvas.setDrawingMode(true)
             binding.btnPencil.setImageResource(R.drawable.ic_pencil_active)
-            binding.btnEraser.setImageResource(R.drawable.ic_eraser)
-        }
-
-        binding.btnEraser.setOnClickListener {
-            binding.tracingCanvas.setDrawingEraser(true)
-            binding.btnPencil.setImageResource(R.drawable.ic_pencil)
-            binding.btnEraser.setImageResource(R.drawable.ic_eraser_active)
         }
 
         binding.btnReload.setOnClickListener {

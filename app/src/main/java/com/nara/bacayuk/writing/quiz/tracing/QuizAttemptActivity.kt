@@ -114,7 +114,7 @@ class QuizAttemptActivity : AppCompatActivity() {
     private fun loadTFLiteModel() {
         try {
             Log.d("TracingQuizActivity", "Mencoba memuat model dari assets...")
-            val tfliteModel = FileUtil.loadMappedFile(this, "model.tflite")
+            val tfliteModel = FileUtil.loadMappedFile(this, "emnist_model_optimized (2).tflite")
             tfLiteInterpreter = Interpreter(tfliteModel)
             Log.d("TracingQuizActivity", "Model berhasil dimuat")
         } catch (e: Exception) {
