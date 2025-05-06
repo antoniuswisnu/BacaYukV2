@@ -63,6 +63,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/plus_jakarta_sans"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Tulis Huruf Tersebut Sesuai dengan Bentuknya \n dan Tulis dalam Area yang Tersedia"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+
+    <View
+        android:id="@+id/dashed_border_box"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_140sdp"
+        android:layout_marginBottom="@dimen/_140sdp"
+        android:layout_marginStart="@dimen/_64sdp"
+        android:layout_marginEnd="@dimen/_64sdp"
+        android:background="@drawable/dashed_border"
+        app:layout_constraintBottom_toBottomOf="@+id/tracing_canvas"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_description" />
+
+
     <com.nara.bacayuk.writing.quiz.tracing.DrawingQuizView
         android:id="@+id/tracing_canvas"
         android:layout_width="match_parent"
@@ -79,7 +109,7 @@
         android:id="@+id/icon_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -91,14 +121,6 @@
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/button_pencil"
             android:src="@drawable/ic_pencil" />
-
-        <ImageView
-            android:id="@+id/btn_eraser"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/button_eraser"
-            android:src="@drawable/ic_eraser" />
 
         <ImageView
             android:id="@+id/btn_reload"

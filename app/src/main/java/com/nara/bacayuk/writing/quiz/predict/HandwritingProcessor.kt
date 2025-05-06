@@ -1,5 +1,6 @@
 package com.nara.bacayuk.writing.quiz.predict
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.Log
@@ -8,22 +9,17 @@ import java.nio.ByteOrder
 import org.tensorflow.lite.Interpreter
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
-import androidx.core.graphics.set
 import java.util.*
+import androidx.core.graphics.scale
 
-/**
- * HandwritingProcessor - kelas untuk memproses tulisan tangan dan mengenali karakter
- * Dirancang khusus untuk inferensi model TFLite pada tulisan tangan langsung di layar Android
- */
 class HandwritingProcessor(private val context: Context, private val tflite: Interpreter) {
 
     companion object {
         private const val TAG = "HandwritingProcessor"
-        private const val INPUT_SIZE = 28 // Model memerlukan input 28x28
-        private const val THRESHOLD = 200 // Threshold untuk binarisasi gambar (0-255)
+        private const val INPUT_SIZE = 28
+        private const val THRESHOLD = 200
     }
 
-    // Mapping antara indeks output model dan karakter yang sesuai (0-9, A-Z)
     private val labelMapping = mapOf(
         0 to "0", 1 to "1", 2 to "2", 3 to "3", 4 to "4",
         5 to "5", 6 to "6", 7 to "7", 8 to "8", 9 to "9",
@@ -35,16 +31,12 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         35 to "Z"
     )
 
-    /**
-     * Fungsi utama untuk memproses gambar dan mengenali tulisan tangan
-     */
+
     fun processImage(bitmap: Bitmap): String {
         Log.d(TAG, "===== MEMULAI PENGENALAN TULISAN TANGAN =====")
 
-        // 1. Cari area tulisan tangan (bounding boxes)
         val boundingBoxes = findWritingAreas(bitmap)
 
-        // 2. Proses setiap area tulisan
         val result = StringBuilder()
 
         if (boundingBoxes.isEmpty()) {
@@ -54,10 +46,8 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
 
         Log.d(TAG, "Menemukan ${boundingBoxes.size} area tulisan")
 
-        // Urutkan bounding box dari kiri ke kanan
         val sortedBoxes = boundingBoxes.sortedBy { it.left }
 
-        // Proses setiap area yang ditemukan
         for ((index, box) in sortedBoxes.withIndex()) {
             Log.d(TAG, "Memproses area #${index+1}: [${box.left},${box.top},${box.right},${box.bottom}]")
 
@@ -65,7 +55,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             val characterBitmap = extractCharacter(bitmap, box)
 
             // Jika area terlalu besar, mungkin itu adalah beberapa karakter yang terhubung
-            if (box.width() > box.height() * 1.5 && box.width() > 50) {
+            if (box.width() > box.height() * 2.0 && box.width() > 80) {
                 // Coba segmentasi lebih lanjut
                 val segments = segmentConnectedChars(characterBitmap)
 
@@ -92,40 +82,30 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         return result.toString()
     }
 
-    /**
-     * Menemukan area tulisan dalam gambar
-     */
+
     private fun findWritingAreas(bitmap: Bitmap): List<Rect> {
-        // Konversi gambar ke biner (hitam dan putih)
         val binaryBitmap = binarizeImage(bitmap)
 
-        // Log sampel gambar biner untuk debug
         logDebugImage(binaryBitmap, "binarized")
 
         val width = binaryBitmap.width
         val height = binaryBitmap.height
 
-        // Array untuk menandai piksel yang sudah dikunjungi
         val visited = BooleanArray(width * height) { false }
 
-        // List untuk menyimpan area tulisan
         val areas = mutableListOf<Rect>()
 
-        // Arah pencarian (8 arah)
         val directions = arrayOf(
             Pair(-1, -1), Pair(-1, 0), Pair(-1, 1),
             Pair(0, -1),               Pair(0, 1),
             Pair(1, -1),  Pair(1, 0),  Pair(1, 1)
         )
 
-        // Cari komponen terhubung (connected components)
         for (y in 0 until height) {
             for (x in 0 until width) {
                 val idx = y * width + x
 
-                // Jika piksel hitam dan belum dikunjungi
                 if (!visited[idx] && binaryBitmap[x, y] == Color.BLACK) {
-                    // Inisialisasi bounding box baru
                     var minX = x
                     var minY = y
                     var maxX = x
@@ -139,22 +119,18 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
                     while (queue.isNotEmpty()) {
                         val (curX, curY) = queue.remove()
 
-                        // Update bounding box
                         minX = minOf(minX, curX)
                         minY = minOf(minY, curY)
                         maxX = maxOf(maxX, curX)
                         maxY = maxOf(maxY, curY)
 
-                        // Periksa 8 arah tetangga
                         for ((dx, dy) in directions) {
                             val nx = curX + dx
                             val ny = curY + dy
 
-                            // Pastikan koordinat valid
                             if (nx in 0 until width && ny in 0 until height) {
                                 val nIdx = ny * width + nx
 
-                                // Jika piksel hitam dan belum dikunjungi
                                 if (!visited[nIdx] && binaryBitmap[nx, ny] == Color.BLACK) {
                                     visited[nIdx] = true
                                     queue.add(Pair(nx, ny))
@@ -163,10 +139,8 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
                         }
                     }
 
-                    // Buat Rect dari bounding box
                     val rect = Rect(minX, minY, maxX + 1, maxY + 1)
 
-                    // Filter area yang terlalu kecil (kemungkinan noise)
                     if (rect.width() >= 10 && rect.height() >= 10) {
                         areas.add(rect)
                     }
@@ -177,34 +151,26 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         return areas
     }
 
-    /**
-     * Mengubah gambar menjadi hitam-putih dengan threshold
-     */
     private fun binarizeImage(bitmap: Bitmap): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
 
-        // Buat bitmap baru untuk hasil
         val result = createBitmap(width, height)
 
-        // Ubah ke grayscale terlebih dahulu
         val canvas = Canvas(result)
         val paint = Paint().apply {
             colorFilter = ColorMatrixColorFilter(ColorMatrix().apply {
-                setSaturation(0f) // Ubah ke grayscale
+                setSaturation(0f)
             })
         }
         canvas.drawBitmap(bitmap, 0f, 0f, paint)
 
-        // Binarisasi dengan threshold
         val pixels = IntArray(width * height)
         result.getPixels(pixels, 0, width, 0, 0, width, height)
 
         for (i in pixels.indices) {
-            // Ambil nilai grayscale (semua channel RGB sama dalam grayscale image)
             val gray = Color.red(pixels[i])
 
-            // Apply threshold
             pixels[i] = if (gray > THRESHOLD) Color.WHITE else Color.BLACK
         }
 
@@ -212,17 +178,12 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         return result
     }
 
-    /**
-     * Mengekstrak dan menyiapkan gambar karakter dari area tertentu
-     */
     private fun extractCharacter(bitmap: Bitmap, rect: Rect): Bitmap {
-        // Periksa validitas bounding box
         if (rect.width() <= 0 || rect.height() <= 0) {
             Log.e(TAG, "Bounding box tidak valid: $rect")
             return createEmptyBitmap(INPUT_SIZE)
         }
 
-        // Potong gambar sesuai bounding box
         val cropped = Bitmap.createBitmap(
             bitmap,
             rect.left,
@@ -231,19 +192,14 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             rect.height()
         )
 
-        // Siapkan gambar untuk model (pusat dan ukur ulang)
         return prepareForModel(cropped)
     }
 
-    /**
-     * Mencoba segmentasi karakter yang mungkin terhubung
-     */
     private fun segmentConnectedChars(bitmap: Bitmap): List<Bitmap> {
         val width = bitmap.width
         val height = bitmap.height
         val results = mutableListOf<Bitmap>()
 
-        // Hitung proyeksi vertikal (jumlah piksel hitam per kolom)
         val projection = IntArray(width) { 0 }
 
         for (x in 0 until width) {
@@ -256,27 +212,21 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             projection[x] = count
         }
 
-        // Temukan lembah dalam proyeksi untuk memisahkan karakter
         val valleys = findValleys(projection)
 
-        // Tambahkan awal dan akhir untuk membentuk segmen lengkap
         val segmentBoundaries = mutableListOf<Int>()
         segmentBoundaries.add(0)
         segmentBoundaries.addAll(valleys)
         segmentBoundaries.add(width - 1)
 
-        // Log valleys untuk debugging
         Log.d(TAG, "Valleys ditemukan pada kolom: $valleys")
 
-        // Buat segmen berdasarkan batas
         for (i in 0 until segmentBoundaries.size - 1) {
             val start = segmentBoundaries[i]
             val end = segmentBoundaries[i + 1]
 
-            // Abaikan segmen yang terlalu sempit
             if (end - start < 5) continue
 
-            // Potong dan siapkan segmen
             val segment = Bitmap.createBitmap(bitmap, start, 0, end - start, height)
             results.add(prepareForModel(segment))
         }
@@ -284,32 +234,24 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         return results
     }
 
-    /**
-     * Menemukan lembah dalam proyeksi (tempat potensial untuk memisahkan karakter)
-     */
     private fun findValleys(projection: IntArray): List<Int> {
         val valleys = mutableListOf<Int>()
         val width = projection.size
 
-        // Smoothing proyeksi untuk mengurangi noise
         val smoothed = smoothArray(projection, 3)
 
-        // Temukan lembah signifikan
         for (x in 2 until width - 2) {
-            // Lembah adalah tempat di mana nilai lebih rendah dari tetangga
             if (smoothed[x] < smoothed[x-1] &&
                 smoothed[x] < smoothed[x+1] &&
                 smoothed[x] < smoothed[x-2] * 0.7 &&
                 smoothed[x] < smoothed[x+2] * 0.7) {
 
-                // Tambahkan jika proyeksi cukup rendah (sedikit piksel hitam)
                 if (smoothed[x] < 0.2 * smoothed.average()) {
                     valleys.add(x)
                 }
             }
         }
 
-        // Jika terlalu banyak valley, ambil yang paling signifikan saja
         if (valleys.size > 5) {
             valleys.sortBy { smoothed[it] }
             return valleys.take(5)
@@ -318,9 +260,6 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         return valleys
     }
 
-    /**
-     * Melakukan smoothing pada array untuk mengurangi noise
-     */
     private fun smoothArray(array: IntArray, windowSize: Int): IntArray {
         val result = IntArray(array.size)
         val halfWindow = windowSize / 2
@@ -340,17 +279,10 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         return result
     }
 
-    /**
-     * Menyiapkan gambar untuk input model
-     * - Memusatkan karakter
-     * - Mengubah ukuran menjadi 28x28
-     * - Memastikan kontras yang baik
-     */
     private fun prepareForModel(bitmap: Bitmap): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
 
-        // Temukan batas karakter (area hitam)
         var minX = width
         var minY = height
         var maxX = 0
@@ -369,20 +301,16 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             }
         }
 
-        // Jika tidak ada konten, kembalikan bitmap kosong
         if (!hasContent) {
             return createEmptyBitmap(INPUT_SIZE)
         }
 
-        // Potong ke area karakter dengan sedikit padding
         val contentWidth = maxX - minX + 1
         val contentHeight = maxY - minY + 1
 
-        // Tambahkan padding 10%
         val paddingX = (contentWidth * 0.1).toInt().coerceAtLeast(1)
         val paddingY = (contentHeight * 0.1).toInt().coerceAtLeast(1)
 
-        // Batasi area crop agar tidak keluar dari bitmap
         val cropLeft = maxOf(0, minX - paddingX)
         val cropTop = maxOf(0, minY - paddingY)
         val cropRight = minOf(width, maxX + paddingX + 1)
@@ -391,7 +319,6 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         val cropWidth = cropRight - cropLeft
         val cropHeight = cropBottom - cropTop
 
-        // Crop ke area konten
         val croppedBitmap = Bitmap.createBitmap(
             bitmap,
             cropLeft,
@@ -400,10 +327,8 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             cropHeight
         )
 
-        // Buat bitmap 28x28 dengan latar putih
         val result = createEmptyBitmap(INPUT_SIZE)
 
-        // Hitung skala sambil mempertahankan rasio aspek
         val scale = minOf(
             INPUT_SIZE.toFloat() / cropWidth,
             INPUT_SIZE.toFloat() / cropHeight
@@ -412,58 +337,40 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         val scaledWidth = (cropWidth * scale).toInt()
         val scaledHeight = (cropHeight * scale).toInt()
 
-        // Resize karakter
-        val scaledBitmap = Bitmap.createScaledBitmap(
-            croppedBitmap,
-            scaledWidth,
-            scaledHeight,
-            true
-        )
+        val scaledBitmap = croppedBitmap.scale(scaledWidth, scaledHeight)
 
-        // Gambar karakter ke tengah bitmap hasil
         val canvas = Canvas(result)
         val left = (INPUT_SIZE - scaledWidth) / 2f
         val top = (INPUT_SIZE - scaledHeight) / 2f
         canvas.drawBitmap(scaledBitmap, left, top, null)
 
-        // Log untuk debugging
         logDebugImage(result, "prepared")
 
         return result
     }
 
-    /**
-     * Membuat bitmap kosong dengan latar putih
-     */
     private fun createEmptyBitmap(size: Int): Bitmap {
         return createBitmap(size, size).apply {
             eraseColor(Color.WHITE)
         }
     }
 
-    /**
-     * Mengenali karakter dari gambar yang sudah disiapkan
-     */
+
+    @SuppressLint("DefaultLocale")
     private fun recognizeCharacter(bitmap: Bitmap): String {
-        // Pastikan ukuran input sesuai (28x28)
         val inputBitmap = if (bitmap.width != INPUT_SIZE || bitmap.height != INPUT_SIZE) {
-            Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true)
+            bitmap.scale(INPUT_SIZE, INPUT_SIZE)
         } else {
             bitmap
         }
 
-        // Persiapkan input buffer untuk model
         val inputBuffer = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * 4)
         inputBuffer.order(ByteOrder.nativeOrder())
 
-        // Array untuk logging nilai input
         val inputValues = Array(INPUT_SIZE) { FloatArray(INPUT_SIZE) }
 
-        // Isi buffer dengan nilai piksel ternormalisasi
         for (y in 0 until INPUT_SIZE) {
             for (x in 0 until INPUT_SIZE) {
-                // Konversi piksel ke nilai float normalisasi
-                // Nilai hitam (karakter) = 1.0f, nilai putih (latar) = 0.0f
                 val pixel = inputBitmap[x, y]
                 val grayScale = (Color.red(pixel) + Color.green(pixel) + Color.blue(pixel)) / 3f
                 val normalized = 1.0f - (grayScale / 255.0f)
@@ -473,7 +380,6 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             }
         }
 
-        // Log sampel nilai input untuk debugging
         Log.d(TAG, "Sampel nilai input model (tengah 5x5):")
         for (y in 11..15) {
             val row = inputValues[y].slice(11..15).joinToString(" ") {
@@ -482,14 +388,11 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             Log.d(TAG, row)
         }
 
-        // Persiapkan output array
         val outputArray = Array(1) { FloatArray(36) } // 0-9, A-Z = 36 kelas
 
-        // Jalankan inferensi
         inputBuffer.rewind()
         tflite.run(inputBuffer, outputArray)
 
-        // Dapatkan prediksi dengan confidence tertinggi
         val outputs = outputArray[0]
         var maxIndex = -1
         var maxConfidence = 0.0f
@@ -501,19 +404,17 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             }
         }
 
-        // Dapatkan 3 prediksi teratas untuk logging
         val topPredictions = outputs.withIndex()
             .sortedByDescending { it.value }
             .take(3)
             .map { indexed ->
                 val char = labelMapping[indexed.index] ?: "?"
-                val confidence = indexed.value * 100 // Persentase
+                val confidence = indexed.value * 100
                 "$char (${String.format("%.1f", confidence)}%)"
             }
 
         Log.d(TAG, "Top 3 prediksi: ${topPredictions.joinToString(", ")}")
 
-        // Konversi index ke karakter
         val predictedChar = if (maxIndex >= 0 && maxIndex in labelMapping) {
             labelMapping[maxIndex] ?: "?"
         } else {
@@ -525,9 +426,6 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         return predictedChar
     }
 
-    /**
-     * Fungsi untuk logging gambar ke debug log
-     */
     private fun logDebugImage(bitmap: Bitmap, label: String) {
         try {
             Log.d(TAG, "Debug image '$label': ${bitmap.width}x${bitmap.height}")
@@ -535,7 +433,6 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             val sb = StringBuilder()
             sb.appendLine("Sample pixels for '$label' (X = black pixel, . = white):")
 
-            // Tampilkan representasi visual sederhana
             val step = maxOf(1, bitmap.height / 15)
             for (y in 0 until bitmap.height step step) {
                 for (x in 0 until bitmap.width step step) {
