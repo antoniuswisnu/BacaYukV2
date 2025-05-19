@@ -28,9 +28,10 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         20 to "K", 21 to "L", 22 to "M", 23 to "N", 24 to "O",
         25 to "P", 26 to "Q", 27 to "R", 28 to "S", 29 to "T",
         30 to "U", 31 to "V", 32 to "W", 33 to "X", 34 to "Y",
-        35 to "Z"
+        35 to "Z", 36 to "a", 37 to "b", 38 to "d", 39 to "e",
+        40 to "f", 41 to "g", 42 to "h", 43 to "n", 44 to "q",
+        45 to "r", 46 to "t"
     )
-
 
     fun processImage(bitmap: Bitmap): String {
         Log.d(TAG, "===== MEMULAI PENGENALAN TULISAN TANGAN =====")
@@ -51,12 +52,9 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         for ((index, box) in sortedBoxes.withIndex()) {
             Log.d(TAG, "Memproses area #${index+1}: [${box.left},${box.top},${box.right},${box.bottom}]")
 
-            // Ekstrak area tulisan
             val characterBitmap = extractCharacter(bitmap, box)
 
-            // Jika area terlalu besar, mungkin itu adalah beberapa karakter yang terhubung
             if (box.width() > box.height() * 2.0 && box.width() > 80) {
-                // Coba segmentasi lebih lanjut
                 val segments = segmentConnectedChars(characterBitmap)
 
                 if (segments.isNotEmpty()) {
@@ -66,12 +64,10 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
                         result.append(charResult)
                     }
                 } else {
-                    // Jika segmentasi gagal, proses sebagai satu karakter
                     val charResult = recognizeCharacter(characterBitmap)
                     result.append(charResult)
                 }
             } else {
-                // Proses sebagai satu karakter
                 val charResult = recognizeCharacter(characterBitmap)
                 result.append(charResult)
             }
@@ -81,7 +77,6 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         Log.d(TAG, "===== PENGENALAN TULISAN TANGAN SELESAI =====")
         return result.toString()
     }
-
 
     private fun findWritingAreas(bitmap: Bitmap): List<Rect> {
         val binaryBitmap = binarizeImage(bitmap)
@@ -111,7 +106,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
                     var maxX = x
                     var maxY = y
 
-                    // Gunakan breadth-first search untuk menemukan seluruh komponen
+                    // breadth-first search algorithm
                     val queue: Queue<Pair<Int, Int>> = LinkedList()
                     queue.add(Pair(x, y))
                     visited[idx] = true
@@ -355,7 +350,6 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
         }
     }
 
-
     @SuppressLint("DefaultLocale")
     private fun recognizeCharacter(bitmap: Bitmap): String {
         val inputBitmap = if (bitmap.width != INPUT_SIZE || bitmap.height != INPUT_SIZE) {
@@ -388,7 +382,7 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             Log.d(TAG, row)
         }
 
-        val outputArray = Array(1) { FloatArray(36) } // 0-9, A-Z = 36 kelas
+        val outputArray = Array(1) { FloatArray(47) }
 
         inputBuffer.rewind()
         tflite.run(inputBuffer, outputArray)

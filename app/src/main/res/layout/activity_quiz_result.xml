@@ -39,13 +39,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view"
-        tools:listitem="@layout/item_result" />
+        tools:listitem="@layout/item_result"
+        />
 
     <TextView
         android:id="@+id/tv_correct_answers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/benar_0"
+        android:layout_marginTop="8dp"
         android:textColor="@android:color/holo_green_dark"
         android:textSize="18sp"
         android:fontFamily="@font/plus_jakarta_sans"
@@ -63,6 +65,7 @@
         android:fontFamily="@font/plus_jakarta_sans"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="18sp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/tv_correct_answers"
         app:layout_constraintTop_toBottomOf="@+id/rv_results" />
 
