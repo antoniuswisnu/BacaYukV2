@@ -31,9 +31,10 @@ interface ReportRepository {
     suspend fun addUpdateReportTulisHuruf(idUser: String, idStudent: String, reportTulisHuruf: ReportTulisHuruf): Boolean
 
     // Tulis Kata
-    suspend fun createReportTulisKataDataSets(idUser: String,idStudent: String): String
-    suspend fun getAllReportTulisKataFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisKata>>>
-    suspend fun addUpdateReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Boolean
+    suspend fun addReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Flow<Response<String>>
+    suspend fun updateReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Flow<Response<Boolean>>
+    suspend fun deleteReportTulisKata(idUser: String, idStudent: String, wordId: String): Flow<Response<Boolean>>
+    fun getAllReportTulisKata(idUser: String, idStudent: String): Flow<Response<List<ReportTulisKata>>>
 
     // Kuis Tulis
 //    suspend fun addUpdateReportKuisTulis(idUser: String, idStudent: String, reportKuisTulis: ReportTulisQuiz): Boolean

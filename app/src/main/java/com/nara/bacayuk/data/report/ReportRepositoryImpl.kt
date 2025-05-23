@@ -118,23 +118,35 @@ class ReportRepositoryImpl(private val dataSource: ReportDataSource) :ReportRepo
     }
 
     // Tulis Kata
-    override suspend fun createReportTulisKataDataSets(idUser: String, idStudent: String): String {
-        return dataSource.createReportTulisKataDataSets(idUser, idStudent)
-    }
-
-    override suspend fun getAllReportTulisKataFromFirestore(
+    override fun getAllReportTulisKata( // Menggunakan nama fungsi baru dari interface
         idUser: String,
         idStudent: String
     ): Flow<Response<List<ReportTulisKata>>> {
-        return dataSource.getAllReportTulisKataFromFirestore(idUser, idStudent)
+        return dataSource.getAllReportTulisKata(idUser, idStudent)
     }
 
-    override suspend fun addUpdateReportTulisKata(
+    override suspend fun addReportTulisKata(
         idUser: String,
         idStudent: String,
         reportTulisKata: ReportTulisKata
-    ): Boolean {
-        return dataSource.addUpdateReportTulisKata(idUser, idStudent, reportTulisKata)
+    ): Flow<Response<String>> {
+        return dataSource.addReportTulisKata(idUser, idStudent, reportTulisKata)
+    }
+
+    override suspend fun updateReportTulisKata(
+        idUser: String,
+        idStudent: String,
+        reportTulisKata: ReportTulisKata
+    ): Flow<Response<Boolean>> {
+        return dataSource.updateReportTulisKata(idUser, idStudent, reportTulisKata)
+    }
+
+    override suspend fun deleteReportTulisKata(
+        idUser: String,
+        idStudent: String,
+        wordId: String
+    ): Flow<Response<Boolean>> {
+        return dataSource.deleteReportTulisKata(idUser, idStudent, wordId)
     }
 
     // Quiz Tulis

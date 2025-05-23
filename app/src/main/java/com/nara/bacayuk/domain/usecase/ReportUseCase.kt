@@ -74,14 +74,28 @@ class ReportUseCase(private val repository: ReportRepository) {
     = repository.addUpdateReportTulisHuruf(idUser, idStudent, reportTulisHuruf)
 
     // Tulis Kata
-    suspend fun createReportTulisKataDataSets(idUser: String, idStudent: String): String
-    = repository.createReportTulisKataDataSets(idUser, idStudent)
+    fun getAllReportTulisKata(
+        idUser: String,
+        idStudent: String
+    ): Flow<Response<List<ReportTulisKata>>> = repository.getAllReportTulisKata(idUser, idStudent)
 
-    suspend fun getAllReportTulisKataFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisKata>>>
-    = repository.getAllReportTulisKataFromFirestore(idUser, idStudent)
+    suspend fun addReportTulisKata(
+        idUser: String,
+        idStudent: String,
+        reportTulisKata: ReportTulisKata
+    ): Flow<Response<String>> = repository.addReportTulisKata(idUser, idStudent, reportTulisKata)
 
-    suspend fun addUpdateReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Boolean
-    = repository.addUpdateReportTulisKata(idUser, idStudent, reportTulisKata)
+    suspend fun updateReportTulisKata(
+        idUser: String,
+        idStudent: String,
+        reportTulisKata: ReportTulisKata
+    ): Flow<Response<Boolean>> = repository.updateReportTulisKata(idUser, idStudent, reportTulisKata)
+
+    suspend fun deleteReportTulisKata(
+        idUser: String,
+        idStudent: String,
+        wordId: String
+    ): Flow<Response<Boolean>> = repository.deleteReportTulisKata(idUser, idStudent, wordId)
 
     // Kuis Tulis
 //    suspend fun addUpdateReportKuisTulis(idUser: String, idStudent: String, reportKuisTulis: ReportTulisQuiz): Boolean

@@ -397,89 +397,165 @@ class ReportDataSourceImpl: ReportDataSource {
     }
 
     // Tulis Kata
-    override suspend fun createReportTulisKataDataSets(idUser: String, idStudent: String): String {
-        return try {
-            val datasetTulisKata = createDatasetTulisKata()
-            var lastStatus = "Menyiapkan data tulis kata.."
-            val firestoreInstance = FirebaseFirestore.getInstance()
-            for (item in datasetTulisKata) {
-                val documentReference =
-                    firestoreInstance.collection("Users").document(idUser)
-                        .collection("Students").document(idStudent)
-                        .collection("ReportTulisKata").document(item.tulisKata)
+    private val firestoreInstance = FirebaseFirestore.getInstance()
 
-                documentReference.set(item).await()
-                if (item.tulisKata == "Z") lastStatus = MESSAGE_KATA_SUCCESS
+    private fun determineWordLevel(word: String): String {
+        return when (word.length) {
+            in 1..3 -> "Mudah"
+            4 -> "Sedang"
+            5 -> "Tinggi"
+            else -> {
+                if (word.length > 5) "Tinggi" // Atau handle sebagai error/kategori lain
+                else "Tidak Diketahui" // Untuk kata kosong atau kasus lain
             }
-            lastStatus
-        } catch (e: Exception) {
-            Log.e("UserDataSourceImpl", "Error adding or updating user to Firestore.", e)
-            "Gagal menyiapkan data belajar tulis kata"
         }
     }
 
-    private fun createDatasetTulisKata(): List<ReportTulisKata>{
-        val reportTulisKatas = mutableListOf<ReportTulisKata>()
-        val listKata = listOf(
-            "Buku",
-            "Tulis",
-            "Baca",
-            "Huruf",
-            "Saya",
-            "Ayah",
-            "Ibu",
-            "Bisa",
-            "Pintar",
-            "Baik",
-            "ABCD",
-            "EFGHIJ",
-            "KLMN",
-            "OPQR",
-            "STUV",
-            "WXYZ"
-        )
-        for (i in listKata) {
-            val reportTulisKata = ReportTulisKata(
-                tulisKata = i
-            )
-            reportTulisKatas.add(reportTulisKata)
-        }
-        return reportTulisKatas
-    }
+//    override suspend fun createReportTulisKataDataSets(idUser: String, idStudent: String): String {
+//        // Fungsi ini sekarang mungkin tidak relevan atau perlu diubah peruntukannya
+//        // jika kata sepenuhnya dinamis.
+//        // Jika ini untuk inisialisasi, pastikan tidak menimpa data pengguna.
+//        // Untuk implementasi CRUD murni, fungsi ini bisa dikosongkan atau dihapus.
+//        Log.d("ReportDataSourceImpl", "createReportTulisKataDataSets called, but word management is now dynamic.")
+//        return "Pengelolaan kata sekarang dinamis melalui CRUD."
+//    }
 
-    override fun getAllReportTulisKataFromFirestore(
+    override fun getAllReportTulisKata(
         idUser: String,
         idStudent: String
     ): Flow<Response<List<ReportTulisKata>>> {
         return flow {
-            val firestoreInstance = FirebaseFirestore.getInstance()
-            val students = mutableListOf<ReportTulisKata>()
-            val snapshot = firestoreInstance.collection("Users")
+            emit(Response.Loading)
+            val reportCollection = firestoreInstance.collection("Users")
                 .document(idUser).collection("Students").document(idStudent)
-                .collection("ReportTulisKata").get().await()
-            for (doc in snapshot.documents) {
-                doc.toObject(ReportTulisKata::class.java)?.let { students.add(it) }
+                .collection("ReportTulisKata")
+
+            val snapshot = reportCollection.get().await()
+            val reports = snapshot.documents.mapNotNull { document ->
+                document.toObject(ReportTulisKata::class.java)?.apply {
+                    id = document.id // Menyimpan ID dokumen Firestore
+                    if (level.isEmpty()) { // Jika level belum ada (migrasi data lama)
+                        level = determineWordLevel(tulisKata)
+                    }
+                }
             }
-            emit(Response.Success(students))
-        }.catch {
-            Log.e("getAllUserFromFirestore", "Failed to fetch user data from Firestore.", it)
+            emit(Response.Success(reports))
+        }.catch { e ->
+            Log.e("ReportDataSourceImpl", "Error getAllReportTulisKata: ${e.message}", e)
+            emit(Response.Error(e.message ?: "Gagal mengambil data ReportTulisKata"))
         }
     }
 
-    override suspend fun addUpdateReportTulisKata(
+    override suspend fun addReportTulisKata(
         idUser: String,
         idStudent: String,
         reportTulisKata: ReportTulisKata
-    ): Boolean {
-        return try {
-            val firestoreInstance = FirebaseFirestore.getInstance()
-            val snapshot = firestoreInstance.collection("Users")
-                .document(idUser).collection("Students").document(idStudent)
-                .collection("ReportTulisKata").document(reportTulisKata.tulisKata).set(reportTulisKata).await()
-            true
-        } catch (e: Exception) {
-            Log.e("UserDataSourceImpl", "Error adding or updating user to Firestore.", e)
-            false
+    ): Flow<Response<String>> {
+        return flow {
+            emit(Response.Loading)
+            try {
+                // Validasi panjang kata jika diperlukan (misal, 1-5 huruf)
+                if (reportTulisKata.tulisKata.isBlank() || reportTulisKata.tulisKata.length > 5) {
+                    emit(Response.Error("Kata tidak valid atau lebih dari 5 huruf."))
+                    return@flow
+                }
+
+                val collectionRef = firestoreInstance.collection("Users")
+                    .document(idUser).collection("Students").document(idStudent)
+                    .collection("ReportTulisKata")
+
+                // Cek duplikasi kata sebelum menambahkan (opsional, tergantung kebutuhan)
+                val querySnapshot = collectionRef.whereEqualTo("tulisKata", reportTulisKata.tulisKata).get().await()
+                if (!querySnapshot.isEmpty) {
+                    emit(Response.Error("Kata '${reportTulisKata.tulisKata}' sudah ada."))
+                    return@flow
+                }
+
+                val newWord = reportTulisKata.copy(
+                    level = determineWordLevel(reportTulisKata.tulisKata),
+                    id = "" // Firestore akan generate ID
+                )
+
+                val documentReference = collectionRef.add(newWord).await()
+                emit(Response.Success(documentReference.id))
+            } catch (e: Exception) {
+                Log.e("ReportDataSourceImpl", "Error addReportTulisKata: ${e.message}", e)
+                emit(Response.Error(e.message ?: "Gagal menambahkan kata"))
+            }
+        }
+    }
+
+
+    override suspend fun updateReportTulisKata(
+        idUser: String,
+        idStudent: String,
+        reportTulisKata: ReportTulisKata
+    ): Flow<Response<Boolean>> {
+        return flow {
+            emit(Response.Loading)
+            if (reportTulisKata.id.isBlank()) {
+                emit(Response.Error("ID kata tidak valid untuk pembaruan."))
+                return@flow
+            }
+            // Validasi panjang kata jika diperlukan
+            if (reportTulisKata.tulisKata.isBlank() || reportTulisKata.tulisKata.length > 5) {
+                emit(Response.Error("Kata tidak valid atau lebih dari 5 huruf untuk pembaruan."))
+                return@flow
+            }
+
+            try {
+                val documentRef = firestoreInstance.collection("Users")
+                    .document(idUser).collection("Students").document(idStudent)
+                    .collection("ReportTulisKata").document(reportTulisKata.id)
+
+                // Cek apakah kata yang diupdate menjadi duplikat dengan kata lain (kecuali dirinya sendiri)
+                val querySnapshot = firestoreInstance.collection("Users")
+                    .document(idUser).collection("Students").document(idStudent)
+                    .collection("ReportTulisKata")
+                    .whereEqualTo("tulisKata", reportTulisKata.tulisKata)
+                    .get().await()
+
+                if (!querySnapshot.isEmpty) {
+                    val existingDoc = querySnapshot.documents.first()
+                    if (existingDoc.id != reportTulisKata.id) {
+                        emit(Response.Error("Kata '${reportTulisKata.tulisKata}' sudah ada (digunakan oleh kata lain)."))
+                        return@flow
+                    }
+                }
+
+
+                val updatedWord = reportTulisKata.copy(
+                    level = determineWordLevel(reportTulisKata.tulisKata)
+                )
+                documentRef.set(updatedWord, SetOptions.merge()).await()
+                emit(Response.Success(true))
+            } catch (e: Exception) {
+                Log.e("ReportDataSourceImpl", "Error updateReportTulisKata: ${e.message}", e)
+                emit(Response.Error(e.message ?: "Gagal memperbarui kata"))
+            }
+        }
+    }
+
+    override suspend fun deleteReportTulisKata(
+        idUser: String,
+        idStudent: String,
+        wordId: String
+    ): Flow<Response<Boolean>> {
+        return flow {
+            emit(Response.Loading)
+            if (wordId.isBlank()) {
+                emit(Response.Error("ID kata tidak valid untuk penghapusan."))
+                return@flow
+            }
+            try {
+                firestoreInstance.collection("Users")
+                    .document(idUser).collection("Students").document(idStudent)
+                    .collection("ReportTulisKata").document(wordId).delete().await()
+                emit(Response.Success(true))
+            } catch (e: Exception) {
+                Log.e("ReportDataSourceImpl", "Error deleteReportTulisKata: ${e.message}", e)
+                emit(Response.Error(e.message ?: "Gagal menghapus kata"))
+            }
         }
     }
 

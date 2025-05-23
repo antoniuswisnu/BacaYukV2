@@ -4,19 +4,19 @@ import com.nara.bacayuk.data.model.*
 import kotlinx.coroutines.flow.Flow
 
 interface ReportDataSource {
-    //huruf
+    //baca huruf
     suspend fun createReportHurufDataSets(idUser: String,idStudent: String): String
     suspend fun updateReportHuruf(idUser: String,idStudent: String,reportHuruf: ReportHuruf): Boolean
     fun getAllReportFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportHuruf>>>
 
-    //kata
+    //baca kata
     suspend fun createReportKataDataSets(idUser: String,idStudent: String): String
     suspend fun updateReportKata(idUser: String,idStudent: String,reportHuruf: ReportKata): Boolean
     suspend fun updateBelajarSuku(idUser: String,idStudent: String,reportHuruf: BelajarSuku): Boolean
     fun getAllReportKataFromFirestore(idUser: String, idStudent: String): Flow<Response<ReportKata>>
     fun getAllBelajarVokal(idUser: String, idStudent: String): Flow<Response<List<BelajarSuku>>>
 
-    //kalimat
+    //baca kalimat
     suspend fun addUpdateReportKalimat(idUser: String,idStudent: String,reportHuruf: ReportKalimat): Boolean
     fun getAllReportKalimatFromFirestore(idUser: String, idStudent: String): Flow<Response<ReportKalimat>>
 
@@ -31,9 +31,10 @@ interface ReportDataSource {
     fun getAllReportAngkaFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisAngka>>>
 
     //tulis kata
-    suspend fun createReportTulisKataDataSets(idUser: String,idStudent: String): String
-    suspend fun addUpdateReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Boolean
-    fun getAllReportTulisKataFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisKata>>>
+    suspend fun addReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Flow<Response<String>> // Mengembalikan ID kata baru atau pesan error
+    suspend fun updateReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Flow<Response<Boolean>>
+    suspend fun deleteReportTulisKata(idUser: String, idStudent: String, wordId: String): Flow<Response<Boolean>>
+    fun getAllReportTulisKata(idUser: String, idStudent: String): Flow<Response<List<ReportTulisKata>>> // Menggantikan getAllReportTulisKataFromFirestore untuk konsistensi nama
 
     //Kuis Tulis
 //    suspend fun addUpdateReportKuisTulis(idUser: String, idStudent: String, reportKuisTulis: ReportTulisQuiz): Boolean

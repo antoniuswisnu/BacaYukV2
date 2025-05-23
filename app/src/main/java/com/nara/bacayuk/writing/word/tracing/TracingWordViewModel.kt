@@ -35,7 +35,7 @@ class TracingWordViewModel (
         reportTulisKata: ReportTulisKata
     ) = viewModelScope.launch {
         try {
-            reportUseCase.addUpdateReportTulisKata(idUser, idStudent, reportTulisKata)
+            reportUseCase.updateReportTulisKata(idUser, idStudent, reportTulisKata)
         } catch (e: Exception) {
             Log.d("MainViewModel", "login: fail")
             e.printStackTrace()
@@ -44,7 +44,7 @@ class TracingWordViewModel (
 
     fun getReportTulisKata(idUser: String, idStudent: String) {
         viewModelScope.launch {
-            reportUseCase.getAllReportTulisKataFromFirestore(idUser, idStudent).collect { response ->
+            reportUseCase.getAllReportTulisKata(idUser, idStudent).collect { response ->
                 _reportTulisKata.value = response
             }
         }

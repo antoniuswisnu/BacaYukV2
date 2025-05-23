@@ -128,7 +128,7 @@ class RiwayatViewModel(
 
     fun getAllReportTulisKataFromFirestore(idStudent: String) {
         viewModelScope.launch {
-            reportUseCase.getAllReportTulisKataFromFirestore(getUID() ?: "-", idStudent).collect { response ->
+            reportUseCase.getAllReportTulisKata(getUID() ?: "-", idStudent).collect { response ->
                     when (response) {
                         is Response.Success -> {
                             Log.d("RiwayatViewModel", "Received ${response.data.size} reports from Firestore")

@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nara.bacayuk.data.model.ReportKalimat
+import com.nara.bacayuk.data.model.ReportTulisKata
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.User
@@ -64,7 +65,7 @@ class MainViewModel(
                     val statusKalimat = reportUseCase.addUpdateReportKalimat(idUser, idStudent, ReportKalimat())
                     val statusTulisAngka = reportUseCase.createReportAngkaDataSets(idUser, idStudent)
                     val statusTulisHuruf = reportUseCase.createReportTulisHurufDataSets(idUser, idStudent)
-                    val statusTulisKata = reportUseCase.createReportTulisKataDataSets(idUser, idStudent)
+                    val statusTulisKata = reportUseCase.updateReportTulisKata(idUser, idStudent, ReportTulisKata())
 
                     val arrayList1 = arrayListOf("","","","","","")
                     arrayList1[0] = status
@@ -72,7 +73,7 @@ class MainViewModel(
                     arrayList1[2] = if (statusKalimat) MESSAGE_KALIMAT_SUCCESS else "Gagal mempersiapkan data kalimat"
                     arrayList1[3] = statusTulisAngka
                     arrayList1[4] = statusTulisHuruf
-                    arrayList1[5] = statusTulisKata
+                    arrayList1[5] = statusTulisKata.toString()
                     _statusCreateData.value = arrayList1
                 }
             } catch (e: Exception) {
