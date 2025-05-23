@@ -22,7 +22,6 @@ class MenuWordViewModel (
      private val userUseCase: UserUseCase
 ): ViewModel() {
 
-    // LiveData untuk semua kata dan yang sudah dikategorikan
     private val _allWords = MutableLiveData<Response<List<ReportTulisKata>>>()
     val allWords: LiveData<Response<List<ReportTulisKata>>> = _allWords
 
@@ -35,8 +34,7 @@ class MenuWordViewModel (
     private val _hardWords = MutableLiveData<List<ReportTulisKata>>()
     val hardWords: LiveData<List<ReportTulisKata>> = _hardWords
 
-    // LiveData untuk hasil operasi CUD (Create, Update, Delete)
-    private val _addWordStatus = MutableLiveData<Response<String>>() // String adalah ID kata baru atau pesan error
+    private val _addWordStatus = MutableLiveData<Response<String>>()
     val addWordStatus: LiveData<Response<String>> = _addWordStatus
 
     private val _updateWordStatus = MutableLiveData<Response<Boolean>>()
@@ -44,7 +42,6 @@ class MenuWordViewModel (
 
     private val _deleteWordStatus = MutableLiveData<Response<Boolean>>()
     val deleteWordStatus: LiveData<Response<Boolean>> = _deleteWordStatus
-
 
     fun fetchAllWords(idStudent: String) {
         viewModelScope.launch {
@@ -86,7 +83,7 @@ class MenuWordViewModel (
                 return@launch
             }
 
-            val newReport = ReportTulisKata(tulisKata = wordText.uppercase()) // ID dan level akan diatur di DataSource/Repo
+            val newReport = ReportTulisKata(tulisKata = wordText.uppercase())
 
             reportUseCase.addReportTulisKata(uid, idStudent, newReport)
                 .onStart { _addWordStatus.value = Response.Loading }
@@ -97,7 +94,7 @@ class MenuWordViewModel (
                 .collect { response ->
                     _addWordStatus.value = response
                     if (response is Response.Success) {
-                        fetchAllWords(idStudent) // Muat ulang daftar kata setelah berhasil menambah
+                        fetchAllWords(idStudent)
                     }
                 }
         }
@@ -115,26 +112,26 @@ class MenuWordViewModel (
                 return@launch
             }
 
-            // Pastikan ID ada untuk update
             if (wordToUpdate.id.isBlank()) {
                 _updateWordStatus.value = Response.Error("ID kata tidak valid untuk pembaruan.")
                 return@launch
             }
             val reportToUpdate = wordToUpdate.copy(tulisKata = wordToUpdate.tulisKata.uppercase())
 
+//            reportUseCase.updateReportTulisKata(uid, idStudent, reportToUpdate)
+//                .onStart { _updateWordStatus.value = Response.Loading }
+//                .catch { e ->
+//                    _updateWordStatus.value = Response.Error(e.message ?: "Gagal memperbarui kata")
+//                    Log.e("MenuWordViewModel", "Error updateExistingWord: ${e.message}", e)
+//                }
+//                .collect { response ->
+//                    _updateWordStatus.value = response
+//                    if (response is Response.Success && response.data) {
+//                        fetchAllWords(idStudent)
+//                    }
+//                }
+//
 
-            reportUseCase.updateReportTulisKata(uid, idStudent, reportToUpdate)
-                .onStart { _updateWordStatus.value = Response.Loading }
-                .catch { e ->
-                    _updateWordStatus.value = Response.Error(e.message ?: "Gagal memperbarui kata")
-                    Log.e("MenuWordViewModel", "Error updateExistingWord: ${e.message}", e)
-                }
-                .collect { response ->
-                    _updateWordStatus.value = response
-                    if (response is Response.Success && response.data) {
-                        fetchAllWords(idStudent) // Muat ulang daftar kata
-                    }
-                }
         }
     }
 
@@ -166,7 +163,7 @@ class MenuWordViewModel (
     }
 
 
-    fun getUID(): String? = runBlocking { // Sebaiknya hindari runBlocking di ViewModel jika memungkinkan
+    fun getUID(): String? = runBlocking {
         dataStoreRepository.getString(UID)
     }
 }

@@ -41,6 +41,7 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
         binding = ActivityMenuWordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("student", Student::class.java)
         } else {
@@ -62,7 +63,7 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
 
     private fun setupUI() {
         binding.btnBack.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            onBackPressed()
         }
 
         binding.rvKata.layoutManager = GridLayoutManager(this@MenuWordActivity, 2)
@@ -97,6 +98,8 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
             showAddOrEditWordDialog(null)
         }
     }
+
+
 
     private fun observeViewModel() {
         menuWordViewModel.allWords.observe(this) { response ->
@@ -187,9 +190,9 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
     private fun mapToTulisList(reports: List<ReportTulisKata>): ArrayList<Tulis> {
         return ArrayList(reports.map { report ->
             Tulis(
-                id = report.id, // Gunakan ID unik dari ReportTulisKata
+                id = report.id,
                 tulisKata = report.tulisKata,
-                reportTulisKata = report // reportTulisKata sekarang memiliki field 'level' dan 'id'
+                reportTulisKata = report
             )
         })
     }
@@ -222,8 +225,6 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
             .show()
     }
 
-
-    // Dialog untuk menambah atau mengedit kata
     private fun showAddOrEditWordDialog(existingWord: ReportTulisKata?) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_edit_word, null)
         val editTextWord = dialogView.findViewById<EditText>(R.id.editTextWordContent)
@@ -259,7 +260,6 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
             .show()
     }
 
-    // Dialog konfirmasi untuk menghapus kata
     private fun showDeleteConfirmationDialog(wordToDelete: ReportTulisKata) {
         AlertDialog.Builder(this)
             .setTitle("Hapus Kata")
@@ -273,7 +273,6 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
             .setNegativeButton("Batal", null)
             .show()
     }
-
 
     override fun onResume() {
         super.onResume()
