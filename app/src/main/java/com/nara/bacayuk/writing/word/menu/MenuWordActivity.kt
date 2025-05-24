@@ -99,8 +99,6 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
         }
     }
 
-
-
     private fun observeViewModel() {
         menuWordViewModel.allWords.observe(this) { response ->
             when (response) {
@@ -123,8 +121,7 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
             }
         }
         menuWordViewModel.mediumWords.observe(this) { words ->
-            if (binding.tabLayoutWords.selectedTabPosition == 1) {
-                mediumWordAdapter.submitData(mapToTulisList(words))
+            if (binding.tabLayoutWords.selectedTabPosition == 1) { mediumWordAdapter.submitData(mapToTulisList(words))
             }
         }
         menuWordViewModel.hardWords.observe(this) { words ->
@@ -185,7 +182,6 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
             2 -> menuWordViewModel.hardWords.value?.let { hardWordAdapter.submitData(mapToTulisList(it)) }
         }
     }
-
 
     private fun mapToTulisList(reports: List<ReportTulisKata>): ArrayList<Tulis> {
         return ArrayList(reports.map { report ->

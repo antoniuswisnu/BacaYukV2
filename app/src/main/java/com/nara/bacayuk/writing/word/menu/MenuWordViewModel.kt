@@ -83,7 +83,7 @@ class MenuWordViewModel (
                 return@launch
             }
 
-            val newReport = ReportTulisKata(tulisKata = wordText.uppercase())
+            val newReport = ReportTulisKata(tulisKata = wordText)
 
             reportUseCase.addReportTulisKata(uid, idStudent, newReport)
                 .onStart { _addWordStatus.value = Response.Loading }

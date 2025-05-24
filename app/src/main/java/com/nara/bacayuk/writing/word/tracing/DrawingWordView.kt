@@ -20,7 +20,6 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.withClip
 import kotlin.math.min
 
 class DrawingWordView @JvmOverloads constructor(
@@ -29,20 +28,19 @@ class DrawingWordView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // --- Paint Objects ---
-    private val userPaint = Paint().apply { // Renamed from 'paint' for clarity
-        color = Color.BLUE // User's drawing color
+    private val userPaint = Paint().apply {
+        color = Color.BLUE
         style = Paint.Style.STROKE
-        strokeWidth = 30f // Initial, will be dynamic
+        strokeWidth = 30f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
         isAntiAlias = true
     }
 
-    private val pencilPaint = Paint().apply { // Separate paint for pencil mode if needed
+    private val pencilPaint = Paint().apply {
         color = Color.BLACK
         style = Paint.Style.STROKE
-        strokeWidth = 30f // Initial, will be dynamic
+        strokeWidth = 30f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
         isAntiAlias = true
@@ -51,83 +49,71 @@ class DrawingWordView @JvmOverloads constructor(
     private val templatePaint = Paint().apply {
         color = Color.LTGRAY
         style = Paint.Style.STROKE
-        strokeWidth = 8f // Initial, will be dynamic
+        strokeWidth = 8f
         pathEffect = DashPathEffect(floatArrayOf(15f, 10f), 0f)
         isAntiAlias = true
     }
 
     private val completedStrokePaint = Paint().apply {
-        color = Color.GREEN // Color for correctly traced strokes
+        color = Color.GREEN
         style = Paint.Style.STROKE
-        strokeWidth = 10f // Initial, will be dynamic
+        strokeWidth = 10f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
-        alpha = 150 // Semi-transparent
+        alpha = 150
         isAntiAlias = true
     }
 
-    // --- Drawing State ---
     private var currentWord = ""
     private var currentLetterIndex = 0
-    private var letterBoxes = mutableListOf<LetterBox>() // Holds info for each letter in the word
+    private var letterBoxes = mutableListOf<LetterBox>()
     private var isInitialized = false
-    private var activeDrawingPath = Path() // The path user is currently drawing
+    private var activeDrawingPath = Path()
 
-    // --- Callbacks ---
     private var onCorrectTracing: (() -> Unit)? = null
-    private var onLetterCompleted: ((Char, Int) -> Unit)? = null // Callback for when a single letter is done
+    private var onLetterCompleted: ((Char, Int) -> Unit)? = null
 
-    // --- Configuration ---
-    private val TARGET_LETTER_ASPECT_RATIO = 0.75f // Width/Height for a single letter drawable
-    private val STROKE_COMPLETION_THRESHOLD = 0.7f // Percentage of stroke points user needs to cover
-    private val STROKE_TOLERANCE_FACTOR = 0.08f // Tolerance for matching user points to template stroke (percentage of letter diagonal)
+    private val TARGET_LETTER_ASPECT_RATIO = 0.75f
+    private val STROKE_COMPLETION_THRESHOLD = 0.7f
+    private val STROKE_TOLERANCE_FACTOR = 0.08f
 
-
-    // --- Data Class for Individual Letter Strokes (adapted from DrawingLetterCapitalView) ---
     private data class DefinedStroke(
-        val path: Path, // The template path for this stroke, relative to 0,0 of letter box
-        val points: MutableList<PointF> = mutableListOf(), // Sampled points along the path
+        val path: Path,
+        val points: MutableList<PointF> = mutableListOf(),
         var isCompletedByPlayer: Boolean = false
     )
 
-    // --- Data Class for Each Letter in the Word ---
     private data class LetterBox(
         val letterChar: Char,
-        var displayRect: RectF, // The actual drawing rectangle for the letter on canvas
+        var displayRect: RectF,
         var outlineBitmap: Bitmap? = null,
         var filledBitmap: Bitmap? = null,
-        val definedStrokes: MutableList<DefinedStroke> = mutableListOf(), // Strokes for this specific letter
-        var userPathsForThisLetter: MutableList<Path> = mutableListOf(), // User's drawn paths for current attempt on this letter
-        var currentStrokeAttemptPoints: MutableList<PointF> = mutableListOf(), // Points for the very current user stroke
-        var completedStrokeIndicesThisLetter: MutableSet<Int> = mutableSetOf(), // Indices of completed strokes for this letter
-        var isLetterFullyCompleted: Boolean = false // If all required strokes for this letter are done
+        val definedStrokes: MutableList<DefinedStroke> = mutableListOf(),
+        var userPathsForThisLetter: MutableList<Path> = mutableListOf(),
+        var currentStrokeAttemptPoints: MutableList<PointF> = mutableListOf(),
+        var completedStrokeIndicesThisLetter: MutableSet<Int> = mutableSetOf(),
+        var isLetterFullyCompleted: Boolean = false
     )
 
     init {
-        // Set current drawing paint
-        userPaint.set(pencilPaint) // Default to pencil
+        userPaint.set(pencilPaint)
     }
-    // --- Public API ---
+
     fun setDrawingMode(isPencilMode: Boolean) {
-        // If you had an eraser mode, you'd switch paint here
-        // For now, pencilPaint is always used by userPaint
-        // userPaint.set(if (isPencilMode) pencilPaint else eraserPaint)
         invalidate()
     }
 
-    fun clearCanvas() { // Clears the current attempt on the active letter
+    fun clearCanvas() {
         if (currentLetterIndex < letterBoxes.size) {
             val activeLetterBox = letterBoxes[currentLetterIndex]
             activeLetterBox.userPathsForThisLetter.clear()
             activeLetterBox.currentStrokeAttemptPoints.clear()
-            // Do NOT reset completedStrokeIndicesThisLetter or isLetterFullyCompleted here,
-            // as clearCanvas is usually for retrying the current stroke/letter, not full reset.
         }
         activeDrawingPath.reset()
         invalidate()
     }
 
-    fun resetCurrentLetterProgress() { // Resets all progress for the currently active letter
+    fun resetCurrentLetterProgress() {
         if (currentLetterIndex < letterBoxes.size) {
             val activeLetterBox = letterBoxes[currentLetterIndex]
             activeLetterBox.userPathsForThisLetter.clear()
@@ -140,7 +126,6 @@ class DrawingWordView @JvmOverloads constructor(
         invalidate()
     }
 
-
     fun setOnCorrectTracingListener(listener: () -> Unit) {
         onCorrectTracing = listener
     }
@@ -150,7 +135,7 @@ class DrawingWordView @JvmOverloads constructor(
     }
 
     fun setWord(word: String) {
-        currentWord = word.uppercase()
+        currentWord = word
         currentLetterIndex = 0
         letterBoxes.clear()
         activeDrawingPath.reset()
@@ -163,7 +148,6 @@ class DrawingWordView @JvmOverloads constructor(
         invalidate()
     }
 
-    // --- Lifecycle and Sizing ---
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (w > 0 && h > 0 && currentWord.isNotEmpty()) {
@@ -181,7 +165,6 @@ class DrawingWordView @JvmOverloads constructor(
         val idealLetterWidth = viewHeight * TARGET_LETTER_ASPECT_RATIO
         val totalIdealWordWidth = idealLetterWidth * currentWord.length
 
-        val displayLetterHeight = viewHeight
         val displayLetterWidth: Float
         val startX: Float
 
@@ -193,19 +176,17 @@ class DrawingWordView @JvmOverloads constructor(
             startX = 0f
         }
 
-        // Dynamic stroke widths
-        val baseStrokeSize = displayLetterWidth * 0.1f // Example: 10% of letter width
+        val baseStrokeSize = displayLetterWidth * 0.1f
         userPaint.strokeWidth = baseStrokeSize
-        pencilPaint.strokeWidth = baseStrokeSize // if used separately
-        templatePaint.strokeWidth = baseStrokeSize * 0.25f // Thinner for template
+        pencilPaint.strokeWidth = baseStrokeSize
+        templatePaint.strokeWidth = baseStrokeSize * 0.25f
         completedStrokePaint.strokeWidth = baseStrokeSize * 0.3f
-
 
         currentWord.forEachIndexed { index, char ->
             val letterLeft = startX + (index * displayLetterWidth)
-            val rect = RectF(letterLeft, 0f, letterLeft + displayLetterWidth, displayLetterHeight)
+            val rect = RectF(letterLeft, 0f, letterLeft + displayLetterWidth, viewHeight)
             val bitmapW = displayLetterWidth.toInt().coerceAtLeast(1)
-            val bitmapH = displayLetterHeight.toInt().coerceAtLeast(1)
+            val bitmapH = viewHeight.toInt().coerceAtLeast(1)
 
             val newLetterBox = LetterBox(
                 letterChar = char,
@@ -213,19 +194,25 @@ class DrawingWordView @JvmOverloads constructor(
                 outlineBitmap = getBitmapForLetter(char, false, bitmapW, bitmapH),
                 filledBitmap = getBitmapForLetter(char, true, bitmapW, bitmapH)
             )
-            defineStrokesForLetter(char, newLetterBox.definedStrokes, rect) // Define strokes for this char
+            defineStrokesForLetter(char, newLetterBox.definedStrokes, rect)
             letterBoxes.add(newLetterBox)
         }
     }
 
-    // --- Bitmap Loading (similar to before) ---
     @SuppressLint("DiscouragedApi")
     private fun getBitmapForLetter(letter: Char, isFilled: Boolean, targetWidth: Int, targetHeight: Int): Bitmap? {
         if (targetWidth <= 0 || targetHeight <= 0) return null
-        val resourceName = "huruf_${letter.lowercaseChar()}_${if (isFilled) "fill" else "outline"}"
+
+        val letterCharForResource = letter.lowercaseChar()
+        val caseSpecificSuffix = if (letter.isLowerCase()) "_lowercase" else ""
+        val fillType = if (isFilled) "fill" else "outline"
+        val resourceName = "huruf_${letterCharForResource}${caseSpecificSuffix}_${fillType}"
+
+        Log.d("DrawingWordView", "Attempting to load drawable: $resourceName for letter '$letter'")
+
         val resourceId = context.resources.getIdentifier(resourceName, "drawable", context.packageName)
         if (resourceId == 0) {
-            Log.w("DrawingWordView", "Drawable resource not found: $resourceName")
+            Log.w("DrawingWordView", "Drawable resource not found: $resourceName. Falling back to placeholder.")
             return createPlaceholderBitmap(letter, targetWidth, targetHeight)
         }
         return try {
@@ -246,42 +233,67 @@ class DrawingWordView @JvmOverloads constructor(
         return bitmap
     }
 
-
-    // --- Stroke Definition Logic (Adapted from DrawingLetterCapitalView) ---
     private fun defineStrokesForLetter(letter: Char, strokesList: MutableList<DefinedStroke>, letterRect: RectF) {
         strokesList.clear()
         val w = letterRect.width()
         val h = letterRect.height()
-        val ox = letterRect.left // Offset X for this letter's rect
-        val oy = letterRect.top  // Offset Y for this letter's rect
+        val ox = letterRect.left
+        val oy = letterRect.top
 
-        if (w <= 0 || h <= 0) return // Cannot define strokes for an empty rect
+        if (w <= 0 || h <= 0) return
 
-        // Helper to create and add a stroke
         fun addStroke(isRequired: Boolean = true, pathBuilder: Path.() -> Unit) {
             val path = Path()
             path.pathBuilder()
             val definedStroke = DefinedStroke(path = path)
-            extractPointsForDefinedStroke(definedStroke) // Sample points
+            extractPointsForDefinedStroke(definedStroke)
             strokesList.add(definedStroke)
         }
 
         when (letter) {
             'A' -> {
-                addStroke { moveTo(ox + w * 0.1f, oy + h * 0.8f); lineTo(ox + w * 0.5f, oy + h * 0.25f) }
-                addStroke { moveTo(ox + w * 0.5f, oy + h * 0.25f); lineTo(ox + w * 0.9f, oy + h * 0.8f) }
-                addStroke { moveTo(ox + w * 0.24f, oy + h * 0.65f); lineTo(ox + w * 0.75f, oy + h * 0.65f) }
+                addStroke {
+                    moveTo(ox + w * 0.1f, oy + h * 0.8f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.25f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.25f)
+                    lineTo(ox + w * 0.9f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.24f, oy + h * 0.65f)
+                    lineTo(ox + w * 0.75f, oy + h * 0.65f)
+                }
             }
             'B' -> {
-                addStroke { moveTo(ox + w * 0.19f, oy + h * 0.26f); lineTo(ox + w * 0.19f, oy + h * 0.8f) }
                 addStroke {
-                    moveTo(ox + w * 0.19f, oy + h * 0.26f); lineTo(ox + w * 0.6f, oy + h * 0.26f)
-                    arcTo(ox + w * 0.5f, oy + h * 0.26f, ox + w * 0.8f, oy + h * 0.5f, 270f, 180f, false)
+                    moveTo(ox + w * 0.19f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.19f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.19f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.6f, oy + h * 0.26f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.6f, oy + h * 0.26f)
+                    arcTo(
+                        ox + w * 0.5f, oy + h * 0.26f,
+                        ox + w * 0.8f, oy + h * 0.5f,
+                        270f, 180f, false
+                    )
                     lineTo(ox + w * 0.19f, oy + h * 0.5f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.19f, oy + h * 0.5f); lineTo(ox + w * 0.6f, oy + h * 0.5f)
-                    arcTo(ox + w * 0.5f, oy + h * 0.5f, ox + w * 0.8f, oy + h * 0.8f, 270f, 180f, false)
+                    moveTo(ox + w * 0.19f, oy + h * 0.5f)
+                    lineTo(ox + w * 0.6f, oy + h * 0.5f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.6f, oy + h * 0.5f)
+                    arcTo(
+                        ox + w * 0.5f, oy + h * 0.5f,
+                        ox + w * 0.8f, oy + h * 0.8f,
+                        270f, 180f, false
+                    )
                     lineTo(ox + w * 0.19f, oy + h * 0.8f)
                 }
             }
@@ -292,14 +304,568 @@ class DrawingWordView @JvmOverloads constructor(
                     quadTo(ox + w * 0.18f, oy + h * 0.9f, ox + w * 0.8f, oy + h * 0.75f)
                 }
             }
-            // Add all other letter stroke definitions here, similar to 'A', 'B', 'C'
-            // Make sure to use 'ox' and 'oy' for offsets and 'w' and 'h' for dimensions.
-            // Example for 'I':
-            'I' -> {
-                addStroke { moveTo(ox + w * 0.5f, oy + h * 0.26f); lineTo(ox + w * 0.5f, oy + h * 0.8f) }
+            'D' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.27f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.79f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.27f)
+                    lineTo(ox + w * 0.3f, oy + h * 0.27f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.3f, oy + h * 0.27f)
+                    arcTo(
+                        ox + w * 0.3f, oy + h * 0.27f,
+                        ox + w * 0.85f, oy + h * 0.79f,
+                        270f, 180f, false
+                    )
+                    lineTo(ox + w * 0.2f, oy + h * 0.79f)
+                }
             }
-            // ... (ensure all letters A-Z from your original createTemplatePath are converted)
-            else -> { // Fallback for undefined letters
+            'E' -> {
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.25f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.85f, oy + h * 0.26f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.53f)
+                    lineTo(ox + w * 0.85f, oy + h * 0.53f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.8f)
+                    lineTo(ox + w * 0.85f, oy + h * 0.8f)
+                }
+            }
+            'F' -> {
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.25f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.85f, oy + h * 0.26f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.53f)
+                    lineTo(ox + w * 0.85f, oy + h * 0.53f)
+                }
+            }
+            'G' -> {
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.3f)
+                    quadTo(ox + w * 0.18f, oy + h * 0.2f, ox + w * 0.18f, oy + h * 0.5f)
+                    quadTo(ox + w * 0.18f, oy + h * 0.9f, ox + w * 0.8f, oy + h * 0.75f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.75f)
+                    lineTo(ox + w * 0.83f, oy + h * 0.55f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.83f, oy + h * 0.55f)
+                    lineTo(ox + w * 0.55f, oy + h * 0.55f)
+                }
+            }
+            'H' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.53f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.53f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.8f)
+                }
+            }
+            'I' -> {
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.8f)
+                }
+            }
+            'J' -> {
+                addStroke {
+                    moveTo(ox + w * 0.65f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.65f, oy + h * 0.7f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.65f, oy + h * 0.7f)
+                    quadTo(ox + w * 0.65f, oy + h * 0.78f, ox + w * 0.2f, oy + h * 0.78f)
+                }
+            }
+            'K' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.63f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.26f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.46f, oy + h * 0.48f)
+                    lineTo(ox + w * 0.82f, oy + h * 0.8f)
+                }
+            }
+            'L' -> {
+                addStroke {
+                    moveTo(ox + w * 0.23f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.23f, oy + h * 0.79f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.23f, oy + h * 0.79f)
+                    lineTo(ox + w * 0.82f, oy + h * 0.79f)
+                }
+            }
+            'M' -> {
+                addStroke {
+                    moveTo(ox + w * 0.15f, oy + h * 0.82f)
+                    lineTo(ox + w * 0.15f, oy + h * 0.25f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.15f, oy + h * 0.25f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.6f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.6f)
+                    lineTo(ox + w * 0.84f, oy + h * 0.25f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.84f, oy + h * 0.25f)
+                    lineTo(ox + w * 0.84f, oy + h * 0.82f)
+                }
+            }
+            'N' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.8f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.25f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.25f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.8f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.25f)
+                }
+            }
+            'O' -> {
+                addStroke {
+                    addOval(
+                        ox + w * 0.12f, oy + h * 0.25f,
+                        ox + w * 0.88f, oy + h * 0.8f,
+                        Path.Direction.CW
+                    )
+                }
+            }
+            'P' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.6f, oy + h * 0.26f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.6f, oy + h * 0.26f)
+                    arcTo(
+                        ox + w * 0.5f, oy + h * 0.26f,
+                        ox + w * 0.82f, oy + h * 0.55f,
+                        270f, 180f, false
+                    )
+                    lineTo(ox + w * 0.2f, oy + h * 0.55f)
+                }
+            }
+            'Q' -> {
+                addStroke {
+                    addOval(
+                        ox + w * 0.12f, oy + h * 0.25f,
+                        ox + w * 0.88f, oy + h * 0.8f,
+                        Path.Direction.CW
+                    )
+                }
+                addStroke {
+                    moveTo(ox + w * 0.51f, oy + h * 0.61f)
+                    lineTo(ox + w * 0.76f, oy + h * 0.9f)
+                }
+            }
+            'R' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.6f, oy + h * 0.26f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.6f, oy + h * 0.26f)
+                    arcTo(
+                        ox + w * 0.5f, oy + h * 0.26f,
+                        ox + w * 0.8f, oy + h * 0.55f,
+                        270f, 180f, false
+                    )
+                    lineTo(ox + w * 0.2f, oy + h * 0.55f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.53f, oy + h * 0.55f)
+                    lineTo(ox + w * 0.82f, oy + h * 0.8f)
+                }
+            }
+            'S' -> {
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.33f)
+                    cubicTo(
+                        ox + w * 0.35f, oy + h * 0.1f,
+                        ox + w * 0.1f, oy + h * 0.4f,
+                        ox + w * 0.3f, oy + h * 0.5f
+                    )
+                    cubicTo(
+                        ox + w * 0.8f, oy + h * 0.6f,
+                        ox + w * 1.1f, oy + h * 0.7f,
+                        ox + w * 0.55f, oy + h * 0.8f
+                    )
+                    quadTo(ox + w * 0.3f, oy + h * 0.85f, ox + w * 0.2f, oy + h * 0.7f)
+                }
+            }
+            'T' -> {
+                addStroke {
+                    moveTo(ox + w * 0.1f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.9f, oy + h * 0.26f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.8f)
+                }
+            }
+            'U' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.70f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.70f)
+                    quadTo(ox + w * 0.5f, oy + h * 0.87f, ox + w * 0.8f, oy + h * 0.70f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.70f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.26f)
+                }
+            }
+            'V' -> {
+                addStroke {
+                    moveTo(ox + w * 0.16f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.8f)
+                    lineTo(ox + w * 0.84f, oy + h * 0.26f)
+                }
+            }
+            'W' -> {
+                addStroke {
+                    moveTo(ox + w * 0.1f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.3f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.3f, oy + h * 0.8f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.26f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.72f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.72f, oy + h * 0.8f)
+                    lineTo(ox + w * 0.9f, oy + h * 0.26f)
+                }
+            }
+            'X' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.8f)
+                }
+            }
+            'Y' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.5f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.5f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.5f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.8f)
+                }
+            }
+            'Z' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.26f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.8f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.8f)
+                }
+            }
+
+            'a' -> {
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.55f) // Mulai dari kanan tengah lingkaran
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, -359.9f) // Sedikit kurang dari 360 untuk menghindari artefak jika path tertutup sempurna
+                }
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.5f)
+                    lineTo(ox + w * 0.75f, oy + h * 0.75f)
+                }
+            }
+            'b' -> { //
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.2f)
+                    lineTo(ox + w * 0.25f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.5f)
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, -359.9f)
+                }
+            }
+            'c' -> {
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.5f)
+                    quadTo(ox + w * 0.3f, oy + h * 0.35f, ox + w * 0.25f, oy + h * 0.55f)
+                    quadTo(ox + w * 0.3f, oy + h * 0.85f, ox + w * 0.8f, oy + h * 0.7f)
+                }
+            }
+            'd' -> { //
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.55f)
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, 359.9f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.2f)
+                    lineTo(ox + w * 0.75f, oy + h * 0.8f)
+                }
+            }
+            'e' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.6f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.6f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.6f)
+                    arcTo(RectF(ox + w * 0.2f, oy + h * 0.4f, ox + w * 0.8f, oy + h * 0.8f), 0f, 270f) // Kurang dari 360 derajat
+                }
+            }
+            'f' -> {
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.25f)
+                    quadTo(ox + w * 0.5f, oy + h * 0.15f, ox + w * 0.4f, oy + h * 0.3f)
+                    lineTo(ox + w * 0.4f, oy + h * 0.8f)
+                }
+                addStroke { // Garis silang 'f'
+                    moveTo(ox + w * 0.2f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.6f, oy + h * 0.45f)
+                }
+            }
+            'g' -> { //
+                addStroke { // Lingkaran atas 'g'
+                    moveTo(ox + w * 0.75f, oy + h * 0.55f)
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, -359.9f)
+                }
+                addStroke { // Batang dan ekor 'g'
+                    moveTo(ox + w * 0.75f, oy + h * 0.5f) // Mulai dari sisi lingkaran
+                    lineTo(ox + w * 0.75f, oy + h * 0.9f) // Turun
+                    quadTo(ox + w * 0.6f, oy + h * 1.0f, ox + w * 0.3f, oy + h * 0.9f) // Ekor melengkung
+                }
+            }
+            'h' -> { //
+                addStroke { // Batang vertikal 'h'
+                    moveTo(ox + w * 0.25f, oy + h * 0.2f)
+                    lineTo(ox + w * 0.25f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.5f)
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f)
+                    lineTo(ox + w * 0.75f, oy + h * 0.8f)
+                }
+            }
+            'i' -> {
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.75f)
+                }
+                addStroke {
+                    addOval(RectF(ox + w * 0.47f, oy + h * 0.3f, ox + w * 0.53f, oy + h * 0.38f), Path.Direction.CW)
+                }
+            }
+            'j' -> {
+                addStroke {
+                    moveTo(ox + w * 0.55f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.55f, oy + h * 0.9f)
+                    quadTo(ox + w * 0.5f, oy + h * 1.0f, ox + w * 0.2f, oy + h * 0.9f)
+                }
+                addStroke {
+                    addOval(RectF(ox + w * 0.52f, oy + h * 0.3f, ox + w * 0.58f, oy + h * 0.38f), Path.Direction.CW)
+                }
+            }
+            'k' -> {
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.2f)
+                    lineTo(ox + w * 0.25f, oy + h * 0.8f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.25f, oy + h * 0.6f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.6f)
+                    lineTo(ox + w * 0.75f, oy + h * 0.8f)
+                }
+            }
+            'l' -> {
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.2f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.8f)
+                }
+            }
+            'm' -> {
+                addStroke {
+                    moveTo(ox + w * 0.15f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.15f, oy + h * 0.75f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.15f, oy + h * 0.5f)
+                    arcTo(RectF(ox + w * 0.15f, oy + h * 0.45f, ox + w * 0.45f, oy + h * 0.75f), 180f, 180f) // Lengkungan
+                    lineTo(ox + w * 0.45f, oy + h * 0.75f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.45f, oy + h * 0.5f)
+                    arcTo(RectF(ox + w * 0.45f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f) // Lengkungan
+                    lineTo(ox + w * 0.75f, oy + h * 0.75f)
+                }
+            }
+            'n' -> { //
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.25f, oy + h * 0.75f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.5f)
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f) // Lengkungan
+                    lineTo(ox + w * 0.75f, oy + h * 0.75f)
+                }
+            }
+            'o' -> {
+                addStroke {
+                    addOval(RectF(ox + w * 0.2f, oy + h * 0.45f, ox + w * 0.8f, oy + h * 0.75f), Path.Direction.CW)
+                }
+            }
+            'p' -> {
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.55f)
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, 359.9f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.5f)
+                    lineTo(ox + w * 0.25f, oy + h * 0.95f) // Lebih panjang ke bawah
+                }
+            }
+            'q' -> {
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.55f)
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, -359.9f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.5f)
+                    lineTo(ox + w * 0.75f, oy + h * 0.95f)
+                }
+            }
+            'r' -> {
+                addStroke {
+                    moveTo(ox + w * 0.3f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.3f, oy + h * 0.75f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.3f, oy + h * 0.5f)
+                    quadTo(ox + w * 0.4f, oy + h * 0.4f, ox + w * 0.7f, oy + h * 0.45f)
+                }
+            }
+            's' -> {
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.5f) // Sesuaikan Y-pos untuk lowercase
+                    quadTo(ox + w * 0.6f, oy + h * 0.4f, ox + w * 0.5f, oy + h * 0.45f)
+                    quadTo(ox + w * 0.2f, oy + h * 0.55f, ox + w * 0.5f, oy + h * 0.65f)
+                    quadTo(ox + w * 0.65f, oy + h * 0.7f, ox + w * 0.25f, oy + h * 0.7f)
+                }
+            }
+            't' -> {
+                addStroke {
+                    moveTo(ox + w * 0.5f, oy + h * 0.25f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.75f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.3f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.7f, oy + h * 0.45f)
+                }
+            }
+            'u' -> { //
+                addStroke {
+                    moveTo(ox + w * 0.25f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.25f, oy + h * 0.65f)
+                    quadTo(ox + w * 0.5f, oy + h * 0.8f, ox + w * 0.75f, oy + h * 0.65f)
+                    lineTo(ox + w * 0.75f, oy + h * 0.45f)
+                }
+            }
+            'v' -> {
+                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.45f); lineTo(ox + w * 0.5f, oy + h * 0.75f) }
+                addStroke { moveTo(ox + w * 0.5f, oy + h * 0.75f); lineTo(ox + w * 0.8f, oy + h * 0.45f) }
+            }
+            'w' -> {
+                addStroke { moveTo(ox + w * 0.1f, oy + h * 0.45f); lineTo(ox + w * 0.3f, oy + h * 0.75f) }
+                addStroke { moveTo(ox + w * 0.3f, oy + h * 0.75f); lineTo(ox + w * 0.5f, oy + h * 0.45f) }
+                addStroke { moveTo(ox + w * 0.5f, oy + h * 0.45f); lineTo(ox + w * 0.7f, oy + h * 0.75f) }
+                addStroke { moveTo(ox + w * 0.7f, oy + h * 0.75f); lineTo(ox + w * 0.9f, oy + h * 0.45f) }
+            }
+            'x' -> {
+                addStroke { moveTo(ox + w * 0.25f, oy + h * 0.45f); lineTo(ox + w * 0.75f, oy + h * 0.75f) }
+                addStroke { moveTo(ox + w * 0.75f, oy + h * 0.45f); lineTo(ox + w * 0.25f, oy + h * 0.75f) }
+            }
+            'y' -> {
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.75f)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.45f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.75f)
+                    lineTo(ox + w * 0.4f, oy + h * 0.95f)
+                }
+            }
+            'z' -> {
+                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.48f); lineTo(ox + w * 0.8f, oy + h * 0.48f) } // y sedikit disesuaikan
+                addStroke { moveTo(ox + w * 0.8f, oy + h * 0.48f); lineTo(ox + w * 0.2f, oy + h * 0.72f) }
+                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.72f); lineTo(ox + w * 0.8f, oy + h * 0.72f) }
+            }
+
+            else -> {
                 addStroke { addRect(ox + w * 0.1f, oy + h * 0.2f, ox + w * 0.9f, oy + h * 0.8f, Path.Direction.CW) }
                 Log.w("DrawingWordView", "Strokes not defined for letter: $letter. Using fallback.")
             }
@@ -311,38 +877,33 @@ class DrawingWordView @JvmOverloads constructor(
         val pm = PathMeasure(definedStroke.path, false)
         if (pm.length == 0f) return
         val point = FloatArray(2)
-        val numPoints = 30 // Number of sample points per stroke
+        val numPoints = 30
         val step = pm.length / numPoints.toFloat()
         var distance = 0f
         while (distance <= pm.length) {
             pm.getPosTan(distance, point, null)
             definedStroke.points.add(PointF(point[0], point[1]))
             distance += step
-            if (numPoints > 0 && definedStroke.points.size > numPoints + 2) break // Safety break
+            if (numPoints > 0 && definedStroke.points.size > numPoints + 2) break
         }
-        if (definedStroke.points.isEmpty() && pm.length > 0) { // Ensure at least start and end if step is too large
+        if (definedStroke.points.isEmpty() && pm.length > 0) {
             pm.getPosTan(0f, point, null); definedStroke.points.add(PointF(point[0], point[1]))
             pm.getPosTan(pm.length, point, null); definedStroke.points.add(PointF(point[0], point[1]))
         }
     }
 
-
-    // --- Touch Event Handling (Adapted for Stroke Logic) ---
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!isInitialized || currentLetterIndex >= letterBoxes.size) {
-            return false // Not ready or word completed
+            return false
         }
 
         val activeLetterBox = letterBoxes[currentLetterIndex]
-        // Transform event coordinates to be relative to the active letter box if needed,
-        // but since strokes are defined with absolute canvas coordinates (ox, oy), direct event.x/y is fine.
         val x = event.x
         val y = event.y
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                // Check if touch is within the general area of the active letter. More precise checks can be added.
                 if (activeLetterBox.displayRect.contains(x, y)) {
                     activeDrawingPath.reset()
                     activeDrawingPath.moveTo(x, y)
@@ -350,10 +911,10 @@ class DrawingWordView @JvmOverloads constructor(
                     activeLetterBox.currentStrokeAttemptPoints.add(PointF(x, y))
                     return true
                 }
-                return false // Touch down outside active letter
+                return false
             }
             MotionEvent.ACTION_MOVE -> {
-                if (!activeDrawingPath.isEmpty) { // Only if ACTION_DOWN was processed
+                if (!activeDrawingPath.isEmpty) {
                     activeDrawingPath.lineTo(x, y)
                     activeLetterBox.currentStrokeAttemptPoints.add(PointF(x, y))
                     invalidate()
@@ -362,12 +923,11 @@ class DrawingWordView @JvmOverloads constructor(
             }
             MotionEvent.ACTION_UP -> {
                 if (!activeDrawingPath.isEmpty && activeLetterBox.currentStrokeAttemptPoints.size > 1) {
-                    activeLetterBox.userPathsForThisLetter.add(Path(activeDrawingPath)) // Store a copy
                     checkActiveLetterStrokeCompletion()
                     invalidate()
                 }
-                activeDrawingPath.reset() // Reset for next touch
-                activeLetterBox.currentStrokeAttemptPoints.clear() // Clear points for next stroke
+                activeDrawingPath.reset()
+                activeLetterBox.currentStrokeAttemptPoints.clear()
                 return true
             }
         }
@@ -384,9 +944,8 @@ class DrawingWordView @JvmOverloads constructor(
         var bestMatchStrokeIndex = -1
         var maxProgress = 0f
 
-        // Find which defined stroke the user was most likely trying to draw
         activeLetterBox.definedStrokes.forEachIndexed { index, definedStroke ->
-            if (!definedStroke.isCompletedByPlayer) { // Only check uncompleted template strokes
+            if (!definedStroke.isCompletedByPlayer) {
                 val progress = calculateUserStrokeProgressOnDefinedStroke(userStrokePoints, definedStroke.points)
                 if (progress > maxProgress) {
                     maxProgress = progress
@@ -400,33 +959,26 @@ class DrawingWordView @JvmOverloads constructor(
             activeLetterBox.completedStrokeIndicesThisLetter.add(bestMatchStrokeIndex)
             Log.d("DrawingWordView", "Letter '${activeLetterBox.letterChar}', Stroke $bestMatchStrokeIndex COMPLETED with progress $maxProgress")
 
-            // Check if all strokes for this letter are now complete
             if (areAllStrokesForLetterCompleted(activeLetterBox)) {
                 activeLetterBox.isLetterFullyCompleted = true
                 onLetterCompleted?.invoke(activeLetterBox.letterChar, currentLetterIndex)
                 Log.i("DrawingWordView", "Letter '${activeLetterBox.letterChar}' FULLY COMPLETED!")
 
-                currentLetterIndex++ // Move to next letter
+                currentLetterIndex++
                 if (currentLetterIndex >= letterBoxes.size) {
-                    onCorrectTracing?.invoke() // Entire word is done
+                    onCorrectTracing?.invoke()
                     Log.i("DrawingWordView", "Word '$currentWord' FULLY TRACED!")
                 }
             }
         } else {
             Log.d("DrawingWordView", "No stroke completed. Best match (stroke $bestMatchStrokeIndex) progress: $maxProgress")
         }
-        // Clear the user's drawn path for this specific attempt, whether successful or not,
-        // so they draw the next stroke cleanly.
-        // activeLetterBox.userPathsForThisLetter.clear() // Or just don't add if not good enough?
-        // For now, let's keep drawn paths for visual feedback until letter is reset/cleared.
     }
 
     private fun calculateUserStrokeProgressOnDefinedStroke(userPoints: List<PointF>, templateStrokePoints: List<PointF>): Float {
         if (templateStrokePoints.isEmpty() || userPoints.isEmpty()) return 0f
-
         var coveredTemplatePoints = 0
         val tolerance = getStrokeToleranceForLetter(letterBoxes[currentLetterIndex])
-
         for (templatePoint in templateStrokePoints) {
             var foundMatch = false
             for (userPoint in userPoints) {
@@ -435,20 +987,18 @@ class DrawingWordView @JvmOverloads constructor(
                     break
                 }
             }
-            if (foundMatch) {
-                coveredTemplatePoints++
-            }
+            if (foundMatch) coveredTemplatePoints++
         }
         return if (templateStrokePoints.isNotEmpty()) coveredTemplatePoints.toFloat() / templateStrokePoints.size else 0f
     }
 
     private fun getStrokeToleranceForLetter(letterBox: LetterBox): Float {
         val diagonal = sqrt(letterBox.displayRect.width().pow(2) + letterBox.displayRect.height().pow(2))
-        return diagonal * STROKE_TOLERANCE_FACTOR // e.g., 8% of the letter's diagonal
+        return diagonal * STROKE_TOLERANCE_FACTOR
     }
 
     private fun areAllStrokesForLetterCompleted(letterBox: LetterBox): Boolean {
-        if (letterBox.definedStrokes.isEmpty()) return true // No strokes to complete
+        if (letterBox.definedStrokes.isEmpty()) return true
         return letterBox.definedStrokes.all { it.isCompletedByPlayer }
     }
 
@@ -456,17 +1006,14 @@ class DrawingWordView @JvmOverloads constructor(
         return sqrt((p1.x - p2.x).pow(2) + (p1.y - p2.y).pow(2))
     }
 
-    // --- Drawing Logic (Adapted for Stroke-based feedback) ---
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (!isInitialized || letterBoxes.isEmpty()) return
 
         letterBoxes.forEachIndexed { letterIndex, letterBox ->
-            // 1. Draw Bitmaps (Outline/Filled)
             val bitmapToDraw = if (letterBox.isLetterFullyCompleted) letterBox.filledBitmap else letterBox.outlineBitmap
             bitmapToDraw?.let { canvas.drawBitmap(it, null, letterBox.displayRect, null) }
 
-            // 2. Draw Template Strokes and Completed Strokes for the current letter
             if (letterIndex == currentLetterIndex && !letterBox.isLetterFullyCompleted) {
                 letterBox.definedStrokes.forEachIndexed { strokeIndex, definedStroke ->
                     if (definedStroke.isCompletedByPlayer) {
@@ -476,19 +1023,7 @@ class DrawingWordView @JvmOverloads constructor(
                     }
                 }
             }
-            // Or, if you want to show completed strokes even after letter is done (but before word is done)
-            // else if (letterBox.isLetterFullyCompleted && letterIndex < currentWord.length) {
-            //    letterBox.definedStrokes.forEach { canvas.drawPath(it.path, completedStrokePaint) }
-            // }
-
-
-            // 3. Draw User's Paths for the current active letter
             if (letterIndex == currentLetterIndex) {
-                // Draw stored paths for the current letter (multiple strokes attempt)
-                // letterBox.userPathsForThisLetter.forEach { path ->
-                //    canvas.drawPath(path, userPaint)
-                // }
-                // Draw the very current, actively being drawn path
                 if (!activeDrawingPath.isEmpty) {
                     canvas.drawPath(activeDrawingPath, userPaint)
                 }
