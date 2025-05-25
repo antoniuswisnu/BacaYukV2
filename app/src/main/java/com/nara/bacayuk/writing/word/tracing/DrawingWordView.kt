@@ -637,7 +637,7 @@ class DrawingWordView @JvmOverloads constructor(
                     lineTo(ox + w * 0.75f, oy + h * 0.75f)
                 }
             }
-            'b' -> { //
+            'b' -> {
                 addStroke {
                     moveTo(ox + w * 0.25f, oy + h * 0.2f)
                     lineTo(ox + w * 0.25f, oy + h * 0.8f)
@@ -654,7 +654,7 @@ class DrawingWordView @JvmOverloads constructor(
                     quadTo(ox + w * 0.3f, oy + h * 0.85f, ox + w * 0.8f, oy + h * 0.7f)
                 }
             }
-            'd' -> { //
+            'd' -> {
                 addStroke {
                     moveTo(ox + w * 0.25f, oy + h * 0.55f)
                     arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, 359.9f)
@@ -671,7 +671,7 @@ class DrawingWordView @JvmOverloads constructor(
                 }
                 addStroke {
                     moveTo(ox + w * 0.8f, oy + h * 0.6f)
-                    arcTo(RectF(ox + w * 0.2f, oy + h * 0.4f, ox + w * 0.8f, oy + h * 0.8f), 0f, 270f) // Kurang dari 360 derajat
+                    arcTo(RectF(ox + w * 0.2f, oy + h * 0.4f, ox + w * 0.8f, oy + h * 0.8f), 0f, 270f)
                 }
             }
             'f' -> {
@@ -680,24 +680,24 @@ class DrawingWordView @JvmOverloads constructor(
                     quadTo(ox + w * 0.5f, oy + h * 0.15f, ox + w * 0.4f, oy + h * 0.3f)
                     lineTo(ox + w * 0.4f, oy + h * 0.8f)
                 }
-                addStroke { // Garis silang 'f'
+                addStroke {
                     moveTo(ox + w * 0.2f, oy + h * 0.45f)
                     lineTo(ox + w * 0.6f, oy + h * 0.45f)
                 }
             }
             'g' -> { //
-                addStroke { // Lingkaran atas 'g'
+                addStroke {
                     moveTo(ox + w * 0.75f, oy + h * 0.55f)
                     arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, -359.9f)
                 }
-                addStroke { // Batang dan ekor 'g'
-                    moveTo(ox + w * 0.75f, oy + h * 0.5f) // Mulai dari sisi lingkaran
-                    lineTo(ox + w * 0.75f, oy + h * 0.9f) // Turun
-                    quadTo(ox + w * 0.6f, oy + h * 1.0f, ox + w * 0.3f, oy + h * 0.9f) // Ekor melengkung
+                addStroke {
+                    moveTo(ox + w * 0.75f, oy + h * 0.5f)
+                    lineTo(ox + w * 0.75f, oy + h * 0.9f)
+                    quadTo(ox + w * 0.6f, oy + h * 1.0f, ox + w * 0.3f, oy + h * 0.9f)
                 }
             }
-            'h' -> { //
-                addStroke { // Batang vertikal 'h'
+            'h' -> {
+                addStroke {
                     moveTo(ox + w * 0.25f, oy + h * 0.2f)
                     lineTo(ox + w * 0.25f, oy + h * 0.8f)
                 }
@@ -785,7 +785,7 @@ class DrawingWordView @JvmOverloads constructor(
                 }
                 addStroke {
                     moveTo(ox + w * 0.25f, oy + h * 0.5f)
-                    lineTo(ox + w * 0.25f, oy + h * 0.95f) // Lebih panjang ke bawah
+                    lineTo(ox + w * 0.25f, oy + h * 0.95f)
                 }
             }
             'q' -> {
@@ -810,7 +810,7 @@ class DrawingWordView @JvmOverloads constructor(
             }
             's' -> {
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.5f) // Sesuaikan Y-pos untuk lowercase
+                    moveTo(ox + w * 0.75f, oy + h * 0.5f)
                     quadTo(ox + w * 0.6f, oy + h * 0.4f, ox + w * 0.5f, oy + h * 0.45f)
                     quadTo(ox + w * 0.2f, oy + h * 0.55f, ox + w * 0.5f, oy + h * 0.65f)
                     quadTo(ox + w * 0.65f, oy + h * 0.7f, ox + w * 0.25f, oy + h * 0.7f)
@@ -860,7 +860,7 @@ class DrawingWordView @JvmOverloads constructor(
                 }
             }
             'z' -> {
-                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.48f); lineTo(ox + w * 0.8f, oy + h * 0.48f) } // y sedikit disesuaikan
+                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.48f); lineTo(ox + w * 0.8f, oy + h * 0.48f) }
                 addStroke { moveTo(ox + w * 0.8f, oy + h * 0.48f); lineTo(ox + w * 0.2f, oy + h * 0.72f) }
                 addStroke { moveTo(ox + w * 0.2f, oy + h * 0.72f); lineTo(ox + w * 0.8f, oy + h * 0.72f) }
             }

@@ -116,21 +116,7 @@ class MenuWordViewModel (
                 _updateWordStatus.value = Response.Error("ID kata tidak valid untuk pembaruan.")
                 return@launch
             }
-            val reportToUpdate = wordToUpdate.copy(tulisKata = wordToUpdate.tulisKata.uppercase())
-
-//            reportUseCase.updateReportTulisKata(uid, idStudent, reportToUpdate)
-//                .onStart { _updateWordStatus.value = Response.Loading }
-//                .catch { e ->
-//                    _updateWordStatus.value = Response.Error(e.message ?: "Gagal memperbarui kata")
-//                    Log.e("MenuWordViewModel", "Error updateExistingWord: ${e.message}", e)
-//                }
-//                .collect { response ->
-//                    _updateWordStatus.value = response
-//                    if (response is Response.Success && response.data) {
-//                        fetchAllWords(idStudent)
-//                    }
-//                }
-//
+            val reportToUpdate = wordToUpdate.copy(tulisKata = wordToUpdate.tulisKata)
 
         }
     }
@@ -156,7 +142,7 @@ class MenuWordViewModel (
                 .collect { response ->
                     _deleteWordStatus.value = response
                     if (response is Response.Success && response.data) {
-                        fetchAllWords(idStudent) // Muat ulang daftar kata
+                        fetchAllWords(idStudent)
                     }
                 }
         }

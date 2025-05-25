@@ -14,8 +14,8 @@ import com.nara.bacayuk.utils.visible
 
 class WordAdapter(
     private val listener: AdapterListener,
-    private val longClickListener: (ReportTulisKata) -> Unit // Callback untuk long click
-) : RecyclerView.Adapter<WordAdapter.WordViewHolder>() { // Ganti nama ViewHolder
+    private val longClickListener: (ReportTulisKata) -> Unit
+) : RecyclerView.Adapter<WordAdapter.WordViewHolder>() {
 
     inner class WordViewHolder(val binding: ItemAbjadMenuBinding) : RecyclerView.ViewHolder(binding.root)
 

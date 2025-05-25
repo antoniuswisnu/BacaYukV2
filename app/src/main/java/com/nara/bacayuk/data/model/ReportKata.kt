@@ -20,7 +20,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%201.png?alt=media&token=dc861d53-33d7-4047-85fe-7a28c734811c"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%201.png?alt=media&token=c61f9297-d9ab-4848-8937-e77548a9ac84"
         )
     )
     list.add(
@@ -31,7 +31,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%202.png?alt=media&token=cc731765-bb5b-4e31-a1d5-59c3ebdf9850"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%202.png?alt=media&token=4b5a415c-f91d-461e-91eb-c697f8d138c4"
         )
     )
     list.add(
@@ -42,7 +42,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%203.png?alt=media&token=1135f602-5f04-4ad2-a8cb-8fe01738f769"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%203.png?alt=media&token=8881f29c-b181-4cd8-aad6-273edaaffa2a"
         )
     )
     list.add(
@@ -53,7 +53,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%204.png?alt=media&token=ac5c74fd-f8c1-4808-af0a-a1bed194e728"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%204.png?alt=media&token=5c4c1e25-3755-483d-80ce-616ff3b6b9b5"
         )
     )
     list.add(
@@ -64,7 +64,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%205.png?alt=media&token=c0d72a1d-09f6-4378-b7be-b585eece1337"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%205.png?alt=media&token=32ce03f8-499a-4fa2-ae05-dc6139afa2ad"
         )
     )
     list.add(
@@ -75,7 +75,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%206.png?alt=media&token=52a746cf-fc6b-4423-855a-2bce7e5edbc9"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%206.png?alt=media&token=a12df1eb-a482-4069-b540-ef2424524262"
         )
     )
     list.add(
@@ -86,7 +86,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%207.png?alt=media&token=27378788-564e-4752-a478-dbac1e19f54e"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%207.png?alt=media&token=69e618d8-eea0-4484-b051-a9db27addbba"
         )
     )
     list.add(
@@ -97,7 +97,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%208.png?alt=media&token=eec162bf-a33f-43b7-b733-8887219e52e1"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%208.png?alt=media&token=14433da1-1173-4ce6-b4ed-8d83aad0a9b9"
         )
     )
     list.add(
@@ -108,7 +108,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%209.png?alt=media&token=e0c9a995-6d3a-419d-9e48-3dbf7ab613a9"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%209.png?alt=media&token=3bf12111-816e-4f90-8fa8-bf500fc09779"
         )
     )
     list.add(
@@ -119,7 +119,7 @@ fun addSusunKata(): ArrayList<SoalKata> {
             false,
             "-",
             0,
-            "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F01_BacaKata%2F1%20-%20susunKata%20-%2010.png?alt=media&token=3b00774d-b857-46d7-bcca-4889585e0d42"
+            "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/susun-kata%2FsusunKata%20-%2010.png?alt=media&token=29a21686-94a8-4e2d-9273-168afbd99132"
         )
     )
     return list
@@ -127,16 +127,16 @@ fun addSusunKata(): ArrayList<SoalKata> {
 
 fun addLatihanBacaKata(): ArrayList<SoalKata> {
     val list = arrayListOf<SoalKata>()
-    list.add(SoalKata(1, "kue", "kue-topi-nasi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%201.png?alt=media&token=f26d4fc1-ded4-477c-b30b-82c7cc303038"))
-    list.add(SoalKata(2, "topi", "topi-kopi-sapi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%202.png?alt=media&token=b42e194c-09b7-44e2-8f09-79e8d41cc183"))
-    list.add(SoalKata(3, "nasi", "nasi-roti-susu", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%203.png?alt=media&token=aa6960c6-1a7a-485a-b82c-397ed3302186"))
-    list.add(SoalKata(4, "sapi", "sapi-topi-gula", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%204.png?alt=media&token=497f320b-5fa1-42ee-80ee-e1cfc6649b6e"))
-    list.add(SoalKata(5, "roti", "roti-kopi-nasi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%205.png?alt=media&token=7d8ce8e3-4e28-491c-87c2-3a50e79d9385"))
-    list.add(SoalKata(6, "susu", "susu-kopi-topi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%206.png?alt=media&token=eeb0636f-b492-47e1-be7f-93747de7f557"))
-    list.add(SoalKata(7, "kopi", "kopi-nasi-susu", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%207.png?alt=media&token=ab048bf2-d54a-4ff2-b343-6c8e73a0cef6"))
-    list.add(SoalKata(8, "boneka", "boneka-kamera-roti", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%208.png?alt=media&token=b5fc1e69-79ef-437c-b535-cb8a225d2f25"))
-    list.add(SoalKata(9, "kamera", "kamera-sepeda-sepatu", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%209.png?alt=media&token=df483d97-6581-46e2-a920-c024b8aa19cb"))
-    list.add(SoalKata(10, "kuda", "kuda-sapi-kopi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bisabelajar-b0579.appspot.com/o/image%2F02_LatihanBacaKata%2F2%20-%20latihanBacaKata%20-%2010.png?alt=media&token=65a45480-2fc7-4967-a326-2513142bff0a"))
+    list.add(SoalKata(1, "kue", "kue-topi-nasi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%201.png?alt=media&token=33906701-6020-4d0f-a02e-af92ead96f6e"))
+    list.add(SoalKata(2, "topi", "topi-kopi-sapi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%202.png?alt=media&token=a6753b29-47fb-477b-a385-c2f780be119e"))
+    list.add(SoalKata(3, "nasi", "nasi-roti-susu", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%203.png?alt=media&token=d1259152-de2f-46dc-8c66-fb215a61d82b"))
+    list.add(SoalKata(4, "sapi", "sapi-topi-gula", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%204.png?alt=media&token=ed84428f-4a17-4ece-9f62-65c2e9f15b27"))
+    list.add(SoalKata(5, "roti", "roti-kopi-nasi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%205.png?alt=media&token=2c33faf8-a6a4-45c7-b94d-78ab26ee376b"))
+    list.add(SoalKata(6, "susu", "susu-kopi-topi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%206.png?alt=media&token=2c99ff4b-3c07-40b3-a8ad-452bbf60c606"))
+    list.add(SoalKata(7, "kopi", "kopi-nasi-susu", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%207.png?alt=media&token=e8ce6dc9-693f-46a6-9d5b-fa84b895e977"))
+    list.add(SoalKata(8, "boneka", "boneka-kamera-roti", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%208.png?alt=media&token=a8388861-970e-4b20-a264-74330f593987"))
+    list.add(SoalKata(9, "kamera", "kamera-sepeda-sepatu", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%209.png?alt=media&token=8d689e21-0bab-4717-b36e-edc4d033413e"))
+    list.add(SoalKata(10, "kuda", "kuda-sapi-kopi", false, "-", 0, "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kata%2FlatihanBacaKata%20-%2010.png?alt=media&token=cfc1d4f2-3d51-45c6-9271-5b0b4c5c30e0"))
     return list
 }
 

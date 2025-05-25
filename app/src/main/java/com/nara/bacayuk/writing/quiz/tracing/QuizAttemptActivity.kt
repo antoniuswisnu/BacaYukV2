@@ -1,6 +1,7 @@
 package com.nara.bacayuk.writing.quiz.tracing
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.nara.bacayuk.R
@@ -30,6 +32,21 @@ class QuizAttemptActivity : AppCompatActivity() {
     private lateinit var tfLiteInterpreter: Interpreter
     private var student: Student? = null
 
+    private val attemptDetails = mutableListOf<QuizAttemptDetail>()
+    private var correctAnswersCount = 0
+    private var wrongAnswersCount = 0
+
+    private val predictActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                proceedToNextQuestionOrFinish()
+            } else {
+                Log.d("QuizAttemptActivity", "PredictActivity did not return RESULT_OK")
+                proceedToNextQuestionOrFinish()
+            }
+        }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityQuizAttemptBinding.inflate(layoutInflater)
@@ -38,6 +55,7 @@ class QuizAttemptActivity : AppCompatActivity() {
         student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("student", Student::class.java)
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableExtra("student") as Student?
         }
 
@@ -48,7 +66,7 @@ class QuizAttemptActivity : AppCompatActivity() {
         }
 
         binding.btnNext.setOnClickListener {
-            setupClickListeners()
+            processAndShowPrediction()
         }
 
         binding.btnReload.setOnClickListener {
@@ -56,8 +74,8 @@ class QuizAttemptActivity : AppCompatActivity() {
         }
 
         binding.btnPencil.setOnClickListener {
-            binding.btnPencil.setImageResource(R.drawable.ic_pencil_active)
-            binding.tracingCanvas.visibility = View.VISIBLE
+            binding.btnPencil.setImageResource(R.drawable.ic_pencil_active) // Pastikan drawable ini ada
+            binding.tracingCanvas.visibility = View.VISIBLE // Pastikan canvas terlihat
         }
 
         setupViewModel()
@@ -67,23 +85,6 @@ class QuizAttemptActivity : AppCompatActivity() {
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this)[QuizAttemptViewModel::class.java]
-        viewModel.loadQuestions(quizSetId)
-    }
-
-    private fun setupClickListeners() {
-        val userAnswer =  processDrawingAndPredict(binding.tracingCanvas.getBitmap())
-        viewModel.saveAnswer(currentQuestionIndex, userAnswer)
-
-        val bitmap = binding.tracingCanvas.getBitmap()
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-
-        val intent = Intent(this, PredictActivity::class.java)
-        intent.putExtra("userAnswer", userAnswer)
-        intent.putExtra("tracingBitmap", byteArray)
-        intent.putExtra("correctAnswer", questions[currentQuestionIndex].correctAnswer)
-        startActivityForResult(intent, PREDICTION_REQUEST_CODE)
     }
 
     @SuppressLint("SetTextI18n")
@@ -91,66 +92,127 @@ class QuizAttemptActivity : AppCompatActivity() {
         viewModel.questions.observe(this) { questionList ->
             questions = questionList
             if (questions.isNotEmpty()) {
+                binding.progressIndicator.max = questions.size
                 showQuestion(currentQuestionIndex)
+            } else {
+                Toast.makeText(this, "Tidak ada pertanyaan dalam kuis ini.", Toast.LENGTH_LONG).show()
+                finish()
             }
         }
+        viewModel.loadQuestions(quizSetId)
 
-        viewModel.currentAttempt.observe(this) {
-            binding.progressIndicator.max = questions.size
-            binding.progressIndicator.progress = currentQuestionIndex + 1
-            binding.tvProgress.text = "${currentQuestionIndex + 1}/${questions.size}"
-        }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showQuestion(index: Int) {
         if (index < questions.size) {
             val question = questions[index]
             binding.tvTitle.text = question.question
             binding.tracingCanvas.clearCanvas()
-            binding.btnNext.text = if (index == questions.size - 1) "Selesai" else "Selanjutnya"
+            binding.progressIndicator.progress = index + 1
+            binding.tvProgress.text = "${index + 1}/${questions.size}"
+            binding.btnNext.text = if (index == questions.size - 1) "Selesai" else "Periksa Jawaban"
         }
     }
 
     private fun loadTFLiteModel() {
         try {
-            Log.d("TracingQuizActivity", "Mencoba memuat model dari assets...")
+            Log.d("QuizAttemptActivity", "Mencoba memuat model dari assets...")
             val tfliteModel = FileUtil.loadMappedFile(this, "emnist_model_optimized(3).tflite")
             tfLiteInterpreter = Interpreter(tfliteModel)
-            Log.d("TracingQuizActivity", "Model berhasil dimuat")
+            Log.d("QuizAttemptActivity", "Model berhasil dimuat")
         } catch (e: Exception) {
-            Log.e("TracingQuizActivity", "Gagal memuat model: ${e.message}")
-            throw RuntimeException("Gagal memuat model TFLite", e)
+            Log.e("QuizAttemptActivity", "Gagal memuat model: ${e.message}", e)
+            Toast.makeText(this, "Gagal memuat model AI.", Toast.LENGTH_LONG).show()
         }
     }
 
     private fun processDrawingAndPredict(bitmap: Bitmap?): String {
         val bitmapToProcess = bitmap ?: binding.tracingCanvas.getBitmap()
+        if (!::tfLiteInterpreter.isInitialized) {
+            Log.e("QuizAttemptActivity", "Interpreter TFLite belum diinisialisasi.")
+            return ""
+        }
         val processor = HandwritingProcessor(this, tfLiteInterpreter)
-        return processor.processImage(bitmapToProcess)
+        var predictedString = processor.processImage(bitmapToProcess)
+
+        if (predictedString.length > 5) {
+            predictedString = predictedString.substring(0, 5)
+            Log.d("QuizAttemptActivity", "Hasil prediksi dipotong menjadi 5 huruf: $predictedString")
+        }
+        return predictedString
     }
 
-    override fun onDestroy() {
-        tfLiteInterpreter.close()
-        super.onDestroy()
+    private fun processAndShowPrediction() {
+        if (currentQuestionIndex >= questions.size) return
+
+        val currentQuestion = questions[currentQuestionIndex]
+        val userAnswerBitmap = binding.tracingCanvas.getBitmap()
+        val predictedAnswer = processDrawingAndPredict(userAnswerBitmap)
+
+        if (predictedAnswer.isEmpty() && userAnswerBitmap.width > 0 && userAnswerBitmap.height > 0) {
+            Toast.makeText(this, "Tidak ada tulisan terdeteksi. Coba tulis lebih jelas.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (predictedAnswer.isEmpty() && (userAnswerBitmap.width == 0 || userAnswerBitmap.height == 0)) {
+            Toast.makeText(this, "Silakan tulis jawaban Anda terlebih dahulu.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val isCorrect = predictedAnswer.equals(currentQuestion.correctAnswer, ignoreCase = true)
+        if (isCorrect) {
+            correctAnswersCount++
+        } else {
+            wrongAnswersCount++
+        }
+        val detail = QuizAttemptDetail(
+            questionText = currentQuestion.question,
+            correctAnswer = currentQuestion.correctAnswer,
+            userAnswerPredicted = predictedAnswer,
+            isCorrect = isCorrect
+        )
+        attemptDetails.add(detail)
+        viewModel.saveAnswer(currentQuestionIndex, predictedAnswer)
+
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        userAnswerBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+
+        val intent = Intent(this, PredictActivity::class.java).apply {
+            putExtra("userAnswer", predictedAnswer)
+            putExtra("tracingBitmap", byteArray)
+            putExtra("correctAnswer", currentQuestion.correctAnswer)
+            putExtra("student", student)
+        }
+        predictActivityLauncher.launch(intent)
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PREDICTION_REQUEST_CODE && resultCode == RESULT_OK) {
-            currentQuestionIndex++
-            if (currentQuestionIndex >= questions.size) {
-                val intent = Intent(this, QuizResultActivity::class.java)
-                intent.putExtra("quizSetId", quizSetId)
-                startActivity(intent)
-                finish()
-            } else {
-                showQuestion(currentQuestionIndex)
+    private fun proceedToNextQuestionOrFinish() {
+        currentQuestionIndex++
+        if (currentQuestionIndex < questions.size) {
+            showQuestion(currentQuestionIndex)
+        } else {
+            val intent = Intent(this, QuizResultActivity::class.java).apply {
+                putExtra("quizSetId", quizSetId)
+                putParcelableArrayListExtra("ATTEMPT_DETAILS", ArrayList(attemptDetails))
+                putExtra("CORRECT_ANSWERS_COUNT", correctAnswersCount)
+                putExtra("WRONG_ANSWERS_COUNT", wrongAnswersCount)
+                putExtra("TOTAL_QUESTIONS", questions.size)
+                putExtra("student", student)
             }
+            startActivity(intent)
+            finish()
         }
     }
 
+    override fun onDestroy() {
+        if (::tfLiteInterpreter.isInitialized) {
+            tfLiteInterpreter.close()
+        }
+        super.onDestroy()
+    }
+
+
     companion object {
-        private const val PREDICTION_REQUEST_CODE = 100
     }
 }

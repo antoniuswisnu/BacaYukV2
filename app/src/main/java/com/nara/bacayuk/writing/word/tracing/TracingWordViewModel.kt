@@ -34,7 +34,6 @@ class TracingWordViewModel (
     private val _activeWordReport = MutableLiveData<Response<ReportTulisKata?>>()
     val activeWordReport: LiveData<Response<ReportTulisKata?>> = _activeWordReport
 
-    // Untuk status pembaruan progres kata
     private val _updateProgressStatus = MutableLiveData<Response<Boolean>>()
     val updateProgressStatus: LiveData<Response<Boolean>> = _updateProgressStatus
 
@@ -89,11 +88,6 @@ class TracingWordViewModel (
         }
     }
 
-    /**
-     * Memperbarui progres (materiTulisKata, latihanTulisKata) untuk ReportTulisKata yang diberikan.
-     * Objek reportTulisKata yang diterima harus sudah memiliki 'id' yang benar dari Firestore
-     * dan field boolean yang sudah diubah.
-     */
     fun updateWordProgress(idUser: String, idStudent: String, reportToUpdate: ReportTulisKata) {
         viewModelScope.launch {
             if (reportToUpdate.id.isBlank()) {
@@ -102,12 +96,9 @@ class TracingWordViewModel (
                 return@launch
             }
 
-            // Memastikan field yang akan diupdate (materi & latihan) sudah benar-benar true
-            // dan `tulisKata` juga sesuai (meskipun ID adalah kunci utama).
-            // Level akan di-handle oleh DataSource/Repository jika ada perubahan pada `tulisKata`.
             val finalReportToUpdate = reportToUpdate.copy(
-                materiTulisKata = true, // Pastikan ini memang true
-                latihanTulisKata = true // Pastikan ini memang true
+                materiTulisKata = true,
+                latihanTulisKata = true
             )
 
             reportUseCase.updateReportTulisKata(idUser, idStudent, finalReportToUpdate)
@@ -120,8 +111,6 @@ class TracingWordViewModel (
                     _updateProgressStatus.value = response
                     if (response is Response.Success && response.data) {
                         Log.i("TracingWordVM", "Progres kata '${finalReportToUpdate.tulisKata}' berhasil diperbarui.")
-                        // Jika perlu, bisa memuat ulang activeWordReport untuk mendapatkan data terbaru
-                        // fetchSpecificWordReport(idUser, idStudent, finalReportToUpdate.tulisKata)
                     } else if (response is Response.Error) {
                         Log.e("TracingWordVM", "Gagal memperbarui progres kata di Firestore: ${response.message}")
                     }
