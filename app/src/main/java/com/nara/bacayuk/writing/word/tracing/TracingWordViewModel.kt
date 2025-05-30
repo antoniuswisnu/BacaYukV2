@@ -64,7 +64,6 @@ class TracingWordViewModel (
                 .onStart { _activeWordReport.value = Response.Loading }
                 .catch { e ->
                     _activeWordReport.value = Response.Error(e.message ?: "Gagal mengambil data kata spesifik")
-                    Log.e("TracingWordVM", "Error fetchSpecificWordReport: ${e.message}", e)
                 }
                 .collect { response ->
                     when (response) {
@@ -74,7 +73,6 @@ class TracingWordViewModel (
                                 _activeWordReport.value = Response.Success(specificWord)
                             } else {
                                 _activeWordReport.value = Response.Error("Kata '$wordText' tidak ditemukan.")
-                                Log.w("TracingWordVM", "Kata '$wordText' tidak ditemukan untuk student $idStudent")
                             }
                         }
                         is Response.Error -> {
@@ -92,7 +90,6 @@ class TracingWordViewModel (
         viewModelScope.launch {
             if (reportToUpdate.id.isBlank()) {
                 _updateProgressStatus.value = Response.Error("ID Kata tidak valid untuk pembaruan progres.")
-                Log.e("TracingWordVM", "Attempted to update word progress with blank ID for word: ${reportToUpdate.tulisKata}")
                 return@launch
             }
 
@@ -105,7 +102,6 @@ class TracingWordViewModel (
                 .onStart { _updateProgressStatus.value = Response.Loading }
                 .catch { e ->
                     _updateProgressStatus.value = Response.Error(e.message ?: "Gagal memperbarui progres kata")
-                    Log.e("TracingWordVM", "Error updateWordProgress: ${e.message}", e)
                 }
                 .collect { response ->
                     _updateProgressStatus.value = response

@@ -80,13 +80,6 @@ class MenuRiwayatActivity : AppCompatActivity() {
                     }
                 startActivity(intent)
             }
-
-//            btnTulisKuis.setOnClickListener {
-//                val intent = Intent(this@MenuRiwayatActivity, RiwayatTulisKuisActivity::class.java).apply {
-//                    putExtra("student", student)
-//                }
-//                startActivity(intent)
-//            }
         }
     }
 }

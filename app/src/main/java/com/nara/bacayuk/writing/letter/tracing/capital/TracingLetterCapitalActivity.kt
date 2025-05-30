@@ -14,6 +14,7 @@ import com.nara.bacayuk.data.model.User
 import com.nara.bacayuk.databinding.ActivityTracingLetterCapitalBinding
 import com.nara.bacayuk.ui.custom_view.AnswerStatusDialog
 import com.nara.bacayuk.ui.custom_view.OnDismissDialog
+import com.nara.bacayuk.writing.letter.animation.capital.LetterAnimationCapitalActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TracingLetterCapitalActivity : AppCompatActivity() {
@@ -42,7 +43,10 @@ class TracingLetterCapitalActivity : AppCompatActivity() {
         loadLetter()
 
         binding.btnPlayTutorial.setOnClickListener {
-            finish()
+            startActivity(Intent(this, LetterAnimationCapitalActivity::class.java).apply {
+                putExtra(LetterAnimationCapitalActivity.EXTRA_LETTER, currentLetter)
+                putExtra("student", student)
+            })
         }
 
         binding.btnPencil.setOnClickListener {

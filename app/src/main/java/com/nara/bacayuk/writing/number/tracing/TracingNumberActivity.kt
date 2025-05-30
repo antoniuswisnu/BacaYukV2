@@ -32,9 +32,6 @@ class TracingNumberActivity : AppCompatActivity() {
         binding = ActivityTracingNumberBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-
-
         student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("student", Student::class.java)
         } else {

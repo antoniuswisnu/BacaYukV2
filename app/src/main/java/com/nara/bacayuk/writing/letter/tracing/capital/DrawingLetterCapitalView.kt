@@ -272,7 +272,7 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
                 curve.quadTo(viewWidth * 0.5f, viewHeight * 0.2f, viewWidth * 0.25f, viewHeight * 0.3f)
                 curve.quadTo(viewWidth * 0.15f, viewHeight * 0.4f, viewWidth * 0.15f, viewHeight * 0.55f)
                 curve.quadTo(viewWidth * 0.15f, viewHeight * 0.7f, viewWidth * 0.35f, viewHeight * 0.8f)
-                curve.quadTo(viewWidth * 0.7f, viewHeight * 0.85f, viewWidth * 0.85f, viewHeight * 0.7f)
+                curve.quadTo(viewWidth * 0.8f, viewHeight * 0.85f, viewWidth * 0.85f, viewHeight * 0.55f)
                 letterStrokes.add(LetterStroke(curve))
                 extractPointsForStroke(letterStrokes.last())
 
@@ -322,13 +322,13 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
                 })
 
                 letterStrokes.add(createStroke {
-                    moveTo(viewWidth * 0.2f, viewHeight * 0.5f)
+                    moveTo(viewWidth * 0.2f, viewHeight * 0.63f)
                     lineTo(viewWidth * 0.8f, viewHeight * 0.26f)
                 })
 
                 letterStrokes.add(createStroke {
-                    moveTo(viewWidth * 0.2f, viewHeight * 0.5f)
-                    lineTo(viewWidth * 0.8f, viewHeight * 0.8f)
+                    moveTo(viewWidth * 0.46f, viewHeight * 0.48f)
+                    lineTo(viewWidth * 0.82f, viewHeight * 0.8f)
                 })
             }
             "L" -> {
@@ -488,25 +488,25 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
             "U" -> {
                 letterStrokes.add(createStroke {
                     moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
-                    lineTo(viewWidth * 0.2f, viewHeight * 0.65f)
+                    lineTo(viewWidth * 0.2f, viewHeight * 0.7f)
                 })
 
                 val curve = Path()
-                curve.moveTo(viewWidth * 0.2f, viewHeight * 0.65f)
+                curve.moveTo(viewWidth * 0.2f, viewHeight * 0.6f)
                 curve.arcTo(
                     viewWidth * 0.2f,
                     viewHeight * 0.6f,
                     viewWidth * 0.8f,
                     viewHeight * 0.8f,
                     180f,
-                    180f,
+                    -180f,
                     false
                 )
                 letterStrokes.add(LetterStroke(curve))
                 extractPointsForStroke(letterStrokes.last())
 
                 letterStrokes.add(createStroke {
-                    moveTo(viewWidth * 0.8f, viewHeight * 0.65f)
+                    moveTo(viewWidth * 0.8f, viewHeight * 0.7f)
                     lineTo(viewWidth * 0.8f, viewHeight * 0.26f)
                 })
             }
@@ -556,16 +556,16 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
             "Y" -> {
                 letterStrokes.add(createStroke {
                     moveTo(viewWidth * 0.2f, viewHeight * 0.26f)
-                    lineTo(viewWidth * 0.5f, viewHeight * 0.5f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.53f)
                 })
 
                 letterStrokes.add(createStroke {
                     moveTo(viewWidth * 0.8f, viewHeight * 0.26f)
-                    lineTo(viewWidth * 0.5f, viewHeight * 0.5f)
+                    lineTo(viewWidth * 0.5f, viewHeight * 0.53f)
                 })
 
                 letterStrokes.add(createStroke {
-                    moveTo(viewWidth * 0.5f, viewHeight * 0.5f)
+                    moveTo(viewWidth * 0.5f, viewHeight * 0.53f)
                     lineTo(viewWidth * 0.5f, viewHeight * 0.8f)
                 })
             }

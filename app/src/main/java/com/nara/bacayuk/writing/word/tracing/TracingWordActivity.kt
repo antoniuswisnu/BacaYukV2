@@ -30,7 +30,6 @@ class TracingWordActivity : AppCompatActivity() {
     private var currentActiveReport: ReportTulisKata? = null
     private val progressDialog by lazy { waitingDialog() }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTracingWordBinding.inflate(layoutInflater)

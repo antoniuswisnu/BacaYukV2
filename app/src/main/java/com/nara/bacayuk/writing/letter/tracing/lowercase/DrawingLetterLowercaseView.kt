@@ -177,8 +177,13 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
                 loop.arcTo(RectF(w * 0.2f, h * 0.4f, w * 0.85f, h * 0.8f), 180f, 180f, false)
                 letterStrokes.add(LetterStroke(loop))
                 extractPointsForStroke(letterStrokes.last())
+
+                letterStrokes.add(createStroke {
+                    moveTo(w * 0.2f, h * 0.5f)
+                    arcTo(RectF(w * 0.2f, h * 0.4f, w * 0.85f, h * 0.8f),180f, -180f, false)
+                })
             }
-            "c" -> {
+            "c" -> { // dari cubicTo ganti pake quadTo
                 val cPath = Path()
                 cPath.moveTo(w * 0.8f, h * 0.5f)
                 cPath.quadTo(w * 0.2f, h * 0.35f,
@@ -195,8 +200,10 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
                 })
 
                 val loop = Path()
-                loop.moveTo(w * 0.8f, h * 0.5f)
-                loop.arcTo(RectF(w * 0.2f, h * 0.4f, w * 0.8f, h * 0.8f), 0f, -180f, false)
+                loop.moveTo(w * 0.15f, h * 0.6f)
+                loop.arcTo(RectF(w * 0.15f, h * 0.4f, w * 0.8f, h * 0.8f), 180f, -180f, false)
+                loop.moveTo(w * 0.15f, h * 0.6f)
+                loop.arcTo(RectF(w * 0.15f, h * 0.4f, w * 0.8f, h * 0.8f), 180f, 180f, false)
                 letterStrokes.add(LetterStroke(loop))
                 extractPointsForStroke(letterStrokes.last())
             }
@@ -207,7 +214,7 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
                 })
 
                 val curve = Path()
-                curve.arcTo(RectF(w * 0.2f, h * 0.4f, w * 0.8f, h * 0.8f), 0f, 180f, false)
+                curve.arcTo(RectF(w * 0.2f, h * 0.4f, w * 0.8f, h * 0.8f), 180f, 180f, false)
                 letterStrokes.add(LetterStroke(curve))
                 extractPointsForStroke(letterStrokes.last())
 
@@ -247,18 +254,18 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
             }
             "h" -> {
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.2f, h * 0.2f)
+                    moveTo(w * 0.2f, h * 0.25f)
                     lineTo(w * 0.2f, h * 0.8f)
                 })
 
                 val arch = Path()
                 arch.moveTo(w * 0.2f, h * 0.5f)
-                arch.arcTo(RectF(w * 0.2f, h * 0.4f, w * 0.8f, h * 0.8f), 180f, 180f, false)
+                arch.arcTo(RectF(w * 0.2f, h * 0.42f, w * 0.8f, h * 0.8f), 180f, 180f, false)
                 letterStrokes.add(LetterStroke(arch))
                 extractPointsForStroke(letterStrokes.last())
 
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.8f, h * 0.5f)
+                    moveTo(w * 0.8f, h * 0.6f)
                     lineTo(w * 0.8f, h * 0.8f)
                 })
             }
@@ -324,18 +331,18 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
                 extractPointsForStroke(letterStrokes.last())
 
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.5f, h * 0.42f)
+                    moveTo(w * 0.5f, h * 0.6f)
                     lineTo(w * 0.5f, h * 0.8f)
                 })
 
                 val secondArch = Path()
-                secondArch.moveTo(w * 0.5f, h * 0.42f)
+                secondArch.moveTo(w * 0.5f, h * 0.8f)
                 secondArch.arcTo(RectF(w * 0.5f, h * 0.42f, w * 0.88f, h * 0.8f), 180f, 180f, false)
                 letterStrokes.add(LetterStroke(secondArch))
                 extractPointsForStroke(letterStrokes.last())
 
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.88f, h * 0.42f)
+                    moveTo(w * 0.88f, h * 0.6f)
                     lineTo(w * 0.88f, h * 0.8f)
                 })
             }
@@ -347,12 +354,12 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
 
                 val arch = Path()
                 arch.moveTo(w * 0.22f, h * 0.4f)
-                arch.arcTo(RectF(w * 0.23f, h * 0.42f, w * 0.83f, h * 0.8f), 180f, 180f, false)
+                arch.arcTo(RectF(w * 0.22f, h * 0.42f, w * 0.83f, h * 0.8f), 180f, 180f, false)
                 letterStrokes.add(LetterStroke(arch))
                 extractPointsForStroke(letterStrokes.last())
 
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.83f, h * 0.4f)
+                    moveTo(w * 0.83f, h * 0.6f)
                     lineTo(w * 0.83f, h * 0.8f)
                 })
             }
@@ -397,22 +404,43 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
             }
             "s" -> {
                 val sPath = Path()
-                sPath.moveTo(w * 0.8f, h * 0.42f)
-                sPath.quadTo(w * 0.5f, h * 0.2f, w * 0.2f, h * 0.4f)
-                sPath.quadTo(w * 0.5f, h * 0.6f, w * 0.8f, h * 0.6f)
-                sPath.quadTo(w * 0.5f, h * 0.8f, w * 0.2f, h * 0.8f)
+                sPath.moveTo(w * 0.75f, h * 0.45f)
+                sPath.cubicTo(
+                    w * 0.7f, h * 0.4f,
+                    w * 0.25f, h * 0.38f,
+                    w * 0.2f, h * 0.55f
+                )
+                sPath.cubicTo(
+                    w * 0.25f, h * 0.58f,
+                    w * 0.75f, h * 0.64f,
+                    w * 0.8f, h * 0.7f
+                )
+                sPath.cubicTo(
+                    w * 0.75f, h * 0.78f,
+                    w * 0.5f, h * 0.85f,
+                    w * 0.25f, h * 0.8f
+                )
+                sPath.quadTo(w * 0.2f, h * 0.78f, w * 0.15f, h * 0.73f)
                 letterStrokes.add(LetterStroke(sPath))
                 extractPointsForStroke(letterStrokes.last())
             }
             "t" -> {
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.5f, h * 0.2f)
-                    lineTo(w * 0.5f, h * 0.8f)
+                    moveTo(w * 0.43f, h * 0.3f)
+                    lineTo(w * 0.43f, h * 0.7f)
                 })
 
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.2f, h * 0.4f)
-                    lineTo(w * 0.8f, h * 0.4f)
+                    moveTo(w * 0.1f, h * 0.43f)
+                    lineTo(w * 0.8f, h * 0.43f)
+                })
+
+                letterStrokes.add(createStroke {
+                    moveTo(w * 0.43f, h * 0.7f)
+                    quadTo(
+                        w * 0.43f, h * 0.8f,
+                        w * 0.8f, h * 0.8f
+                    )
                 })
             }
             "u" -> {
@@ -423,13 +451,21 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
 
                 val curve = Path()
                 curve.moveTo(w * 0.2f, h * 0.7f)
-                curve.quadTo(w * 0.5f, h * 0.8f, w * 0.8f, h * 0.7f)
+                curve.arcTo(
+                    width * 0.2f,
+                    height * 0.6f,
+                    width * 0.8f,
+                    height * 0.8f,
+                    180f,
+                    -180f,
+                    false
+                )
                 letterStrokes.add(LetterStroke(curve))
                 extractPointsForStroke(letterStrokes.last())
 
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.8f, h * 0.7f)
-                    lineTo(w * 0.8f, h * 0.4f)
+                    moveTo(w * 0.8f, h * 0.4f)
+                    lineTo(w * 0.8f, h * 0.8f)
                 })
             }
             "v" -> {
@@ -477,18 +513,21 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
             }
             "y" -> {
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.2f, h * 0.4f)
+                    moveTo(w * 0.15f, h * 0.4f)
                     lineTo(w * 0.5f, h * 0.8f)
                 })
 
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.5f, h * 0.8f)
-                    lineTo(w * 0.8f, h * 0.4f)
+                    moveTo(w * 0.85f, h * 0.4f)
+                    lineTo(w * 0.4f, h * 0.93f)
                 })
 
                 letterStrokes.add(createStroke {
-                    moveTo(w * 0.5f, h * 0.8f)
-                    lineTo(w * 0.5f, h * 0.98f)
+                    moveTo(w * 0.4f, h * 0.93f)
+                    quadTo(
+                        w * 0.4f, h * 0.96f,
+                        w * 0.15f, h * 0.94f
+                    )
                 })
             }
             "z" -> {

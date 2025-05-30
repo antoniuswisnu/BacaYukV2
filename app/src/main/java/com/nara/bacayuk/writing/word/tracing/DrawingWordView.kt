@@ -627,10 +627,12 @@ class DrawingWordView @JvmOverloads constructor(
                 }
             }
 
+            // Lowercase
+
             'a' -> {
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.55f) // Mulai dari kanan tengah lingkaran
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, -359.9f) // Sedikit kurang dari 360 untuk menghindari artefak jika path tertutup sempurna
+                    moveTo(ox + w * 0.75f, oy + h * 0.55f)
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, -359.9f)
                 }
                 addStroke {
                     moveTo(ox + w * 0.75f, oy + h * 0.5f)
@@ -753,12 +755,12 @@ class DrawingWordView @JvmOverloads constructor(
                 }
                 addStroke {
                     moveTo(ox + w * 0.15f, oy + h * 0.5f)
-                    arcTo(RectF(ox + w * 0.15f, oy + h * 0.45f, ox + w * 0.45f, oy + h * 0.75f), 180f, 180f) // Lengkungan
+                    arcTo(RectF(ox + w * 0.15f, oy + h * 0.45f, ox + w * 0.45f, oy + h * 0.75f), 180f, 180f)
                     lineTo(ox + w * 0.45f, oy + h * 0.75f)
                 }
                 addStroke {
                     moveTo(ox + w * 0.45f, oy + h * 0.5f)
-                    arcTo(RectF(ox + w * 0.45f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f) // Lengkungan
+                    arcTo(RectF(ox + w * 0.45f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f)
                     lineTo(ox + w * 0.75f, oy + h * 0.75f)
                 }
             }
@@ -769,7 +771,7 @@ class DrawingWordView @JvmOverloads constructor(
                 }
                 addStroke {
                     moveTo(ox + w * 0.25f, oy + h * 0.5f)
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f) // Lengkungan
+                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f)
                     lineTo(ox + w * 0.75f, oy + h * 0.75f)
                 }
             }

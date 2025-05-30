@@ -13,6 +13,7 @@ import com.nara.bacayuk.data.model.User
 import com.nara.bacayuk.databinding.ActivityTracingLetterLowercaseBinding
 import com.nara.bacayuk.ui.custom_view.AnswerStatusDialog
 import com.nara.bacayuk.ui.custom_view.OnDismissDialog
+import com.nara.bacayuk.writing.letter.animation.lowercase.LetterAnimationLowercaseActivity
 import com.nara.bacayuk.writing.letter.menu.MenuLetterActivity
 import com.nara.bacayuk.writing.letter.tracing.capital.TracingLetterCapitalActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -43,7 +44,10 @@ class TracingLetterLowercaseActivity : AppCompatActivity() {
         loadLetter()
 
         binding.btnPlayTutorial.setOnClickListener {
-            finish()
+            startActivity(Intent(this, LetterAnimationLowercaseActivity::class.java).apply {
+                putExtra(LetterAnimationLowercaseActivity.EXTRA_LETTER, currentLetter.lowercase())
+                putExtra("student", student)
+            })
         }
 
         binding.btnPencil.setOnClickListener {

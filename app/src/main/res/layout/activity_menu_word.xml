@@ -52,7 +52,7 @@
             app:tabGravity="fill"
             app:tabIndicatorColor="#5382FB"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="#11348C"
+            app:tabSelectedTextColor="@color/white"
             app:tabTextColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -76,9 +76,10 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="Tambah Kata Baru"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/ic_add_blue"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@android:color/white" />
+        app:tint="#2153D6" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
