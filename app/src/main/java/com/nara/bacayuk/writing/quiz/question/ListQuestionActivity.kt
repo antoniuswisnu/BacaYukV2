@@ -6,10 +6,13 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityListQuestionBinding
+import com.nara.bacayuk.utils.invisible
 import com.nara.bacayuk.writing.quiz.menu.MenuQuizActivity
 
 class ListQuestionActivity : AppCompatActivity() {
@@ -38,7 +41,25 @@ class ListQuestionActivity : AppCompatActivity() {
         Log.d("AddEditQuizActivity", "QuizSetId: $quizSetId")
 
         val title = intent.getStringExtra("title")
-        binding.tvTitle.text = title
+        binding.apply{
+            toolbarAction.apply {
+                imgActionRight.invisible()
+                rootView.backgroundTintList = AppCompatResources.getColorStateList(this@ListQuestionActivity,
+                    R.color.primary_800)
+
+                imageView.imageTintList = AppCompatResources.getColorStateList(this@ListQuestionActivity,
+                    R.color.white)
+
+                txtTitle.setTextColor(
+                    AppCompatResources.getColorStateList(this@ListQuestionActivity,
+                        R.color.white))
+
+                txtTitle.text = title
+                imageView.setOnClickListener {
+                    onBackPressed()
+                }
+            }
+        }
 
         setupViewModel()
         setupRecyclerView()
@@ -80,12 +101,13 @@ class ListQuestionActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.btnSaveQuiz.setOnClickListener {
-            val intent = Intent(this, MenuQuizActivity::class.java).apply {
-                putExtra("student", student)
-            }
-            startActivity(intent)
-        }
+//        binding.btnSaveQuiz.setOnClickListener {
+//            val intent = Intent(this, MenuQuizActivity::class.java).apply {
+//                putExtra("student", student)
+//            }
+//            startActivity(intent)
+//            finish()
+//        }
     }
 
     private fun observeViewModel() {

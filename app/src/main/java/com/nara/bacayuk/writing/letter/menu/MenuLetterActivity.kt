@@ -1,12 +1,15 @@
 package com.nara.bacayuk.writing.letter.menu
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.GridLayoutManager
+import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.Tulis
@@ -14,6 +17,7 @@ import com.nara.bacayuk.databinding.ActivityMenuLetterBinding
 import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
 import com.nara.bacayuk.ui.listener.adapter.AdapterListener
+import com.nara.bacayuk.utils.invisible
 import com.nara.bacayuk.writing.letter.animation.capital.LetterAnimationCapitalActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -26,6 +30,7 @@ class MenuLetterActivity : AppCompatActivity(), AdapterListener {
     private val adapterLetterAdapter by lazy { AlphabetAdapter(this@MenuLetterActivity) }
     var student: Student? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMenuLetterBinding.inflate(layoutInflater)
@@ -37,8 +42,24 @@ class MenuLetterActivity : AppCompatActivity(), AdapterListener {
             intent.getParcelableExtra("student") as Student?
         }
 
-        binding.btnBack.setOnClickListener {
-            onBackPressed()
+        binding.apply{
+            toolbarAction.apply {
+                imgActionRight.invisible()
+                rootView.backgroundTintList = AppCompatResources.getColorStateList(this@MenuLetterActivity,
+                    R.color.teal_600)
+
+                imageView.imageTintList = AppCompatResources.getColorStateList(this@MenuLetterActivity,
+                    R.color.white)
+
+                txtTitle.setTextColor(
+                    AppCompatResources.getColorStateList(this@MenuLetterActivity,
+                    R.color.white))
+
+                txtTitle.text = "Tulis Huruf"
+                imageView.setOnClickListener {
+                    onBackPressed()
+                }
+            }
         }
 
         menuLetterViewModel.reportsLetter.observe(this@MenuLetterActivity){ response ->

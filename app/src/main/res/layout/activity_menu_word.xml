@@ -14,35 +14,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#2153D6"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="18dp"
-                android:layout_height="21dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:contentDescription="@string/button_back"
-                android:src="@drawable/ic_arrow_white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:fontFamily="@font/plus_jakarta_sans_semibold"
-                android:text="@string/tulis_kata"
-                android:textColor="#ffffff"
-                android:textSize="18sp" />
-
-        </androidx.appcompat.widget.Toolbar>
+        <include
+            android:id="@+id/toolbar_action"
+            layout="@layout/layout_toolbar_action" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayoutWords"
@@ -62,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="180dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

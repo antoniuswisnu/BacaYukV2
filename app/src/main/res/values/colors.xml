@@ -15,6 +15,7 @@
     <color name="primary_500">#6E2FF8</color>
     <color name="primary_600">#601DE4</color>
     <color name="primary_700">#5018BF</color>
+    <color name="primary_800">#43169C</color>
 
     <color name="neutral_700">#344054</color>
     <color name="neutral_200">#E4E7EC</color>
@@ -27,6 +28,7 @@
     <color name="blue_50">#CAD7FA</color>
     <color name="blue_500">#2154D6</color>
     <color name="blue_700">#16388F</color>
+    <color name="blue_200">#2153D6</color>
     <color name="unselected_vocal">#D3DDF7</color>
 
 <!--    neutral-->

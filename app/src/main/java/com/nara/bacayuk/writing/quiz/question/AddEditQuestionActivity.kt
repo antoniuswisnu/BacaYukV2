@@ -1,5 +1,6 @@
 package com.nara.bacayuk.writing.quiz.question
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -7,9 +8,12 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
+import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityAddEditQuestionBinding
+import com.nara.bacayuk.utils.invisible
 
 class AddEditQuestionActivity : AppCompatActivity() {
 
@@ -20,6 +24,7 @@ class AddEditQuestionActivity : AppCompatActivity() {
     private lateinit var quizId: String
     private var student: Student? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddEditQuestionBinding.inflate(layoutInflater)
@@ -40,19 +45,33 @@ class AddEditQuestionActivity : AppCompatActivity() {
         quizSetId = intent.getStringExtra("quizSetId") ?: ""
         quizId = intent.getStringExtra("quizId") ?: ""
 
-        if (quizId.isBlank()) {
-            binding.btnSave.text = "Tambah Soal"
-            binding.tvTitle.text = "Tambah Soal"
-        } else {
-            binding.btnSave.text = "Update Soal"
-            binding.tvTitle.text = "Update Soal"
-        }
+        binding.apply{
+            toolbarAction.apply {
+                imgActionRight.invisible()
+                rootView.backgroundTintList = AppCompatResources.getColorStateList(this@AddEditQuestionActivity,
+                    R.color.white)
 
-        binding.btnBack.setOnClickListener {
-            startActivity(Intent(this, ListQuestionActivity::class.java).apply {
-                putExtra("student", student)
-            })
-            finish()
+                imageView.imageTintList = AppCompatResources.getColorStateList(this@AddEditQuestionActivity,
+                    R.color.primary_800)
+
+                txtTitle.setTextColor(
+                    AppCompatResources.getColorStateList(this@AddEditQuestionActivity,
+                        R.color.primary_800))
+
+                if (quizId.isBlank()) {
+                    btnSave.text = "Tambah Soal"
+                    txtTitle.text = "Tambah Soal"
+                } else {
+                    btnSave.text = "Update Soal"
+                    txtTitle.text = "Update Soal"
+                }
+                imageView.setOnClickListener {
+                    startActivity(Intent(this@AddEditQuestionActivity, ListQuestionActivity::class.java).apply {
+                        putExtra("student", student)
+                    })
+                    finish()
+                }
+            }
         }
 
         setupViewModel()

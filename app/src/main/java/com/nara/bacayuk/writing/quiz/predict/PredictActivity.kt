@@ -41,6 +41,8 @@ class PredictActivity : AppCompatActivity() {
         binding.tvCorrectAnswer.text = correctAnswer
         binding.tvFeedback.visibility = View.GONE
 
+        Log.d("GeminiHelper", "User Answer: $userAnswer, Correct Answer: $correctAnswer")
+
         try {
             geminiFeedbackHelper = GeminiHelper(this)
 
@@ -99,3 +101,4 @@ class PredictActivity : AppCompatActivity() {
             "Belum tepat. Jawaban yang benar: $correctAnswer. Coba perhatikan bentuk hurufnya."
     }
 }
+

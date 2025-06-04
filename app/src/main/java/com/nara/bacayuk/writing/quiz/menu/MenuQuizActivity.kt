@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nara.bacayuk.writing.quiz.tracing.QuizAttemptActivity
 import com.nara.bacayuk.writing.quiz.question.ListQuestionActivity
@@ -19,6 +20,7 @@ import com.nara.bacayuk.databinding.ActivityMenuQuizBinding
 import com.nara.bacayuk.databinding.DialogCreateQuizSetBinding
 import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
 import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
+import com.nara.bacayuk.utils.invisible
 
 class MenuQuizActivity : AppCompatActivity() {
 
@@ -32,12 +34,24 @@ class MenuQuizActivity : AppCompatActivity() {
         binding = ActivityMenuQuizBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnBack.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java)
-                .apply {
-                    putExtra("student", student)
+        binding.apply{
+            toolbarAction.apply {
+                imgActionRight.invisible()
+                rootView.backgroundTintList = AppCompatResources.getColorStateList(this@MenuQuizActivity,
+                    R.color.purple_200)
+
+                imageView.imageTintList = AppCompatResources.getColorStateList(this@MenuQuizActivity,
+                    R.color.white)
+
+                txtTitle.setTextColor(
+                    AppCompatResources.getColorStateList(this@MenuQuizActivity,
+                        R.color.white))
+
+                txtTitle.text = "Kuis Menulis"
+                imageView.setOnClickListener {
+                    onBackPressed()
                 }
-            )
+            }
         }
 
         student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

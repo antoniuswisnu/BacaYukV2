@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.nara.bacayuk.data.model.ReportTulisKata
@@ -23,6 +24,7 @@ import com.nara.bacayuk.ui.listener.adapter.AdapterListener
 import com.nara.bacayuk.writing.word.tracing.TracingWordActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.nara.bacayuk.R
+import com.nara.bacayuk.utils.invisible
 
 class MenuWordActivity : AppCompatActivity(), AdapterListener {
 
@@ -41,12 +43,31 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
         binding = ActivityMenuWordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("student", Student::class.java)
         } else {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra("student") as Student?
+        }
+
+        binding.apply{
+            toolbarAction.apply {
+                imgActionRight.invisible()
+                rootView.backgroundTintList = AppCompatResources.getColorStateList(this@MenuWordActivity,
+                    R.color.blue_200)
+
+                imageView.imageTintList = AppCompatResources.getColorStateList(this@MenuWordActivity,
+                    R.color.white)
+
+                txtTitle.setTextColor(
+                    AppCompatResources.getColorStateList(this@MenuWordActivity,
+                        R.color.white))
+
+                txtTitle.text = "Tulis Kata"
+                imageView.setOnClickListener {
+                    onBackPressed()
+                }
+            }
         }
 
         if (student == null) {
@@ -62,10 +83,6 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
     }
 
     private fun setupUI() {
-        binding.btnBack.setOnClickListener {
-            onBackPressed()
-        }
-
         binding.rvKata.layoutManager = GridLayoutManager(this@MenuWordActivity, 2)
         binding.rvKata.adapter = easyWordAdapter
 

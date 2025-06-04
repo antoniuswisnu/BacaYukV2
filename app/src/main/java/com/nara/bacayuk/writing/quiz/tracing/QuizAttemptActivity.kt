@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModelProvider
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
@@ -22,6 +24,9 @@ import com.nara.bacayuk.writing.quiz.question.Question
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import java.io.ByteArrayOutputStream
+import androidx.lifecycle.lifecycleScope
+import com.nara.bacayuk.writing.quiz.predict.GeminiHelper
+import kotlinx.coroutines.launch
 
 class QuizAttemptActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuizAttemptBinding
@@ -31,6 +36,7 @@ class QuizAttemptActivity : AppCompatActivity() {
     private var questions = listOf<Question>()
     private lateinit var tfLiteInterpreter: Interpreter
     private var student: Student? = null
+    private lateinit var geminiHelper: GeminiHelper
 
     private val attemptDetails = mutableListOf<QuizAttemptDetail>()
     private var correctAnswersCount = 0
@@ -45,7 +51,6 @@ class QuizAttemptActivity : AppCompatActivity() {
                 proceedToNextQuestionOrFinish()
             }
         }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,8 +70,28 @@ class QuizAttemptActivity : AppCompatActivity() {
             return
         }
 
+        geminiHelper = GeminiHelper(this)
+
         binding.btnNext.setOnClickListener {
-            processAndShowPrediction()
+            val currentQuestion = questions[currentQuestionIndex]
+
+            if (currentQuestion.questionType == "Kata") {
+                lifecycleScope.launch {
+                    val userAnswerBitmap = binding.tracingCanvas.getBitmap()
+                    val baos = ByteArrayOutputStream().apply { userAnswerBitmap.compress(Bitmap.CompressFormat.PNG, 100, this) }
+                    val byteArray = baos.toByteArray()
+                    val finalImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                    val finalImage2 = finalImage.scale(512, 512, true)
+                    val predicted = geminiHelper.predictText(finalImage2)
+                    handlePredictionResult(userAnswerBitmap, predicted)
+                    Log.d("GeminiHelper", "Jawaban pengguna: $predicted")
+                }
+            } else {
+                val userAnswerBitmap = binding.tracingCanvas.getBitmap()
+                Log.d("GeminiHelper", "User answer bitmap: ${userAnswerBitmap.width}x${userAnswerBitmap.height}")
+                val predicted = processDrawingAndPredict(userAnswerBitmap)
+                handlePredictionResult(userAnswerBitmap, predicted)
+            }
         }
 
         binding.btnReload.setOnClickListener {
@@ -74,8 +99,8 @@ class QuizAttemptActivity : AppCompatActivity() {
         }
 
         binding.btnPencil.setOnClickListener {
-            binding.btnPencil.setImageResource(R.drawable.ic_pencil_active) // Pastikan drawable ini ada
-            binding.tracingCanvas.visibility = View.VISIBLE // Pastikan canvas terlihat
+            binding.btnPencil.setImageResource(R.drawable.ic_pencil_active)
+            binding.tracingCanvas.visibility = View.VISIBLE
         }
 
         setupViewModel()
@@ -134,22 +159,17 @@ class QuizAttemptActivity : AppCompatActivity() {
             return ""
         }
         val processor = HandwritingProcessor(this, tfLiteInterpreter)
-        var predictedString = processor.processImage(bitmapToProcess)
+        val predictedString = processor.processImage(bitmapToProcess)
 
-        if (predictedString.length > 5) {
-            predictedString = predictedString.substring(0, 5)
-            Log.d("QuizAttemptActivity", "Hasil prediksi dipotong menjadi 5 huruf: $predictedString")
-        }
+//        if (predictedString.length > 5) {
+//            predictedString = predictedString.substring(0, 5)
+//            Log.d("QuizAttemptActivity", "Hasil prediksi dipotong menjadi 5 huruf: $predictedString")
+//        }
+//
         return predictedString
     }
 
-    private fun processAndShowPrediction() {
-        if (currentQuestionIndex >= questions.size) return
-
-        val currentQuestion = questions[currentQuestionIndex]
-        val userAnswerBitmap = binding.tracingCanvas.getBitmap()
-        val predictedAnswer = processDrawingAndPredict(userAnswerBitmap)
-
+    private fun handlePredictionResult(userAnswerBitmap: Bitmap, predictedAnswer: String) {
         if (predictedAnswer.isEmpty() && userAnswerBitmap.width > 0 && userAnswerBitmap.height > 0) {
             Toast.makeText(this, "Tidak ada tulisan terdeteksi. Coba tulis lebih jelas.", Toast.LENGTH_SHORT).show()
             return
@@ -158,33 +178,26 @@ class QuizAttemptActivity : AppCompatActivity() {
             Toast.makeText(this, "Silakan tulis jawaban Anda terlebih dahulu.", Toast.LENGTH_SHORT).show()
             return
         }
-
-        val isCorrect = predictedAnswer.equals(currentQuestion.correctAnswer, ignoreCase = true)
-        if (isCorrect) {
-            correctAnswersCount++
-        } else {
-            wrongAnswersCount++
-        }
-        val detail = QuizAttemptDetail(
-            questionText = currentQuestion.question,
-            correctAnswer = currentQuestion.correctAnswer,
+        val current = questions[currentQuestionIndex]
+        val isCorrect = predictedAnswer.equals(current.correctAnswer, ignoreCase = true)
+        if (isCorrect) correctAnswersCount++ else wrongAnswersCount++
+        attemptDetails.add(QuizAttemptDetail(
+            questionText = current.question,
+            correctAnswer = current.correctAnswer,
             userAnswerPredicted = predictedAnswer,
             isCorrect = isCorrect
-        )
-        attemptDetails.add(detail)
+        ))
         viewModel.saveAnswer(currentQuestionIndex, predictedAnswer)
-
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        userAnswerBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-
-        val intent = Intent(this, PredictActivity::class.java).apply {
+        val baos = ByteArrayOutputStream().apply { userAnswerBitmap.compress(Bitmap.CompressFormat.PNG, 100, this) }
+        val byteArray = baos.toByteArray()
+        Intent(this, PredictActivity::class.java).apply {
             putExtra("userAnswer", predictedAnswer)
             putExtra("tracingBitmap", byteArray)
-            putExtra("correctAnswer", currentQuestion.correctAnswer)
+            putExtra("correctAnswer", current.correctAnswer)
             putExtra("student", student)
-        }
-        predictActivityLauncher.launch(intent)
+            putExtra("questionType", current.questionType)
+        }.also { predictActivityLauncher.launch(it) }
+        Log.d("GeminiHelper", "Mengirim ke PredictActivity: userAnswer=$predictedAnswer, correctAnswer=${current.correctAnswer}, questionType=${current.questionType}")
     }
 
     private fun proceedToNextQuestionOrFinish() {
@@ -211,7 +224,6 @@ class QuizAttemptActivity : AppCompatActivity() {
         }
         super.onDestroy()
     }
-
 
     companion object {
     }

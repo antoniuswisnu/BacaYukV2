@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
+import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Response
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.data.model.Tulis
@@ -13,6 +15,7 @@ import com.nara.bacayuk.databinding.ActivityMenuNumberBinding
 import com.nara.bacayuk.ui.custom_view.waitingDialog
 import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
 import com.nara.bacayuk.ui.listener.adapter.AdapterListener
+import com.nara.bacayuk.utils.invisible
 import com.nara.bacayuk.writing.number.animation.NumberAnimationActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -36,8 +39,24 @@ class MenuNumberActivity : AppCompatActivity(), AdapterListener {
             intent.getParcelableExtra("student") as Student?
         }
 
-        binding.btnBack.setOnClickListener {
-            onBackPressed()
+        binding.apply{
+            toolbarAction.apply {
+                imgActionRight.invisible()
+                rootView.backgroundTintList = AppCompatResources.getColorStateList(this@MenuNumberActivity,
+                    R.color.teal_600)
+
+                imageView.imageTintList = AppCompatResources.getColorStateList(this@MenuNumberActivity,
+                    R.color.white)
+
+                txtTitle.setTextColor(
+                    AppCompatResources.getColorStateList(this@MenuNumberActivity,
+                        R.color.white))
+
+                txtTitle.text = "Tulis Angka"
+                imageView.setOnClickListener {
+                    onBackPressed()
+                }
+            }
         }
 
         menuNumberViewModel.reportsNumber.observe(this@MenuNumberActivity){ response ->

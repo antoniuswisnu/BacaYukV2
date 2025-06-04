@@ -83,6 +83,31 @@ class GeminiHelper(private val context: Context) {
         }
     }
 
+    /**
+     * Predicts handwritten text using Gemini generative model.
+     * Returns the recognized text or empty string on failure.
+     */
+    suspend fun predictText(bitmap: Bitmap): String = withContext(Dispatchers.IO) {
+        try {
+            if (!isGooglePlayServicesAvailable) return@withContext ""
+            val scaledBitmap = scaleBitmap(bitmap, 512)
+            val prompt = "Baca tulisan tangan ini dan kembalikan teks persis tanpa penjelasan, komentar, atau tanda kutip. Jangan ada kata awalan 'Berikut teks tulisan tangan' langsung hasil tulisannya saja. Contoh: 'aku', 'anda', 'ibu','ayah'."
+            val response = generativeModel.generateContent(
+                content {
+                    image(scaledBitmap)
+                    text(prompt)
+                }
+            )
+
+            return@withContext response.text?.trim()?.ifEmpty {
+                ""
+            } ?: ""
+        } catch (e: Exception) {
+            Log.e("GeminiHelper", "Error saat memprediksi teks: ${e.message}", e)
+            return@withContext ""
+        }
+    }
+
     private fun scaleBitmap(original: Bitmap, maxDimension: Int): Bitmap {
         val width = original.width
         val height = original.height
@@ -116,3 +141,4 @@ class GeminiHelper(private val context: Context) {
         }
     }
 }
+
