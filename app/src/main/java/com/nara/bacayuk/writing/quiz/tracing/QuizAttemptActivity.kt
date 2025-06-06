@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityQuizAttemptBinding
+import com.nara.bacayuk.writing.quiz.predict.DigitalInkRecognizerHelper
 import com.nara.bacayuk.writing.quiz.predict.HandwritingProcessor
 import com.nara.bacayuk.writing.quiz.predict.PredictActivity
 import com.nara.bacayuk.writing.quiz.result.QuizResultActivity
@@ -37,6 +38,7 @@ class QuizAttemptActivity : AppCompatActivity() {
     private lateinit var tfLiteInterpreter: Interpreter
     private var student: Student? = null
     private lateinit var geminiHelper: GeminiHelper
+    private lateinit var digitalInkHelper: DigitalInkRecognizerHelper
 
     private val attemptDetails = mutableListOf<QuizAttemptDetail>()
     private var correctAnswersCount = 0
@@ -71,26 +73,25 @@ class QuizAttemptActivity : AppCompatActivity() {
         }
 
         geminiHelper = GeminiHelper(this)
+        digitalInkHelper = DigitalInkRecognizerHelper()
 
         binding.btnNext.setOnClickListener {
             val currentQuestion = questions[currentQuestionIndex]
-
+            val userBitmap = binding.tracingCanvas.getBitmap()
             if (currentQuestion.questionType == "Kata") {
-                lifecycleScope.launch {
-                    val userAnswerBitmap = binding.tracingCanvas.getBitmap()
-                    val baos = ByteArrayOutputStream().apply { userAnswerBitmap.compress(Bitmap.CompressFormat.PNG, 100, this) }
-                    val byteArray = baos.toByteArray()
-                    val finalImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                    val finalImage2 = finalImage.scale(512, 512, true)
-                    val predicted = geminiHelper.predictText(finalImage2)
-                    handlePredictionResult(userAnswerBitmap, predicted)
-                    Log.d("GeminiHelper", "Jawaban pengguna: $predicted")
-                }
+                val strokes = binding.tracingCanvas.getStrokes()
+                digitalInkHelper.recognize(strokes,
+                    onResult = { predicted ->
+                        handlePredictionResult(userBitmap, predicted)
+                    },
+                    onError = { e ->
+                        Toast.makeText(this, "Gagal mengenali tulisan: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Log.e("QuizAttemptActivity", "Error recognizing handwriting: ${e.message}", e)
+                    }
+                )
             } else {
-                val userAnswerBitmap = binding.tracingCanvas.getBitmap()
-                Log.d("GeminiHelper", "User answer bitmap: ${userAnswerBitmap.width}x${userAnswerBitmap.height}")
-                val predicted = processDrawingAndPredict(userAnswerBitmap)
-                handlePredictionResult(userAnswerBitmap, predicted)
+                val predicted = processDrawingAndPredict(userBitmap)
+                handlePredictionResult(userBitmap, predicted)
             }
         }
 

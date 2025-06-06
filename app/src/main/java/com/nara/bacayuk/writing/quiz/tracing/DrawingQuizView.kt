@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.createBitmap
+import android.graphics.PointF
 
 class DrawingQuizView @JvmOverloads constructor(
     context: Context,
@@ -29,6 +30,9 @@ class DrawingQuizView @JvmOverloads constructor(
         strokeWidth = 30f
     }
 
+    private val strokes = mutableListOf<MutableList<PointF>>()
+    private var currentStroke: MutableList<PointF>? = null
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawPath(path, pencil)
@@ -41,6 +45,7 @@ class DrawingQuizView @JvmOverloads constructor(
 
     fun clearCanvas() {
         path.reset()
+        strokes.clear()
         invalidate()
     }
 
@@ -59,10 +64,13 @@ class DrawingQuizView @JvmOverloads constructor(
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 path.moveTo(x, y)
+                currentStroke = mutableListOf(PointF(x, y))
+                strokes.add(currentStroke!!)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
                 path.lineTo(x, y)
+                currentStroke?.add(PointF(x, y))
             }
             MotionEvent.ACTION_UP -> {
             }
@@ -72,4 +80,6 @@ class DrawingQuizView @JvmOverloads constructor(
         invalidate()
         return true
     }
+
+    fun getStrokes(): List<List<PointF>> = strokes
 }

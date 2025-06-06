@@ -148,4 +148,6 @@ dependencies {
 
     //    implementation 'com.yarolegovich:discrete-scrollview:1.5.1'
 //    implementation 'com.github.yarolegovich:DiscreteScrollView:v1.5.1'
+
+    implementation 'com.google.mlkit:digital-ink-recognition:18.1.0'
 }
