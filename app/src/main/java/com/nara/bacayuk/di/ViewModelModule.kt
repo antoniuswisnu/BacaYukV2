@@ -45,6 +45,4 @@ val viewModelModule = module {
 
     viewModel { MenuWordViewModel(get(), get(), get()) }
     viewModel { TracingWordViewModel(get(), get(), get()) }
-
-//    viewModel { QuizQuestionViewModel(get(), get(), get()) }
 }

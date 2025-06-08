@@ -16,3 +16,4 @@ data class Tulis (
     val reportTulisKata: ReportTulisKata? = ReportTulisKata(),
     val reportTulisQuiz: ReportTulisQuiz? = ReportTulisQuiz(),
     ): Parcelable
+

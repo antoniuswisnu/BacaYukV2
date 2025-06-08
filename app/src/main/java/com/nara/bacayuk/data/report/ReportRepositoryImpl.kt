@@ -118,7 +118,7 @@ class ReportRepositoryImpl(private val dataSource: ReportDataSource) :ReportRepo
     }
 
     // Tulis Kata
-    override fun getAllReportTulisKata( // Menggunakan nama fungsi baru dari interface
+    override fun getAllReportTulisKata(
         idUser: String,
         idStudent: String
     ): Flow<Response<List<ReportTulisKata>>> {
@@ -148,22 +148,5 @@ class ReportRepositoryImpl(private val dataSource: ReportDataSource) :ReportRepo
     ): Flow<Response<Boolean>> {
         return dataSource.deleteReportTulisKata(idUser, idStudent, wordId)
     }
-
-    // Quiz Tulis
-//    override suspend fun getAllReportQuizTulisFromFirestore(
-//        idUser: String,
-//        idStudent: String
-//    ): Flow<Response<List<ReportTulisQuiz>>> {
-//        return dataSource.getAllReportKuisTulisFromFirestore(idUser, idStudent)
-//    }
-//
-//    override suspend fun addUpdateReportQuizTulis(
-//        idUser: String,
-//        idStudent: String,
-//        reportQuizTulis: ReportTulisQuiz
-//    ): Boolean {
-//        return dataSource.addUpdateReportKuisTulis(idUser, idStudent, reportQuizTulis)
-//    }
-
 }
 

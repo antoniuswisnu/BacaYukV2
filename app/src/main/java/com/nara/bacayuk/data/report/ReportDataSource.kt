@@ -31,12 +31,8 @@ interface ReportDataSource {
     fun getAllReportAngkaFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisAngka>>>
 
     //tulis kata
-    suspend fun addReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Flow<Response<String>> // Mengembalikan ID kata baru atau pesan error
+    suspend fun addReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Flow<Response<String>>
     suspend fun updateReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata): Flow<Response<Boolean>>
     suspend fun deleteReportTulisKata(idUser: String, idStudent: String, wordId: String): Flow<Response<Boolean>>
-    fun getAllReportTulisKata(idUser: String, idStudent: String): Flow<Response<List<ReportTulisKata>>> // Menggantikan getAllReportTulisKataFromFirestore untuk konsistensi nama
-
-    //Kuis Tulis
-//    suspend fun addUpdateReportKuisTulis(idUser: String, idStudent: String, reportKuisTulis: ReportTulisQuiz): Boolean
-//    fun getAllReportKuisTulisFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisQuiz>>>
+    fun getAllReportTulisKata(idUser: String, idStudent: String): Flow<Response<List<ReportTulisKata>>>
 }

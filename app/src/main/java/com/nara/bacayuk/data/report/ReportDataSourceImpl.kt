@@ -43,7 +43,7 @@ class ReportDataSourceImpl: ReportDataSource {
                 if (item.abjadName == "Zz") lastStatus = MESSAGE_HURUF_SUCCESS
             }
 
-            lastStatus // kembalikan nilai boolean true jika operasi berhasil
+            lastStatus
         } catch (e: Exception) {
             Log.e("UserDataSourceImpl", "Error adding or updating user to Firestore.", e)
             "Gagal menyiapkan data belajar huruf"
@@ -93,10 +93,10 @@ class ReportDataSourceImpl: ReportDataSource {
                 .collection("Students").document(idStudent)
                 .collection("ReportKata").document("ReportKata")
                 .collection("BelajarVokal").document(reportHuruf.abjadName).set(reportHuruf).await()
-            true // kembalikan nilai boolean true jika operasi berhasil
+            true
         } catch (e: Exception) {
             Log.e("UserDataSourceImpl", "Error adding or updating user to Firestore.", e)
-            false // kembalikan nilai boolean false jika operasi gagal
+            false
         }
     }
 
@@ -111,7 +111,6 @@ class ReportDataSourceImpl: ReportDataSource {
                 .collection("Students").document(idStudent)
                 .collection("ReportKata").document("ReportKata")
                 .collection("BelajarVokal").get().await()
-            //get list students
             for (doc in snapshot.documents) {
                 doc.toObject(BelajarSuku::class.java)?.let { students.add(it) }
             }
@@ -172,10 +171,10 @@ class ReportDataSourceImpl: ReportDataSource {
             val snapshot = firestoreInstance.collection("Users")
                 .document(idUser).collection("Students").document(idStudent)
                 .collection("ReportKata").document("ReportKata").set(reportHuruf).await()
-            true // kembalikan nilai boolean true jika operasi berhasil
+            true
         } catch (e: Exception) {
             Log.e("UserDataSourceImpl", "Error adding or updating user to Firestore.", e)
-            false // kembalikan nilai boolean false jika operasi gagal
+            false
         }
     }
 
@@ -405,20 +404,11 @@ class ReportDataSourceImpl: ReportDataSource {
             4 -> "Sedang"
             5 -> "Tinggi"
             else -> {
-                if (word.length > 5) "Tinggi" // Atau handle sebagai error/kategori lain
-                else "Tidak Diketahui" // Untuk kata kosong atau kasus lain
+                if (word.length > 5) "Tinggi"
+                else "Tidak Diketahui"
             }
         }
     }
-
-//    override suspend fun createReportTulisKataDataSets(idUser: String, idStudent: String): String {
-//        // Fungsi ini sekarang mungkin tidak relevan atau perlu diubah peruntukannya
-//        // jika kata sepenuhnya dinamis.
-//        // Jika ini untuk inisialisasi, pastikan tidak menimpa data pengguna.
-//        // Untuk implementasi CRUD murni, fungsi ini bisa dikosongkan atau dihapus.
-//        Log.d("ReportDataSourceImpl", "createReportTulisKataDataSets called, but word management is now dynamic.")
-//        return "Pengelolaan kata sekarang dinamis melalui CRUD."
-//    }
 
     override fun getAllReportTulisKata(
         idUser: String,
@@ -433,8 +423,8 @@ class ReportDataSourceImpl: ReportDataSource {
             val snapshot = reportCollection.get().await()
             val reports = snapshot.documents.mapNotNull { document ->
                 document.toObject(ReportTulisKata::class.java)?.apply {
-                    id = document.id // Menyimpan ID dokumen Firestore
-                    if (level.isEmpty()) { // Jika level belum ada (migrasi data lama)
+                    id = document.id
+                    if (level.isEmpty()) {
                         level = determineWordLevel(tulisKata)
                     }
                 }
@@ -454,7 +444,6 @@ class ReportDataSourceImpl: ReportDataSource {
         return flow {
             emit(Response.Loading)
             try {
-                // Validasi panjang kata jika diperlukan (misal, 1-5 huruf)
                 if (reportTulisKata.tulisKata.isBlank() || reportTulisKata.tulisKata.length > 5) {
                     emit(Response.Error("Kata tidak valid atau lebih dari 5 huruf."))
                     return@flow
@@ -464,7 +453,6 @@ class ReportDataSourceImpl: ReportDataSource {
                     .document(idUser).collection("Students").document(idStudent)
                     .collection("ReportTulisKata")
 
-                // Cek duplikasi kata sebelum menambahkan (opsional, tergantung kebutuhan)
                 val querySnapshot = collectionRef.whereEqualTo("tulisKata", reportTulisKata.tulisKata).get().await()
                 if (!querySnapshot.isEmpty) {
                     emit(Response.Error("Kata '${reportTulisKata.tulisKata}' sudah ada."))
@@ -473,7 +461,7 @@ class ReportDataSourceImpl: ReportDataSource {
 
                 val newWord = reportTulisKata.copy(
                     level = determineWordLevel(reportTulisKata.tulisKata),
-                    id = "" // Firestore akan generate ID
+                    id = ""
                 )
 
                 val documentReference = collectionRef.add(newWord).await()
@@ -497,7 +485,6 @@ class ReportDataSourceImpl: ReportDataSource {
                 emit(Response.Error("ID kata tidak valid untuk pembaruan."))
                 return@flow
             }
-            // Validasi panjang kata jika diperlukan
             if (reportTulisKata.tulisKata.isBlank() || reportTulisKata.tulisKata.length > 5) {
                 emit(Response.Error("Kata tidak valid atau lebih dari 5 huruf untuk pembaruan."))
                 return@flow
@@ -508,7 +495,6 @@ class ReportDataSourceImpl: ReportDataSource {
                     .document(idUser).collection("Students").document(idStudent)
                     .collection("ReportTulisKata").document(reportTulisKata.id)
 
-                // Cek apakah kata yang diupdate menjadi duplikat dengan kata lain (kecuali dirinya sendiri)
                 val querySnapshot = firestoreInstance.collection("Users")
                     .document(idUser).collection("Students").document(idStudent)
                     .collection("ReportTulisKata")
@@ -558,21 +544,4 @@ class ReportDataSourceImpl: ReportDataSource {
             }
         }
     }
-
-    // Kuis Tulis
-
-//    override suspend fun addUpdateReportKuisTulis(
-//        idUser: String,
-//        idStudent: String,
-//        reportKuisTulis: ReportTulisQuiz
-//    ): Boolean {
-//        TODO("Not yet implemented")
-//    }
-//
-//    override fun getAllReportKuisTulisFromFirestore(
-//        idUser: String,
-//        idStudent: String
-//    ): Flow<Response<List<ReportTulisQuiz>>> {
-//        TODO("Not yet implemented")
-//    }
 }

@@ -63,7 +63,7 @@ class ReportUseCase(private val repository: ReportRepository) {
         idUser: String, idStudent: String, reportTulisAngka: ReportTulisAngka
     ): Boolean = repository.addUpdateReportTulisAngka(idUser, idStudent, reportTulisAngka)
 
-    // TUlis Huruf
+    // Tulis Huruf
     suspend fun createReportTulisHurufDataSets(idUser: String, idStudent: String): String
     = repository.createReportTulisHurufDataSets(idUser, idStudent)
 
@@ -74,33 +74,15 @@ class ReportUseCase(private val repository: ReportRepository) {
     = repository.addUpdateReportTulisHuruf(idUser, idStudent, reportTulisHuruf)
 
     // Tulis Kata
-    fun getAllReportTulisKata(
-        idUser: String,
-        idStudent: String
+    fun getAllReportTulisKata(idUser: String, idStudent: String
     ): Flow<Response<List<ReportTulisKata>>> = repository.getAllReportTulisKata(idUser, idStudent)
 
-    suspend fun addReportTulisKata(
-        idUser: String,
-        idStudent: String,
-        reportTulisKata: ReportTulisKata
+    suspend fun addReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata
     ): Flow<Response<String>> = repository.addReportTulisKata(idUser, idStudent, reportTulisKata)
 
-    suspend fun updateReportTulisKata(
-        idUser: String,
-        idStudent: String,
-        reportTulisKata: ReportTulisKata
+    suspend fun updateReportTulisKata(idUser: String, idStudent: String, reportTulisKata: ReportTulisKata
     ): Flow<Response<Boolean>> = repository.updateReportTulisKata(idUser, idStudent, reportTulisKata)
 
-    suspend fun deleteReportTulisKata(
-        idUser: String,
-        idStudent: String,
-        wordId: String
+    suspend fun deleteReportTulisKata(idUser: String, idStudent: String, wordId: String
     ): Flow<Response<Boolean>> = repository.deleteReportTulisKata(idUser, idStudent, wordId)
-
-    // Kuis Tulis
-//    suspend fun addUpdateReportKuisTulis(idUser: String, idStudent: String, reportKuisTulis: ReportTulisQuiz): Boolean
-//    = repository.addUpdateReportKuisTulis(idUser, idStudent, reportKuisTulis)
-//
-//    suspend fun getAllReportKuisTulisFromFirestore(idUser: String, idStudent: String): Flow<Response<List<ReportTulisQuiz>>>
-//    = repository.getAllReportKuisTulisFromFirestore(idUser, idStudent)
 }

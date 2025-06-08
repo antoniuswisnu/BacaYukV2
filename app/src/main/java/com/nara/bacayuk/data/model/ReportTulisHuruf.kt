@@ -12,3 +12,4 @@ data class ReportTulisHuruf (
     var latihanTulisHurufKapital: Boolean = false,
     var latihanTulisHurufNonKapital: Boolean = false,
 ): Parcelable
+
