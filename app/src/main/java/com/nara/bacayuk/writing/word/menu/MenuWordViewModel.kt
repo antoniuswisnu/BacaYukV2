@@ -111,12 +111,23 @@ class MenuWordViewModel (
                 _updateWordStatus.value = Response.Error("Kata tidak boleh kosong dan maksimal 5 huruf.")
                 return@launch
             }
-
             if (wordToUpdate.id.isBlank()) {
                 _updateWordStatus.value = Response.Error("ID kata tidak valid untuk pembaruan.")
                 return@launch
             }
             val reportToUpdate = wordToUpdate.copy(tulisKata = wordToUpdate.tulisKata)
+            reportUseCase.updateReportTulisKata(uid, idStudent, reportToUpdate)
+                .onStart { _updateWordStatus.value = Response.Loading }
+                .catch { e ->
+                    _updateWordStatus.value = Response.Error(e.message ?: "Gagal memperbarui kata")
+                    Log.e("MenuWordViewModel", "Error updateExistingWord: ${e.message}", e)
+                }
+                .collect { response ->
+                    _updateWordStatus.value = response
+                    if (response is Response.Success && response.data) {
+                        fetchAllWords(idStudent)
+                    }
+                }
 
         }
     }
@@ -147,7 +158,6 @@ class MenuWordViewModel (
                 }
         }
     }
-
 
     fun getUID(): String? = runBlocking {
         dataStoreRepository.getString(UID)

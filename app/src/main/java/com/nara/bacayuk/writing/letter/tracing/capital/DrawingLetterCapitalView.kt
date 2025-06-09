@@ -35,7 +35,7 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
     private var strokesProgress = mutableMapOf<Int, Float>()
 
     private var pencil = Paint().apply {
-        color = Color.BLACK
+        color = Color.BLUE
         style = Paint.Style.STROKE
         strokeWidth = 30f
         strokeCap = Paint.Cap.ROUND

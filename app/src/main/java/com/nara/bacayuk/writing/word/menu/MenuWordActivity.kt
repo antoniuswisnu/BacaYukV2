@@ -168,9 +168,11 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
                     dialog.dismiss()
                     if(response.data) Toast.makeText(this, "Kata berhasil diperbarui", Toast.LENGTH_SHORT).show()
                     else Toast.makeText(this, "Gagal memperbarui kata (status false)", Toast.LENGTH_SHORT).show()
+                    Log.d("MenuWordActivity", "Word updated successfully: ${response.data}")
                 }
                 is Response.Error -> {
                     dialog.dismiss()
+                    Log.e("MenuWordActivity", "Error updating word: ${response.message}")
                     Toast.makeText(this, "Gagal memperbarui kata: ${response.message}", Toast.LENGTH_LONG).show()
                 }
             }

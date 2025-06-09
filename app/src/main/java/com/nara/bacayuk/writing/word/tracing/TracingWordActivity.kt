@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -62,7 +63,7 @@ class TracingWordActivity : AppCompatActivity() {
         }
 
         binding.btnReload.setOnClickListener {
-            binding.tracingCanvas.clearCanvas()
+            binding.tracingCanvas.resetCurrentLetterProgress()
         }
 
         binding.btnBack.setOnClickListener {
@@ -87,10 +88,25 @@ class TracingWordActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkButtonVisibility()
+        binding.tracingCanvas.setDrawingMode(false)
+        binding.btnPencil.setImageResource(R.drawable.ic_pencil)
+    }
+
+    private fun checkButtonVisibility() {
+        if (currentActiveReport?.materiTulisKata == true && currentActiveReport?.latihanTulisKata == true) {
+            binding.btnNext.visibility = View.VISIBLE
+        } else {
+            binding.btnNext.visibility = View.GONE
+        }
+    }
+
     private fun fetchWordDetails() {
         val user = tracingWordViewModel.getUserDataStore()
         if (user?.uuid != null && student?.uuid != null && currentWordText.isNotBlank()) {
-            tracingWordViewModel.fetchSpecificWordReport(user.uuid!!, student!!.uuid!!, currentWordText)
+            tracingWordViewModel.fetchSpecificWordReport(user.uuid, student!!.uuid, currentWordText)
         } else {
             Toast.makeText(this, "Gagal memuat detail kata: Informasi pengguna/siswa tidak lengkap.", Toast.LENGTH_LONG).show()
         }
@@ -105,6 +121,7 @@ class TracingWordActivity : AppCompatActivity() {
                 is Response.Success -> {
                     progressDialog.dismiss()
                     currentActiveReport = response.data
+                    checkButtonVisibility()
                     if (currentActiveReport == null) {
                         Toast.makeText(this, "Detail kata tidak ditemukan.", Toast.LENGTH_LONG).show()
                     } else {
@@ -128,7 +145,7 @@ class TracingWordActivity : AppCompatActivity() {
                     if (response.data) {
                         showSuccessDialog()
                         currentActiveReport = currentActiveReport?.copy(materiTulisKata = true, latihanTulisKata = true)
-
+                        checkButtonVisibility()
                     } else {
                         Toast.makeText(this, "Gagal menyimpan progres kata (status false).", Toast.LENGTH_LONG).show()
                     }

@@ -38,7 +38,7 @@ class DrawingWordView @JvmOverloads constructor(
     }
 
     private val pencilPaint = Paint().apply {
-        color = Color.BLACK
+        color = Color.BLUE
         style = Paint.Style.STROKE
         strokeWidth = 30f
         strokeCap = Paint.Cap.ROUND
@@ -55,12 +55,12 @@ class DrawingWordView @JvmOverloads constructor(
     }
 
     private val completedStrokePaint = Paint().apply {
-        color = Color.GREEN
+        color = Color.BLUE
         style = Paint.Style.STROKE
         strokeWidth = 10f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
-        alpha = 150
+        alpha = 100
         isAntiAlias = true
     }
 
@@ -631,39 +631,45 @@ class DrawingWordView @JvmOverloads constructor(
 
             'a' -> {
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.55f)
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, -359.9f)
+                    moveTo(ox + w * 0.2f, oy + h * 0.5f)
+                    quadTo(ox + w * 0.8f, oy + h * 0.2f, ox + w * 0.8f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.5f)
-                    lineTo(ox + w * 0.75f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.78f, oy + h * 0.6f)
+                    quadTo(ox + w * 0.5f, oy + h * 0.56f, ox + w * 0.2f, oy + h * 0.68f)
+                    quadTo(ox + w * 0.2f, oy + h * 0.9f, ox + w * 0.78f, oy + h * 0.75f)
                 }
             }
             'b' -> {
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.2f)
-                    lineTo(ox + w * 0.25f, oy + h * 0.8f)
+                    moveTo(w * 0.2f, h * 0.22f)
+                    lineTo(w * 0.2f, h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.5f)
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, -359.9f)
+                    arcTo(RectF(w * 0.2f, h * 0.4f, w * 0.85f, h * 0.8f), 180f, 180f, false)
+                }
+                addStroke {
+                    arcTo(RectF(w * 0.2f, h * 0.4f, w * 0.85f, h * 0.8f),180f, -180f, false)
                 }
             }
             'c' -> {
                 addStroke {
                     moveTo(ox + w * 0.8f, oy + h * 0.5f)
-                    quadTo(ox + w * 0.3f, oy + h * 0.35f, ox + w * 0.25f, oy + h * 0.55f)
-                    quadTo(ox + w * 0.3f, oy + h * 0.85f, ox + w * 0.8f, oy + h * 0.7f)
+                    quadTo(ox + w * 0.2f, oy + h * 0.35f, ox + w * 0.18f, oy + h * 0.55f)
+                    quadTo(ox + w * 0.18f, oy + h * 0.9f, ox + w * 0.8f, oy + h * 0.75f)
                 }
             }
             'd' -> {
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.55f)
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, 359.9f)
+                    moveTo(ox + w * 0.15f, oy + h * 0.6f)
+                    arcTo(RectF(ox + w * 0.15f, oy + h * 0.4f, ox + w * 0.8f, oy + h * 0.8f), 180f, -180f, false)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.2f)
-                    lineTo(ox + w * 0.75f, oy + h * 0.8f)
+                    arcTo(RectF(ox + w * 0.15f, oy + h * 0.4f, ox + w * 0.8f, oy + h * 0.8f), 180f, 180f, false)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.2f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.8f)
                 }
             }
             'e' -> {
@@ -672,199 +678,206 @@ class DrawingWordView @JvmOverloads constructor(
                     lineTo(ox + w * 0.8f, oy + h * 0.6f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.8f, oy + h * 0.6f)
-                    arcTo(RectF(ox + w * 0.2f, oy + h * 0.4f, ox + w * 0.8f, oy + h * 0.8f), 0f, 270f)
+                    arcTo(RectF(ox + w * 0.2f, oy + h * 0.4f, ox + w * 0.8f, oy + h * 0.8f), 180f, 180f, false)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.2f, oy + h * 0.6f)
+                    quadTo(ox + w * 0.2f, oy + h * 0.9f, ox + w * 0.75f, oy + h * 0.75f)
                 }
             }
             'f' -> {
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.25f)
-                    quadTo(ox + w * 0.5f, oy + h * 0.15f, ox + w * 0.4f, oy + h * 0.3f)
-                    lineTo(ox + w * 0.4f, oy + h * 0.8f)
+                    moveTo(ox + w * 0.85f, oy + h * 0.25f)
+                    quadTo(ox + w * 0.6f, oy + h * 0.2f, ox + w * 0.45f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.45f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.2f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.6f, oy + h * 0.45f)
+                    moveTo(ox + w * 0.15f, oy + h * 0.42f)
+                    lineTo(ox + w * 0.85f, oy + h * 0.42f)
                 }
             }
-            'g' -> { //
+            'g' -> {
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.55f)
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, -359.9f)
+                    addOval(RectF(ox + w * 0.16f, oy + h * 0.4f, ox + w * 0.8f, oy + h * 0.75f), Path.Direction.CW)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.5f)
-                    lineTo(ox + w * 0.75f, oy + h * 0.9f)
-                    quadTo(ox + w * 0.6f, oy + h * 1.0f, ox + w * 0.3f, oy + h * 0.9f)
+                    moveTo(ox + w * 0.8f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.9f)
+                    quadTo(ox + w * 0.5f, oy + h * 1f, ox + w * 0.2f, oy + h * 0.88f)
                 }
             }
             'h' -> {
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.2f)
-                    lineTo(ox + w * 0.25f, oy + h * 0.8f)
+                    moveTo(ox + w * 0.2f, oy + h * 0.25f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.5f)
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f)
-                    lineTo(ox + w * 0.75f, oy + h * 0.8f)
+                    moveTo(ox + w * 0.2f, oy + h * 0.5f)
+                    arcTo(RectF(ox + w * 0.2f, oy + h * 0.42f, ox + w * 0.8f, oy + h * 0.8f), 180f, 180f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.8f)
                 }
             }
             'i' -> {
                 addStroke {
-                    moveTo(ox + w * 0.5f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.5f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.5f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.8f)
                 }
                 addStroke {
-                    addOval(RectF(ox + w * 0.47f, oy + h * 0.3f, ox + w * 0.53f, oy + h * 0.38f), Path.Direction.CW)
+                    addOval(RectF(ox + w * 0.48f, oy + h * 0.25f, ox + w * 0.53f, oy + h * 0.3f), Path.Direction.CW)
                 }
             }
             'j' -> {
                 addStroke {
-                    moveTo(ox + w * 0.55f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.55f, oy + h * 0.9f)
-                    quadTo(ox + w * 0.5f, oy + h * 1.0f, ox + w * 0.2f, oy + h * 0.9f)
+                    moveTo(ox + w * 0.62f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.62f, oy + h * 0.83f)
+                    quadTo(ox + w * 0.62f, oy + h * 0.98f, ox + w * 0.15f, oy + h * 0.95f)
                 }
                 addStroke {
-                    addOval(RectF(ox + w * 0.52f, oy + h * 0.3f, ox + w * 0.58f, oy + h * 0.38f), Path.Direction.CW)
+                    addOval(RectF(ox + w * 0.58f, oy + h * 0.25f, ox + w * 0.64f, oy + h * 0.3f), Path.Direction.CW)
                 }
             }
             'k' -> {
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.2f)
-                    lineTo(ox + w * 0.25f, oy + h * 0.8f)
+                    moveTo(ox + w * 0.2f, oy + h * 0.26f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.25f, oy + h * 0.6f)
+                    moveTo(ox + w * 0.83f, oy + h * 0.38f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.7f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.6f)
-                    lineTo(ox + w * 0.75f, oy + h * 0.8f)
+                    moveTo(ox + w * 0.46f, oy + h * 0.57f)
+                    lineTo(ox + w * 0.82f, oy + h * 0.8f)
                 }
             }
             'l' -> {
                 addStroke {
-                    moveTo(ox + w * 0.5f, oy + h * 0.2f)
+                    moveTo(ox + w * 0.5f, oy + h * 0.25f)
                     lineTo(ox + w * 0.5f, oy + h * 0.8f)
                 }
             }
             'm' -> {
                 addStroke {
-                    moveTo(ox + w * 0.15f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.15f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.15f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.15f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.15f, oy + h * 0.5f)
-                    arcTo(RectF(ox + w * 0.15f, oy + h * 0.45f, ox + w * 0.45f, oy + h * 0.75f), 180f, 180f)
-                    lineTo(ox + w * 0.45f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.15f, oy + h * 0.4f)
+                    arcTo(RectF(ox + w * 0.15f, oy + h * 0.42f, ox + w * 0.5f, oy + h * 0.8f), 180f, 180f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.45f, oy + h * 0.5f)
-                    arcTo(RectF(ox + w * 0.45f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f)
-                    lineTo(ox + w * 0.75f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.5f, oy + h * 0.8f)
+                    arcTo(RectF(ox + w * 0.5f, oy + h * 0.42f, ox + w * 0.88f, oy + h * 0.8f), 180f, 180f)
+                    lineTo(ox + w * 0.88f, oy + h * 0.8f)
                 }
             }
-            'n' -> { //
+            'n' -> {
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.25f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.22f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.22f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.5f)
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 180f, 180f)
-                    lineTo(ox + w * 0.75f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.22f, oy + h * 0.4f)
+                    arcTo(RectF(ox + w * 0.22f, oy + h * 0.42f, ox + w * 0.83f, oy + h * 0.8f), 180f, 180f)
+                    lineTo(ox + w * 0.83f, oy + h * 0.8f)
                 }
             }
             'o' -> {
                 addStroke {
-                    addOval(RectF(ox + w * 0.2f, oy + h * 0.45f, ox + w * 0.8f, oy + h * 0.75f), Path.Direction.CW)
+                    addOval(RectF(ox + w * 0.15f, oy + h * 0.42f, ox + w * 0.85f, oy + h * 0.8f), Path.Direction.CW)
                 }
             }
             'p' -> {
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.55f)
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, 359.9f)
+                    addOval(RectF(ox + w * 0.2f, oy + h * 0.42f, ox + w * 0.85f, oy + h * 0.8f), Path.Direction.CW)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.5f)
-                    lineTo(ox + w * 0.25f, oy + h * 0.95f)
+                    moveTo(ox + w * 0.2f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.98f)
                 }
             }
             'q' -> {
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.55f)
-                    arcTo(RectF(ox + w * 0.25f, oy + h * 0.45f, ox + w * 0.75f, oy + h * 0.75f), 0f, -359.9f)
+                    addOval(RectF(ox + w * 0.14f, oy + h * 0.42f, ox + w * 0.8f, oy + h * 0.8f), Path.Direction.CW)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.5f)
-                    lineTo(ox + w * 0.75f, oy + h * 0.95f)
+                    moveTo(ox + w * 0.8f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.98f)
                 }
             }
             'r' -> {
                 addStroke {
-                    moveTo(ox + w * 0.3f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.3f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.32f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.32f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.3f, oy + h * 0.5f)
-                    quadTo(ox + w * 0.4f, oy + h * 0.4f, ox + w * 0.7f, oy + h * 0.45f)
+                    moveTo(ox + w * 0.32f, oy + h * 0.65f)
+                    quadTo(ox + w * 0.5f, oy + h * 0.4f, ox + w * 0.85f, oy + h * 0.42f)
                 }
             }
             's' -> {
                 addStroke {
-                    moveTo(ox + w * 0.75f, oy + h * 0.5f)
-                    quadTo(ox + w * 0.6f, oy + h * 0.4f, ox + w * 0.5f, oy + h * 0.45f)
-                    quadTo(ox + w * 0.2f, oy + h * 0.55f, ox + w * 0.5f, oy + h * 0.65f)
-                    quadTo(ox + w * 0.65f, oy + h * 0.7f, ox + w * 0.25f, oy + h * 0.7f)
+                    moveTo(ox + w * 0.75f, oy + h * 0.45f)
+                    cubicTo(ox + w * 0.7f, oy + h * 0.4f, ox + w * 0.25f, oy + h * 0.38f, ox + w * 0.2f, oy + h * 0.55f)
+                    cubicTo(ox + w * 0.25f, oy + h * 0.58f, ox + w * 0.75f, oy + h * 0.64f, ox + w * 0.8f, oy + h * 0.7f)
+                    cubicTo(ox + w * 0.75f, oy + h * 0.78f, ox + w * 0.5f, oy + h * 0.85f, ox + w * 0.25f, oy + h * 0.8f)
+                    quadTo(ox + w * 0.2f, oy + h * 0.78f, ox + w * 0.15f, oy + h * 0.73f)
                 }
             }
             't' -> {
                 addStroke {
-                    moveTo(ox + w * 0.5f, oy + h * 0.25f)
-                    lineTo(ox + w * 0.5f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.43f, oy + h * 0.3f)
+                    lineTo(ox + w * 0.43f, oy + h * 0.7f)
+                    quadTo(ox + w * 0.43f, oy + h * 0.8f, ox + w * 0.8f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.3f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.7f, oy + h * 0.45f)
+                    moveTo(ox + w * 0.1f, oy + h * 0.43f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.43f)
                 }
             }
-            'u' -> { //
+            'u' -> {
                 addStroke {
-                    moveTo(ox + w * 0.25f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.25f, oy + h * 0.65f)
-                    quadTo(ox + w * 0.5f, oy + h * 0.8f, ox + w * 0.75f, oy + h * 0.65f)
-                    lineTo(ox + w * 0.75f, oy + h * 0.45f)
+                    moveTo(ox + w * 0.2f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.2f, oy + h * 0.7f)
+                }
+                addStroke {
+                    arcTo(ox + w * 0.2f, oy + h * 0.6f, ox + w * 0.8f, oy + h * 0.8f, 180f, -180f, false)
+                }
+                addStroke {
+                    moveTo(ox + w * 0.8f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.8f, oy + h * 0.8f)
                 }
             }
             'v' -> {
-                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.45f); lineTo(ox + w * 0.5f, oy + h * 0.75f) }
-                addStroke { moveTo(ox + w * 0.5f, oy + h * 0.75f); lineTo(ox + w * 0.8f, oy + h * 0.45f) }
+                addStroke { moveTo(ox + w * 0.14f, oy + h * 0.4f); lineTo(ox + w * 0.5f, oy + h * 0.8f) }
+                addStroke { moveTo(ox + w * 0.5f, oy + h * 0.8f); lineTo(ox + w * 0.86f, oy + h * 0.4f) }
             }
             'w' -> {
-                addStroke { moveTo(ox + w * 0.1f, oy + h * 0.45f); lineTo(ox + w * 0.3f, oy + h * 0.75f) }
-                addStroke { moveTo(ox + w * 0.3f, oy + h * 0.75f); lineTo(ox + w * 0.5f, oy + h * 0.45f) }
-                addStroke { moveTo(ox + w * 0.5f, oy + h * 0.45f); lineTo(ox + w * 0.7f, oy + h * 0.75f) }
-                addStroke { moveTo(ox + w * 0.7f, oy + h * 0.75f); lineTo(ox + w * 0.9f, oy + h * 0.45f) }
+                addStroke { moveTo(ox + w * 0.1f, oy + h * 0.4f); lineTo(ox + w * 0.3f, oy + h * 0.8f) }
+                addStroke { moveTo(ox + w * 0.3f, oy + h * 0.8f); lineTo(ox + w * 0.5f, oy + h * 0.4f) }
+                addStroke { moveTo(ox + w * 0.5f, oy + h * 0.4f); lineTo(ox + w * 0.72f, oy + h * 0.8f) }
+                addStroke { moveTo(ox + w * 0.72f, oy + h * 0.8f); lineTo(ox + w * 0.9f, oy + h * 0.4f) }
             }
             'x' -> {
-                addStroke { moveTo(ox + w * 0.25f, oy + h * 0.45f); lineTo(ox + w * 0.75f, oy + h * 0.75f) }
-                addStroke { moveTo(ox + w * 0.75f, oy + h * 0.45f); lineTo(ox + w * 0.25f, oy + h * 0.75f) }
+                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.4f); lineTo(ox + w * 0.8f, oy + h * 0.8f) }
+                addStroke { moveTo(ox + w * 0.8f, oy + h * 0.4f); lineTo(ox + w * 0.2f, oy + h * 0.8f) }
             }
             'y' -> {
                 addStroke {
-                    moveTo(ox + w * 0.2f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.5f, oy + h * 0.75f)
+                    moveTo(ox + w * 0.15f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.5f, oy + h * 0.8f)
                 }
                 addStroke {
-                    moveTo(ox + w * 0.8f, oy + h * 0.45f)
-                    lineTo(ox + w * 0.5f, oy + h * 0.75f)
-                    lineTo(ox + w * 0.4f, oy + h * 0.95f)
+                    moveTo(ox + w * 0.85f, oy + h * 0.4f)
+                    lineTo(ox + w * 0.4f, oy + h * 0.93f)
+                    quadTo(ox + w * 0.4f, oy + h * 0.96f, ox + w * 0.15f, oy + h * 0.94f)
                 }
             }
             'z' -> {
-                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.48f); lineTo(ox + w * 0.8f, oy + h * 0.48f) }
-                addStroke { moveTo(ox + w * 0.8f, oy + h * 0.48f); lineTo(ox + w * 0.2f, oy + h * 0.72f) }
-                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.72f); lineTo(ox + w * 0.8f, oy + h * 0.72f) }
+                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.43f); lineTo(ox + w * 0.8f, oy + h * 0.43f) }
+                addStroke { moveTo(ox + w * 0.8f, oy + h * 0.43f); lineTo(ox + w * 0.2f, oy + h * 0.8f) }
+                addStroke { moveTo(ox + w * 0.2f, oy + h * 0.8f); lineTo(ox + w * 0.8f, oy + h * 0.8f) }
             }
 
             else -> {
@@ -925,6 +938,8 @@ class DrawingWordView @JvmOverloads constructor(
             }
             MotionEvent.ACTION_UP -> {
                 if (!activeDrawingPath.isEmpty && activeLetterBox.currentStrokeAttemptPoints.size > 1) {
+                    val storedPath = Path(activeDrawingPath)
+                    activeLetterBox.userPathsForThisLetter.add(storedPath)
                     checkActiveLetterStrokeCompletion()
                     invalidate()
                 }
@@ -1015,6 +1030,10 @@ class DrawingWordView @JvmOverloads constructor(
         letterBoxes.forEachIndexed { letterIndex, letterBox ->
             val bitmapToDraw = if (letterBox.isLetterFullyCompleted) letterBox.filledBitmap else letterBox.outlineBitmap
             bitmapToDraw?.let { canvas.drawBitmap(it, null, letterBox.displayRect, null) }
+
+            letterBox.userPathsForThisLetter.forEach { userPath ->
+                canvas.drawPath(userPath, userPaint)
+            }
 
             if (letterIndex == currentLetterIndex && !letterBox.isLetterFullyCompleted) {
                 letterBox.definedStrokes.forEachIndexed { strokeIndex, definedStroke ->

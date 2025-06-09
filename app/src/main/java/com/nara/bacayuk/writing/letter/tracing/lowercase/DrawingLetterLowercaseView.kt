@@ -183,7 +183,7 @@ class DrawingLetterLowercaseView(context: Context, attrs: AttributeSet) : View(c
                     arcTo(RectF(w * 0.2f, h * 0.4f, w * 0.85f, h * 0.8f),180f, -180f, false)
                 })
             }
-            "c" -> { // dari cubicTo ganti pake quadTo
+            "c" -> {
                 val cPath = Path()
                 cPath.moveTo(w * 0.8f, h * 0.5f)
                 cPath.quadTo(w * 0.2f, h * 0.35f,

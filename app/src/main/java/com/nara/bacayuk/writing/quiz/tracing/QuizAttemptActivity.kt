@@ -198,7 +198,6 @@ class QuizAttemptActivity : AppCompatActivity() {
             putExtra("student", student)
             putExtra("questionType", current.questionType)
         }.also { predictActivityLauncher.launch(it) }
-        Log.d("GeminiHelper", "Mengirim ke PredictActivity: userAnswer=$predictedAnswer, correctAnswer=${current.correctAnswer}, questionType=${current.questionType}")
     }
 
     private fun proceedToNextQuestionOrFinish() {
