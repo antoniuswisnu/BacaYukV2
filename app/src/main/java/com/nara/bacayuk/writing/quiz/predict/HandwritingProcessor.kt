@@ -228,7 +228,6 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             Log.d(TAG, "Attempting segment from $start to $end")
         }
 
-        // Di dalam segmentConnectedChars, setelah menghitung projection
         Log.d(TAG, "Projection profile for segmentation: ${projection.joinToString()}")
 
         return results
@@ -256,15 +255,6 @@ class HandwritingProcessor(private val context: Context, private val tflite: Int
             valleys.sortBy { smoothed[it] }
             return valleys.take(5)
         }
-
-
-        // Di dalam findValleys, setelah smoothing
-        Log.d(TAG, "Smoothed projection: ${smoothed.joinToString()}")
-        // Setelah menemukan valleys
-        Log.d(TAG, "Initial valleys found: $valleys")
-        // Sebelum `return valleys` di `findValleys`
-        Log.d(TAG, "Final valleys returned: $valleys")
-
         return valleys
     }
 

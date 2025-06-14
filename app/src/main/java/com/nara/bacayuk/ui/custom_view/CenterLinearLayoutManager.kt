@@ -15,8 +15,6 @@ open class CenterLinearLayoutManager : LinearLayoutManager {
     private lateinit var recyclerView: RecyclerView
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
-        // always measure first item, its size determines starting offset
-        // this must be done before super.onLayoutChildren
         if (childCount == 0 && state.itemCount > 0) {
             val firstChild = recycler.getViewForPosition(0)
             measureChildWithMargins(firstChild, 0, 0)
@@ -29,7 +27,6 @@ open class CenterLinearLayoutManager : LinearLayoutManager {
         val lp = (child.layoutParams as RecyclerView.LayoutParams).absoluteAdapterPosition
         super.measureChildWithMargins(child, widthUsed, heightUsed)
         if (lp != 0 && lp != itemCount - 1) return
-        // after determining first and/or last items size use it to alter host padding
         when (orientation) {
             HORIZONTAL -> {
                 val hPadding = ((width - child.measuredWidth) / 2).coerceAtLeast(0)
@@ -54,7 +51,6 @@ open class CenterLinearLayoutManager : LinearLayoutManager {
         }
     }
 
-    // capture host recyclerview
     override fun onAttachedToWindow(view: RecyclerView) {
         recyclerView = view
         super.onAttachedToWindow(view)

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityListQuestionBinding
+import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
 import com.nara.bacayuk.utils.invisible
 import com.nara.bacayuk.writing.quiz.menu.MenuQuizActivity
 
@@ -82,7 +83,16 @@ class ListQuestionActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = QuestionAdapter(
             onDeleteClick = { quiz ->
-                viewModel.deleteQuiz(quiz.id)
+                val dialogDelete = ConfirmationDialogRedStyle(
+                    this@ListQuestionActivity,
+                    icon = R.drawable.ic_baseline_delete_24,
+                    title = "Hapus Soal",
+                    message = "Apakah Anda yakin ingin menghapus soal ini?",
+                    onConfirmClickListener = {
+                        viewModel.deleteQuiz(quiz.id)
+                    }
+                )
+                dialogDelete.show()
             }
         )
         binding.rvListQuestion.apply {

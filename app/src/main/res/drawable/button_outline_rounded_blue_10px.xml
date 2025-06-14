@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Pressed state -->
+    <item android:state_hovered="true"
+        android:drawable="@drawable/button_outline_rounded_focused_blue" />
+    <item android:state_pressed="true"
+        android:drawable="@drawable/button_outline_rounded_focused_blue" />
+    <item android:state_pressed="false"
+        android:drawable="@drawable/button_outline_rounded_normal_blue" />
+    <!-- Disabled state -->
+    <item android:state_enabled="false"
+        android:drawable="@drawable/button_outline_rounded_disabled_blue" />
+
+</selector>

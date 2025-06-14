@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +11,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModelProvider
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
@@ -25,9 +23,7 @@ import com.nara.bacayuk.writing.quiz.question.Question
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import java.io.ByteArrayOutputStream
-import androidx.lifecycle.lifecycleScope
 import com.nara.bacayuk.writing.quiz.predict.GeminiHelper
-import kotlinx.coroutines.launch
 
 class QuizAttemptActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuizAttemptBinding
@@ -162,11 +158,6 @@ class QuizAttemptActivity : AppCompatActivity() {
         val processor = HandwritingProcessor(this, tfLiteInterpreter)
         val predictedString = processor.processImage(bitmapToProcess)
 
-//        if (predictedString.length > 5) {
-//            predictedString = predictedString.substring(0, 5)
-//            Log.d("QuizAttemptActivity", "Hasil prediksi dipotong menjadi 5 huruf: $predictedString")
-//        }
-//
         return predictedString
     }
 

@@ -24,7 +24,11 @@ import com.nara.bacayuk.ui.listener.adapter.AdapterListener
 import com.nara.bacayuk.writing.word.tracing.TracingWordActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.nara.bacayuk.R
+import com.nara.bacayuk.ui.custom_view.AddEditWordDialog
+import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
+import com.nara.bacayuk.ui.custom_view.ShowWordActionDialog
 import com.nara.bacayuk.utils.invisible
+import com.nara.bacayuk.writing.word.tracing.TracingWordActivity.Companion.EXTRA_WORD
 
 class MenuWordActivity : AppCompatActivity(), AdapterListener {
 
@@ -152,11 +156,11 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
                 is Response.Loading -> dialog.show()
                 is Response.Success -> {
                     dialog.dismiss()
-                    Toast.makeText(this, "Kata berhasil ditambahkan (ID: ${response.data})", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Kata berhasil ditambahkan", Toast.LENGTH_SHORT).show()
                 }
                 is Response.Error -> {
                     dialog.dismiss()
-                    Toast.makeText(this, "Gagal menambah kata: ${response.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Gagal menambah kata", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -226,41 +230,37 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
     }
 
     private fun showWordActionsDialog(reportTulisKata: ReportTulisKata) {
-        val options = arrayOf("Edit Kata", "Hapus Kata")
-        AlertDialog.Builder(this)
-            .setTitle("Aksi untuk '${reportTulisKata.tulisKata}'")
-            .setItems(options) { dialogInterface, which ->
-                when (which) {
-                    0 -> showAddOrEditWordDialog(reportTulisKata)
-                    1 -> showDeleteConfirmationDialog(reportTulisKata)
-                }
-                dialogInterface.dismiss()
+        val showWordActionDialog = ShowWordActionDialog(
+            this,
+            icon = R.drawable.ic_baseline_info_24_blue,
+            title = "Aksi untuk '${reportTulisKata.tulisKata}'",
+            message = "Pilih aksi yang ingin dilakukan pada kata ini",
+            onEditClickListener = {
+                showAddOrEditWordDialog(reportTulisKata)
+            },
+            onDeleteClickListener = {
+                showDeleteConfirmationDialog(reportTulisKata)
             }
-            .setNegativeButton("Batal", null)
-            .show()
+        )
+        showWordActionDialog.show()
     }
 
     private fun showAddOrEditWordDialog(existingWord: ReportTulisKata?) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_edit_word, null)
-        val editTextWord = dialogView.findViewById<EditText>(R.id.editTextWordContent)
-
-        val title = if (existingWord == null) "Tambah Kata Baru" else "Edit Kata"
-        existingWord?.let { editTextWord.setText(it.tulisKata) }
-
-        AlertDialog.Builder(this)
-            .setTitle(title)
-            .setView(dialogView)
-            .setPositiveButton(if (existingWord == null) "Tambah" else "Simpan") { dialog, _ ->
-                val wordText = editTextWord.text.toString().trim()
+        val addEditWordDialog = AddEditWordDialog(
+            this,
+            icon = if (existingWord == null) R.drawable.ic_add_blue else R.drawable.ic_edit_blue,
+            title = if (existingWord == null) "Tambah Kata Baru" else "Edit Kata",
+            message = "Masukkan kata yang ingin ditulis",
+            editTextWord = existingWord?.tulisKata ?: "",
+            onConfirmClickListener = { wordText ->
                 if (wordText.isBlank()) {
                     Toast.makeText(this, "Kata tidak boleh kosong.", Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
+                    return@AddEditWordDialog
                 }
                 if (wordText.length > 5) {
                     Toast.makeText(this, "Kata maksimal 5 huruf.", Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
+                    return@AddEditWordDialog
                 }
-
                 student?.uuid?.let { studentId ->
                     if (existingWord == null) {
                         menuWordViewModel.addNewWord(studentId, wordText)
@@ -269,24 +269,24 @@ class MenuWordActivity : AppCompatActivity(), AdapterListener {
                         menuWordViewModel.updateExistingWord(studentId, updatedWord)
                     }
                 }
-                dialog.dismiss()
             }
-            .setNegativeButton("Batal", null)
-            .show()
+        )
+        addEditWordDialog.show()
     }
 
     private fun showDeleteConfirmationDialog(wordToDelete: ReportTulisKata) {
-        AlertDialog.Builder(this)
-            .setTitle("Hapus Kata")
-            .setMessage("Apakah Anda yakin ingin menghapus kata '${wordToDelete.tulisKata}'?")
-            .setPositiveButton("Hapus") { dialog, _ ->
+        val dialogDelete = ConfirmationDialogRedStyle(
+            this@MenuWordActivity,
+            icon = R.drawable.ic_baseline_delete_24,
+            title = "Hapus Kata",
+            message = "Apakah Anda yakin ingin menghapus kata '${wordToDelete.tulisKata}'?",
+            onConfirmClickListener = {
                 student?.uuid?.let { studentId ->
                     menuWordViewModel.deleteSpecificWord(studentId, wordToDelete.id)
                 }
-                dialog.dismiss()
             }
-            .setNegativeButton("Batal", null)
-            .show()
+        )
+        dialogDelete.show()
     }
 
     override fun onResume() {

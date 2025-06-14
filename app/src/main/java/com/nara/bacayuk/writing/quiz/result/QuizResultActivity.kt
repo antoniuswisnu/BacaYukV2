@@ -51,7 +51,7 @@ class QuizResultActivity : AppCompatActivity() {
         val wrongAnswersCount = intent.getIntExtra("WRONG_ANSWERS_COUNT", 0)
         val totalQuestions = intent.getIntExtra("TOTAL_QUESTIONS", attemptDetails?.size ?: 0)
 
-        if (attemptDetails == null || attemptDetails.isEmpty()) {
+        if (attemptDetails.isNullOrEmpty()) {
             Log.e("QuizResultActivity", "Tidak ada detail hasil kuis yang diterima.")
             binding.tvCorrectAnswers.text = "Benar: -"
             binding.tvWrongAnswers.text = "Salah: -"

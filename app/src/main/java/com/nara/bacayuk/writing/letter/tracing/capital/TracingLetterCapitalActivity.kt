@@ -52,6 +52,13 @@ class TracingLetterCapitalActivity : AppCompatActivity() {
         binding.btnPencil.setOnClickListener {
             binding.tracingCanvas.setDrawingMode(true)
             binding.btnPencil.setImageResource(R.drawable.ic_pencil_active)
+            binding.btnEraser.setImageResource(R.drawable.ic_eraser) // Reset eraser button to inactive
+        }
+
+        binding.btnEraser.setOnClickListener {
+            binding.tracingCanvas.setDrawingEraser(true)
+            binding.btnEraser.setImageResource(R.drawable.ic_eraser_active)
+            binding.btnPencil.setImageResource(R.drawable.ic_pencil) // Reset pencil button to inactive
         }
 
         binding.btnReload.setOnClickListener {

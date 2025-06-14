@@ -25,6 +25,12 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
     private var onCorrectTracing: (() -> Unit)? = null
     private var currentLetter = "A"
 
+    private var drawingBitmap: Bitmap? = null
+    private var drawingCanvas: Canvas? = null
+    private val bitmapPaint = Paint(Paint.DITHER_FLAG)
+    private var currentPath = Path()
+
+
     private var outlineBitmap: Bitmap? = null
     private var filledBitmap: Bitmap? = null
 
@@ -40,12 +46,15 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
         strokeWidth = 30f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
+        isAntiAlias = true
     }
 
     private var eraser = Paint().apply {
-        color = Color.WHITE
+        isAntiAlias = true
+        color = Color.TRANSPARENT
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
         style = Paint.Style.STROKE
-        strokeWidth = 30f
+        strokeWidth = 40f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
     }
@@ -71,9 +80,15 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
         viewWidth = w.toFloat()
         viewHeight = h.toFloat()
 
+        if (drawingBitmap == null) {
+            drawingBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            drawingCanvas = Canvas(drawingBitmap!!)
+        }
+
         setLetter(currentLetter)
         loadLetterDrawables(currentLetter)
     }
+
 
     fun setDrawingMode(enabled: Boolean) {
         isDrawing = enabled
@@ -86,6 +101,7 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
     }
 
     fun clearCanvas() {
+        drawingBitmap?.eraseColor(Color.TRANSPARENT)
         userPaths.clear()
         userStrokes.clear()
         currentStrokePoints.clear()
@@ -632,21 +648,30 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!isDrawing) return false
 
+        val x = event.x
+        val y = event.y
+
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                val currentPath = Path()
-                currentPath.moveTo(event.x, event.y)
-                userPaths.add(currentPath)
+                currentPath.reset()
+                currentPath.moveTo(x, y)
 
-                currentStrokePoints = mutableListOf()
-                currentStrokePoints.add(PointF(event.x, event.y))
+                if (paint != eraser) {
+                    currentStrokePoints = mutableListOf()
+                    currentStrokePoints.add(PointF(event.x, event.y))
+                }
             }
             MotionEvent.ACTION_MOVE -> {
-                userPaths.last().lineTo(event.x, event.y)
-                currentStrokePoints.add(PointF(event.x, event.y))
+                currentPath.lineTo(x, y)
+                if (paint != eraser) {
+                    currentStrokePoints.add(PointF(event.x, event.y))
+                }
             }
             MotionEvent.ACTION_UP -> {
-                if (currentStrokePoints.isNotEmpty()) {
+                drawingCanvas?.drawPath(currentPath, paint)
+                currentPath.reset()
+
+                if (paint != eraser && currentStrokePoints.isNotEmpty()) {
                     userStrokes.add(currentStrokePoints)
                     checkStrokeCompletion()
 
@@ -655,10 +680,12 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
                     }
                 }
             }
+            else -> return false
         }
         invalidate()
         return true
     }
+
 
     private fun checkStrokeCompletion() {
         val lastStroke = currentStrokePoints
@@ -730,7 +757,6 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
         outlineBitmap?.let { bitmap ->
             canvas.drawBitmap(bitmap, null, RectF(0f, 0f, viewWidth, viewHeight), null)
         }
-
         canvas.drawPath(templatePath, templatePaint)
 
         for (i in letterStrokes.indices) {
@@ -739,9 +765,11 @@ class DrawingLetterCapitalView(context: Context, attrs: AttributeSet) : View(con
             }
         }
 
-        for (path in userPaths) {
-            canvas.drawPath(path, paint)
+        drawingBitmap?.let {
+            canvas.drawBitmap(it, 0f, 0f, bitmapPaint)
         }
+
+        canvas.drawPath(currentPath, paint)
 
         if (isAllRequiredStrokesCompleted()) {
             filledBitmap?.let { bitmap ->

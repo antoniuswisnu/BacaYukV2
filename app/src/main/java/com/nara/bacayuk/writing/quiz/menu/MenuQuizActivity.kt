@@ -18,6 +18,7 @@ import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityMenuQuizBinding
 import com.nara.bacayuk.databinding.DialogCreateQuizSetBinding
+import com.nara.bacayuk.ui.custom_view.ConfirmationDialog
 import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
 import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
 import com.nara.bacayuk.utils.invisible
@@ -68,17 +69,19 @@ class MenuQuizActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         adapter = MenuQuizAdapter(
             onMenuQuizClick = { quizSet ->
-                AlertDialog.Builder(this)
-                    .setTitle("Mulai Kuis")
-                    .setMessage("Apakah Anda yakin ingin memulai mengerjakan soal?")
-                    .setPositiveButton("Ya") { _, _ ->
+                val dialogStart = ConfirmationDialog(
+                    this@MenuQuizActivity,
+                    icon = R.drawable.ic_start_64,
+                    title = "Mulai Kuis",
+                    message = "Apakah Anda yakin ingin memulai mengerjakan soal?",
+                    onConfirmClickListener = {
                         val intent = Intent(this, QuizAttemptActivity::class.java)
                         intent.putExtra("quizSetId", quizSet.id)
                         intent.putExtra("student", student)
                         startActivity(intent)
                     }
-                    .setNegativeButton("Tidak", null)
-                    .show()
+                )
+                dialogStart.show()
             },
             onDeleteClick = { quizSet ->
                 val dialogDelete = ConfirmationDialogRedStyle(
