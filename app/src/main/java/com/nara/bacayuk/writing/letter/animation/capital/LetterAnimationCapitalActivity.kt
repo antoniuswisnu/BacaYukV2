@@ -37,6 +37,10 @@ class LetterAnimationCapitalActivity : AppCompatActivity() {
                 }
             )
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     companion object {

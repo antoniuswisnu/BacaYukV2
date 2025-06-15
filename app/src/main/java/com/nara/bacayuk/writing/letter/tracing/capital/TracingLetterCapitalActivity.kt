@@ -52,14 +52,14 @@ class TracingLetterCapitalActivity : AppCompatActivity() {
         binding.btnPencil.setOnClickListener {
             binding.tracingCanvas.setDrawingMode(true)
             binding.btnPencil.setImageResource(R.drawable.ic_pencil_active)
-            binding.btnEraser.setImageResource(R.drawable.ic_eraser) // Reset eraser button to inactive
+//            binding.btnEraser.setImageResource(R.drawable.ic_eraser)
         }
 
-        binding.btnEraser.setOnClickListener {
-            binding.tracingCanvas.setDrawingEraser(true)
-            binding.btnEraser.setImageResource(R.drawable.ic_eraser_active)
-            binding.btnPencil.setImageResource(R.drawable.ic_pencil) // Reset pencil button to inactive
-        }
+//        binding.btnEraser.setOnClickListener {
+//            binding.tracingCanvas.setDrawingEraser(true)
+//            binding.btnEraser.setImageResource(R.drawable.ic_eraser_active)
+//            binding.btnPencil.setImageResource(R.drawable.ic_pencil)
+//        }
 
         binding.btnReload.setOnClickListener {
             binding.tracingCanvas.clearCanvas()
@@ -74,6 +74,10 @@ class TracingLetterCapitalActivity : AppCompatActivity() {
 
         binding.tracingCanvas.setOnCorrectTracingListener {
             sendData()
+        }
+
+        binding.btnBack.setOnClickListener{
+            finish()
         }
 
         binding.tvTitle.text = currentLetter.uppercase()

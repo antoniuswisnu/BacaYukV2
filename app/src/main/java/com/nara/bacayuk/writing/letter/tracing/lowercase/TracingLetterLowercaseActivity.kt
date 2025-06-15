@@ -69,6 +69,10 @@ class TracingLetterLowercaseActivity : AppCompatActivity() {
             sendData()
         }
 
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+
         binding.tvTitle.text = currentLetter
     }
 

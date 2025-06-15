@@ -37,6 +37,10 @@ class NumberAnimationActivity : AppCompatActivity() {
                 }
             )
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     companion object {

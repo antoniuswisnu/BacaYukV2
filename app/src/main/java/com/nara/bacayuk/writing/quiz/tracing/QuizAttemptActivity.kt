@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityQuizAttemptBinding
+import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
 import com.nara.bacayuk.writing.quiz.predict.DigitalInkRecognizerHelper
 import com.nara.bacayuk.writing.quiz.predict.HandwritingProcessor
 import com.nara.bacayuk.writing.quiz.predict.PredictActivity
@@ -81,7 +82,7 @@ class QuizAttemptActivity : AppCompatActivity() {
                         handlePredictionResult(userBitmap, predicted)
                     },
                     onError = { e ->
-                        Toast.makeText(this, "Gagal mengenali tulisan: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Gagal mengenali tulisan", Toast.LENGTH_SHORT).show()
                         Log.e("QuizAttemptActivity", "Error recognizing handwriting: ${e.message}", e)
                     }
                 )
@@ -98,6 +99,19 @@ class QuizAttemptActivity : AppCompatActivity() {
         binding.btnPencil.setOnClickListener {
             binding.btnPencil.setImageResource(R.drawable.ic_pencil_active)
             binding.tracingCanvas.visibility = View.VISIBLE
+        }
+
+        binding.btnBack.setOnClickListener {
+            val dialogConfirmExit = ConfirmationDialogRedStyle(
+                context = this,
+                icon = R.drawable.ic_baseline_exit_to_app_24,
+                title = "Konfirmasi Keluar",
+                message = "Apakah Anda yakin ingin keluar dari kuis ini? Semua jawaban yang belum disimpan akan hilang.",
+                onConfirmClickListener = {
+                    finish()
+                }
+            )
+            dialogConfirmExit.show()
         }
 
         setupViewModel()
@@ -140,12 +154,12 @@ class QuizAttemptActivity : AppCompatActivity() {
     private fun loadTFLiteModel() {
         try {
             Log.d("QuizAttemptActivity", "Mencoba memuat model dari assets...")
-            val tfliteModel = FileUtil.loadMappedFile(this, "emnist_model_optimized(3).tflite")
+            val tfliteModel = FileUtil.loadMappedFile(this, "fix_model.tflite")
             tfLiteInterpreter = Interpreter(tfliteModel)
             Log.d("QuizAttemptActivity", "Model berhasil dimuat")
         } catch (e: Exception) {
             Log.e("QuizAttemptActivity", "Gagal memuat model: ${e.message}", e)
-            Toast.makeText(this, "Gagal memuat model AI.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Gagal memuat model AI", Toast.LENGTH_LONG).show()
         }
     }
 

@@ -37,6 +37,10 @@ class LetterAnimationLowercaseActivity : AppCompatActivity() {
                 }
             )
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     companion object {
