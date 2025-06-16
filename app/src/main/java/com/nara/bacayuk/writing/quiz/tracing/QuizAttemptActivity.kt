@@ -11,7 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityQuizAttemptBinding
@@ -25,10 +25,11 @@ import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import java.io.ByteArrayOutputStream
 import com.nara.bacayuk.writing.quiz.predict.GeminiHelper
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class QuizAttemptActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuizAttemptBinding
-    private lateinit var viewModel: QuizAttemptViewModel
+    private val viewModel: QuizAttemptViewModel by viewModel()
     private lateinit var quizSetId: String
     private var currentQuestionIndex = 0
     private var questions = listOf<Question>()
@@ -36,7 +37,7 @@ class QuizAttemptActivity : AppCompatActivity() {
     private var student: Student? = null
     private lateinit var geminiHelper: GeminiHelper
     private lateinit var digitalInkHelper: DigitalInkRecognizerHelper
-
+    private var userId: String? = null
     private val attemptDetails = mutableListOf<QuizAttemptDetail>()
     private var correctAnswersCount = 0
     private var wrongAnswersCount = 0
@@ -55,6 +56,8 @@ class QuizAttemptActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityQuizAttemptBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        userId = FirebaseAuth.getInstance().currentUser?.uid
 
         student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("student", Student::class.java)
@@ -114,13 +117,8 @@ class QuizAttemptActivity : AppCompatActivity() {
             dialogConfirmExit.show()
         }
 
-        setupViewModel()
         observeViewModel()
         loadTFLiteModel()
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(this)[QuizAttemptViewModel::class.java]
     }
 
     @SuppressLint("SetTextI18n")
@@ -135,7 +133,12 @@ class QuizAttemptActivity : AppCompatActivity() {
                 finish()
             }
         }
-        viewModel.loadQuestions(quizSetId)
+        viewModel.loadQuestions(
+            userId = userId ?: "",
+            studentId = student?.uuid ?: "",
+            quizSetId = quizSetId
+        )
+        Log.d("QuizAttemptActivity", "Memuat pertanyaan untuk UserId: $userId, StudentId: ${student?.uuid}, QuizSetId: $quizSetId")
 
     }
 

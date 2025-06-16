@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ItemQuizQuestionBinding
 
 class QuestionAdapter(
-    private val onDeleteClick: (Question) -> Unit
+    private val onDeleteClick: (Question) -> Unit,
+    private val student: Student
 ) : ListAdapter<Question, QuestionAdapter.QuestionViewHolder>(QuestionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
@@ -44,6 +46,7 @@ class QuestionAdapter(
                 intent.putExtra("quizSetId", quiz.quizSetId)
                 intent.putExtra("quiz", quiz)
                 intent.putExtra("quizId", quiz.id)
+                intent.putExtra("student", student)
                 binding.root.context.startActivity(intent)
             }
         }

@@ -17,6 +17,7 @@ import com.nara.bacayuk.writing.letter.tracing.lowercase.TracingLetterLowercaseV
 import com.nara.bacayuk.writing.number.animation.NumberAnimationViewModel
 import com.nara.bacayuk.writing.number.menu.MenuNumberViewModel
 import com.nara.bacayuk.writing.number.tracing.TracingNumberViewModel
+import com.nara.bacayuk.writing.quiz.tracing.QuizAttemptViewModel
 import com.nara.bacayuk.writing.word.menu.MenuWordViewModel
 import com.nara.bacayuk.writing.word.tracing.TracingWordViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -45,4 +46,5 @@ val viewModelModule = module {
 
     viewModel { MenuWordViewModel(get(), get(), get()) }
     viewModel { TracingWordViewModel(get(), get(), get()) }
+    viewModel { QuizAttemptViewModel(get(), get(), get()) }
 }

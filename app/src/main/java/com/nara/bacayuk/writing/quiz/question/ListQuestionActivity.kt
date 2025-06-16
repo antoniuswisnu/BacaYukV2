@@ -6,15 +6,16 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityListQuestionBinding
 import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
 import com.nara.bacayuk.utils.invisible
-import com.nara.bacayuk.writing.quiz.menu.MenuQuizActivity
 
 class ListQuestionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListQuestionBinding
@@ -22,11 +23,19 @@ class ListQuestionActivity : AppCompatActivity() {
     private lateinit var adapter: QuestionAdapter
     private lateinit var quizSetId: String
     private var student: Student? = null
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityListQuestionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(this, "User not logged in!", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         student = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("student", Student::class.java)
@@ -34,12 +43,18 @@ class ListQuestionActivity : AppCompatActivity() {
             intent.getParcelableExtra("student") as Student?
         }
 
+        if (student == null) {
+            Toast.makeText(this, "Student data is missing!", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
         quizSetId = intent.getStringExtra("quizSetId") ?: run {
             finish()
             return
         }
 
-        Log.d("AddEditQuizActivity", "QuizSetId: $quizSetId")
+        Log.d("ListQuestionActivity", "UserId: $userId, StudentId: ${student?.uuid}, QuizSetId: $quizSetId")
 
         val title = intent.getStringExtra("title")
         binding.apply{
@@ -71,13 +86,18 @@ class ListQuestionActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (::viewModel.isInitialized && ::quizSetId.isInitialized) {
-            viewModel.loadQuizzes(quizSetId)
+            loadData()
+        }
+    }
+
+    private fun loadData() {
+        if (userId != null && student != null) {
+            viewModel.loadQuizzes(userId!!, student!!.uuid, quizSetId)
         }
     }
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this)[QuizQuestionViewModel::class.java]
-        viewModel.loadQuizzes(quizSetId)
     }
 
     private fun setupRecyclerView() {
@@ -89,11 +109,14 @@ class ListQuestionActivity : AppCompatActivity() {
                     title = "Hapus Soal",
                     message = "Apakah Anda yakin ingin menghapus soal ini?",
                     onConfirmClickListener = {
-                        viewModel.deleteQuiz(quiz.id)
+                        if (userId != null && student != null) {
+                            viewModel.deleteQuiz(userId!!, student!!.uuid, quiz)
+                        }
                     }
                 )
                 dialogDelete.show()
-            }
+            },
+            student = student!!
         )
         binding.rvListQuestion.apply {
             layoutManager = LinearLayoutManager(this@ListQuestionActivity)
@@ -107,17 +130,8 @@ class ListQuestionActivity : AppCompatActivity() {
                 putExtra("quizSetId", quizSetId)
                 putExtra("student", student)
             }
-            Log.d("QuizListActivity", "Sending quizSetId: $quizSetId")
             startActivity(intent)
         }
-
-//        binding.btnSaveQuiz.setOnClickListener {
-//            val intent = Intent(this, MenuQuizActivity::class.java).apply {
-//                putExtra("student", student)
-//            }
-//            startActivity(intent)
-//            finish()
-//        }
     }
 
     private fun observeViewModel() {

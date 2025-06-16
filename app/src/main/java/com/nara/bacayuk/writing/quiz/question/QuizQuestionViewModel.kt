@@ -15,12 +15,19 @@ class QuizQuestionViewModel : ViewModel() {
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
+    private var currentUserId: String? = null
+    private var currentStudentId: String? = null
     private var currentQuizSetId: String? = null
 
-    fun loadQuizzes(quizSetId: String) {
+    fun loadQuizzes(userId: String, studentId: String, quizSetId: String) {
+        currentUserId = userId
+        currentStudentId = studentId
         currentQuizSetId = quizSetId
+
         _loading.value = true
         repository.getQuizzesByQuizSetId(
+            userId = userId,
+            studentId = studentId,
             quizSetId = quizSetId,
             onSuccess = { quizList ->
                 val sortedList = quizList.sortedBy { it.createdAt }
@@ -34,12 +41,13 @@ class QuizQuestionViewModel : ViewModel() {
         )
     }
 
-    fun addQuiz(quiz: Question) {
+    fun addQuiz(userId: String, studentId: String, quiz: Question) {
         _loading.value = true
         repository.addQuiz(
+            userId = userId,
+            studentId = studentId,
             quiz = quiz,
             onSuccess = {
-                loadQuizzes(currentQuizSetId ?: "")
                 _loading.value = false
             },
             onFailure = { e ->
@@ -49,14 +57,13 @@ class QuizQuestionViewModel : ViewModel() {
         )
     }
 
-    fun updateQuiz(quiz: Question) {
+    fun updateQuiz(userId: String, studentId: String, quiz: Question) {
         _loading.value = true
         repository.updateQuiz(
+            userId = userId,
+            studentId = studentId,
             quiz = quiz,
             onSuccess = {
-                loadQuizzes(
-                    quizSetId = currentQuizSetId ?: ""
-                )
                 _loading.value = false
             },
             onFailure = { e ->
@@ -66,14 +73,14 @@ class QuizQuestionViewModel : ViewModel() {
         )
     }
 
-    fun deleteQuiz(quizId: String) {
+    fun deleteQuiz(userId: String, studentId: String, quiz: Question) {
         _loading.value = true
         repository.deleteQuiz(
-            quizId = quizId,
+            userId = userId,
+            studentId = studentId,
+            quizId = quiz.id,
+            quizSetId = quiz.quizSetId,
             onSuccess = {
-                loadQuizzes(
-                    quizSetId = currentQuizSetId ?: ""
-                )
                 _loading.value = false
             },
             onFailure = { e ->

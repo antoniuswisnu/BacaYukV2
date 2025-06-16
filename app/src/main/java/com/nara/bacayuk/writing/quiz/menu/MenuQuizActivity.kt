@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.nara.bacayuk.writing.quiz.tracing.QuizAttemptActivity
 import com.nara.bacayuk.writing.quiz.question.ListQuestionActivity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,7 +21,6 @@ import com.nara.bacayuk.databinding.ActivityMenuQuizBinding
 import com.nara.bacayuk.databinding.DialogCreateQuizSetBinding
 import com.nara.bacayuk.ui.custom_view.ConfirmationDialog
 import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
-import com.nara.bacayuk.ui.feat_menu_utama.MainActivity
 import com.nara.bacayuk.utils.invisible
 
 class MenuQuizActivity : AppCompatActivity() {
@@ -28,7 +28,8 @@ class MenuQuizActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMenuQuizBinding
     private lateinit var adapter: MenuQuizAdapter
     private val firestore = FirebaseFirestore.getInstance()
-    var student: Student? = null
+    private val auth = FirebaseAuth.getInstance()
+    private var student: Student? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,8 +62,18 @@ class MenuQuizActivity : AppCompatActivity() {
             intent.getParcelableExtra("student") as Student?
         }
 
+        if (student == null || auth.currentUser == null) {
+            Toast.makeText(this, "Data siswa atau pengguna tidak ditemukan.", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+
         setupRecyclerView()
         setupClickListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
         loadQuizSets()
     }
 
@@ -88,10 +99,9 @@ class MenuQuizActivity : AppCompatActivity() {
                     this@MenuQuizActivity,
                     icon = R.drawable.ic_baseline_delete_24,
                     title = "Apakah Anda yakin akan menghapus kuis ini?",
-                    message = "kuis akan dihapus permanen",
+                    message = "Semua soal di dalamnya juga akan terhapus permanen.",
                     onConfirmClickListener = {
                         deleteQuizSet(quizSet.id)
-                        onResume()
                     }
                 )
                 dialogDelete.show()
@@ -117,6 +127,11 @@ class MenuQuizActivity : AppCompatActivity() {
         }
     }
 
+    private fun getStudentBaseCollection() =
+        firestore.collection("Users").document(auth.currentUser!!.uid)
+            .collection("Students").document(student!!.uuid)
+
+
     private fun showCreateQuizSetDialog() {
         val dialogBinding = DialogCreateQuizSetBinding.inflate(layoutInflater)
 
@@ -137,16 +152,18 @@ class MenuQuizActivity : AppCompatActivity() {
     }
 
     private fun createQuizSet(title: String, description: String) {
+        val quizSetsCollection = getStudentBaseCollection().collection("quizSets")
+
+        val newDoc = quizSetsCollection.document()
         val quizSet = MenuQuiz(
-            id = firestore.collection("quizSets").document().id,
+            id = newDoc.id,
             title = title,
             description = description,
         )
 
-        firestore.collection("quizSets")
-            .document(quizSet.id)
-            .set(quizSet)
+        newDoc.set(quizSet)
             .addOnSuccessListener {
+                Log.d("MenuQuizActivity", "Quiz set created successfully.")
                 loadQuizSets()
             }
             .addOnFailureListener { e ->
@@ -156,7 +173,7 @@ class MenuQuizActivity : AppCompatActivity() {
     }
 
     private fun loadQuizSets() {
-        firestore.collection("quizSets")
+        getStudentBaseCollection().collection("quizSets")
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
@@ -173,22 +190,28 @@ class MenuQuizActivity : AppCompatActivity() {
     }
 
     private fun deleteQuizSet(quizSetId: String) {
-        firestore.runBatch { batch ->
-            batch.delete(firestore.collection("quizSets").document(quizSetId))
+        val studentCollection = getStudentBaseCollection()
+        val quizSetDoc = studentCollection.collection("quizSets").document(quizSetId)
+        val questionsQuery = studentCollection.collection("quizzes").whereEqualTo("quizSetId", quizSetId)
 
-            firestore.collection("quizzes")
-                .whereEqualTo("quizSetId", quizSetId)
-                .get()
-                .addOnSuccessListener { questions ->
-                    questions.documents.forEach { doc ->
-                        batch.delete(doc.reference)
-                    }
+        questionsQuery.get().addOnSuccessListener { questionsSnapshot ->
+            firestore.runBatch { batch ->
+                batch.delete(quizSetDoc)
+
+                for (doc in questionsSnapshot.documents) {
+                    batch.delete(doc.reference)
                 }
-        }.addOnSuccessListener {
-            loadQuizSets()
+            }.addOnSuccessListener {
+                Toast.makeText(this, "Kuis berhasil dihapus", Toast.LENGTH_SHORT).show()
+                Log.d("MenuQuizActivity", "Batch delete successful.")
+                loadQuizSets()
+            }.addOnFailureListener { e ->
+                Toast.makeText(this, "Gagal menghapus kuis: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("MenuQuizActivity", "Error in batch delete: ${e.message}")
+            }
         }.addOnFailureListener { e ->
-            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Gagal menemukan soal terkait: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("MenuQuizActivity", "Error finding related questions: ${e.message}")
         }
     }
-
 }
