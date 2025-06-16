@@ -89,7 +89,7 @@ fun addLatihanBacaKalimat(): ArrayList<SoalKata> {
                         false,
                         "-",
                         0,
-                        "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kalimat%2F4%20-%20latihanBacaKalimat%20-%206.png?alt=media&token=1746342e-8fa2-4b29-99b2-83f1df5aff66"
+                        "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kalimat%2F4%20-%20latihanBacaKalimat%20-%207.png?alt=media&token=9f5790dd-5fd6-4ce3-bcf7-9c03b9dca8ce"
                 )
         )
         list.add(
@@ -100,7 +100,7 @@ fun addLatihanBacaKalimat(): ArrayList<SoalKata> {
                         false,
                         "-",
                         0,
-                        "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kalimat%2F4%20-%20latihanBacaKalimat%20-%207.png?alt=media&token=9f5790dd-5fd6-4ce3-bcf7-9c03b9dca8ce"
+                        "https://firebasestorage.googleapis.com/v0/b/bacayukv2.appspot.com/o/baca-kalimat%2F4%20-%20latihanBacaKalimat%20-%206.png?alt=media&token=1746342e-8fa2-4b29-99b2-83f1df5aff66"
                 )
         )
         list.add(
