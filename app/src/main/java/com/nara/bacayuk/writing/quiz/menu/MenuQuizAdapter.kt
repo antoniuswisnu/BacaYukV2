@@ -11,7 +11,8 @@ import com.nara.bacayuk.databinding.ItemQuizSetBinding
 class MenuQuizAdapter(
     private val onMenuQuizClick: (MenuQuiz) -> Unit,
     private val onDeleteClick: (MenuQuiz) -> Unit,
-    private val onEditClick: (MenuQuiz) -> Unit
+    private val onEditClick: (MenuQuiz) -> Unit,
+    private val onUpdateClick: (MenuQuiz) -> Boolean
 ) : ListAdapter<MenuQuiz, MenuQuizAdapter.MenuQuizViewHolder>(MenuQuizDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuQuizViewHolder {
@@ -42,7 +43,9 @@ class MenuQuizAdapter(
             binding.root.setOnClickListener {
                 onMenuQuizClick(quizSet)
             }
-
+            binding.root.setOnLongClickListener {
+                onUpdateClick(quizSet)
+            }
             binding.btnDelete.setOnClickListener {
                 onDeleteClick(quizSet)
             }

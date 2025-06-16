@@ -28,7 +28,6 @@ import com.nara.bacayuk.ui.custom_view.AddEditWordDialog
 import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
 import com.nara.bacayuk.ui.custom_view.ShowWordActionDialog
 import com.nara.bacayuk.utils.invisible
-import com.nara.bacayuk.writing.word.tracing.TracingWordActivity.Companion.EXTRA_WORD
 
 class MenuWordActivity : AppCompatActivity(), AdapterListener {
 

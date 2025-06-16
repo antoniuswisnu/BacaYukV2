@@ -4,17 +4,18 @@ import android.app.Dialog
 import android.content.Context
 import androidx.core.content.ContextCompat
 import com.nara.bacayuk.R
-import com.nara.bacayuk.databinding.DialogAddEditWordBinding
+import com.nara.bacayuk.databinding.DialogAddQuizSetBinding
 
-class AddEditWordDialog (
+class AddQuizSetDialog (
     context: Context,
-    private val icon: Int = R.drawable.ic_baseline_info_24,
+    private val icon: Int = R.drawable.ic_add_purple,
     private val title: String,
     private val message: String,
-    private var editTextWord: String = "",
-    private val onConfirmClickListener: (String) -> Unit
+    private var titleQuiz: String = "",
+    private var descQuiz: String = "",
+    private val onConfirmClickListener: (String, String) -> Unit
 ): Dialog(context) {
-    private val binding by lazy { DialogAddEditWordBinding.inflate(layoutInflater) }
+    private val binding by lazy { DialogAddQuizSetBinding.inflate(layoutInflater) }
     init {
         setContentView(binding.root)
         setCancelable(false)
@@ -23,13 +24,15 @@ class AddEditWordDialog (
         binding.apply {
             imgIcon.setImageResource(icon)
             txtTitle.text = title
-            editTextWordContent.setText(editTextWord)
+            editTextTitleQuiz.setText(titleQuiz)
+            editTextDescQuiz.setText(descQuiz)
             txtMessage.text = message
             btnNo.setOnClickListener {
                 dismiss()
             }
             btnYes.setOnClickListener {
-                onConfirmClickListener.invoke(binding.editTextWordContent.text.toString().trim())
+                onConfirmClickListener.invoke(binding.editTextTitleQuiz.text.toString().trim(),
+                                              binding.editTextDescQuiz.text.toString().trim())
                 dismiss()
             }
         }

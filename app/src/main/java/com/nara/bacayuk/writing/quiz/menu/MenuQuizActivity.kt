@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +17,7 @@ import com.google.firebase.firestore.Query
 import com.nara.bacayuk.R
 import com.nara.bacayuk.data.model.Student
 import com.nara.bacayuk.databinding.ActivityMenuQuizBinding
-import com.nara.bacayuk.databinding.DialogCreateQuizSetBinding
+import com.nara.bacayuk.ui.custom_view.AddQuizSetDialog
 import com.nara.bacayuk.ui.custom_view.ConfirmationDialog
 import com.nara.bacayuk.ui.custom_view.ConfirmationDialogRedStyle
 import com.nara.bacayuk.utils.invisible
@@ -112,6 +111,20 @@ class MenuQuizActivity : AppCompatActivity() {
                 intent.putExtra("title", quizSet.title)
                 intent.putExtra("student", student)
                 startActivity(intent)
+            },
+            onUpdateClick = { quizSet ->
+                val addQuizSetDialog = AddQuizSetDialog(
+                    context = this,
+                    title = "Edit Kuis",
+                    message = "Ubah judul dan deskripsi kuis ini",
+                    titleQuiz = quizSet.title,
+                    descQuiz = quizSet.description,
+                    onConfirmClickListener = { title, description ->
+                        editQuizSet(quizSet.id, title, description)
+                    }
+                )
+                addQuizSetDialog.show()
+                true
             }
         )
 
@@ -131,24 +144,22 @@ class MenuQuizActivity : AppCompatActivity() {
         firestore.collection("Users").document(auth.currentUser!!.uid)
             .collection("Students").document(student!!.uuid)
 
-
     private fun showCreateQuizSetDialog() {
-        val dialogBinding = DialogCreateQuizSetBinding.inflate(layoutInflater)
-
-        AlertDialog.Builder(this)
-            .setTitle("Buat Quiz Baru")
-            .setView(dialogBinding.root)
-            .setPositiveButton("Buat") { dialog, _ ->
-                val title = dialogBinding.etTitle.text.toString()
-                val description = dialogBinding.etDescription.text.toString()
-
-                if (title.isNotBlank()) {
-                    createQuizSet(title, description)
+        val addQuizSetDialog = AddQuizSetDialog(
+            context = this,
+            title = "Buat Kuis Baru",
+            message = "Masukkan judul dan deskripsi kuis baru",
+            titleQuiz = "",
+            descQuiz = "",
+            onConfirmClickListener = { titleQuiz, descQuiz ->
+                if (titleQuiz.isNotBlank()) {
+                    createQuizSet(titleQuiz, descQuiz)
+                } else {
+                    Toast.makeText(this, "Judul kuis tidak boleh kosong", Toast.LENGTH_SHORT).show()
                 }
-                dialog.dismiss()
             }
-            .setNegativeButton("Batal", null)
-            .show()
+        )
+        addQuizSetDialog.show()
     }
 
     private fun createQuizSet(title: String, description: String) {
@@ -169,6 +180,21 @@ class MenuQuizActivity : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 Log.d("MenuQuizActivity", "Error creating quiz set: ${e.message}")
+            }
+    }
+
+    private fun editQuizSet(quizSetId: String, newTitle: String, newDescription: String) {
+        val quizSetDoc = getStudentBaseCollection().collection("quizSets").document(quizSetId)
+
+        quizSetDoc.update("title", newTitle, "description", newDescription)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Kuis berhasil diperbarui", Toast.LENGTH_SHORT).show()
+                Log.d("MenuQuizActivity", "Quiz set updated successfully.")
+                loadQuizSets()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Gagal memperbarui kuis: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("MenuQuizActivity", "Error updating quiz set: ${e.message}")
             }
     }
 

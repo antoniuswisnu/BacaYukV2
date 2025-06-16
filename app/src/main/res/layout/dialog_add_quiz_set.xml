@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/_16sdp"
+    android:gravity="center_horizontal"
+    android:background="@drawable/bg_rounded_8px_white"
+    android:layout_marginHorizontal="@dimen/_16sdp"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/img_icon"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:src="@drawable/ic_baseline_help_24"/>
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextViewH18Bold"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:textColor="@color/neutral_700"
+        android:text="@string/sample_text"/>
+
+    <TextView
+        android:id="@+id/txt_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/neutral_700"
+        android:text="@string/sample_text"
+        android:textAlignment="center"
+        android:layout_marginTop="@dimen/_8sdp"
+        style="@style/TextViewH14Regular"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textFieldLayoutTitleQuiz"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Judul Quiz">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextTitleQuiz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
+            android:maxLength="12" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textFieldLayoutDescQuiz"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Deskripsi Quiz">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextDescQuiz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
+            android:maxLength="20" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/purple_500"
+            android:textAllCaps="false"
+            android:paddingVertical="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="@drawable/button_outline_rounded_purple_10px"
+            android:text="Batal"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_yes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingVertical="@dimen/_8sdp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:background="@drawable/button_rounded_purple_10px"
+            android:text="Simpan"/>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
+
+
